@@ -7,8 +7,7 @@ namespace Discord;
 
 [
     Loadable(nameof(Routes.GetChannel), typeof(GroupDMChannel)),
-    Modifiable<ModifyGroupDMProperties>(nameof(Routes.ModifyChannel)),
-    SuppressMessage("ReSharper", "PossibleInterfaceMemberAmbiguity")
+    Modifiable<ModifyGroupDMProperties>(nameof(Routes.ModifyChannel))
 ]
 public partial interface IGroupChannelActor :
     IMessageChannelTrait,

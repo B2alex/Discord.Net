@@ -10,7 +10,7 @@ namespace Discord;
     Modifiable<ModifyTextChannelProperties>(nameof(Routes.ModifyChannel)),
     Creatable<CreateGuildTextChannelProperties>(
         nameof(Routes.CreateGuildChannel),
-        nameof(IGuildActor),
+        WhenBackLinkingFrom = [typeof(IGuildActor)],
         RouteGenerics = [typeof(GuildTextChannel)]
     )
 ]

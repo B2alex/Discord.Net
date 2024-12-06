@@ -8,14 +8,8 @@ public partial interface IIntegrationChannelTrait :
     IEntityProvider<IIntegrationChannel, IGuildChannelModel>,
     IActorTrait<ulong, IIntegrationChannel>
 {
-    [return: TypeHeuristic(nameof(Webhooks))]
-    IGuildChannelWebhookActor Webhook(ulong id) => Webhooks[id];
-
     IGuildChannelWebhookActor.Enumerable.Indexable Webhooks { get; }
 
-    [SourceOfTruth]
-    internal new IIntegrationChannel CreateEntity(IGuildChannelModel model);
-    
     [
         TraitComponent,
         TraitLinkExtends(nameof(Webhooks), typeof(IGuildChannelWebhookActor.WithIncoming))

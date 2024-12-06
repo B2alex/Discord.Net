@@ -4,7 +4,7 @@ namespace Discord;
 
 public class ModifyUserVoiceStateProperties : IEntityProperties<ModifyUserVoiceStateParams>
 {
-    public Optional<EntityOrId<ulong, IVoiceChannel>> Channel { get; set; }
+    public Optional<IdOrEntity<ulong, IVoiceChannel>> Channel { get; set; }
     public Optional<bool> IsSuppressed { get; set; }
 
     public ModifyUserVoiceStateParams ToApiModel(ModifyUserVoiceStateParams? existing = default)

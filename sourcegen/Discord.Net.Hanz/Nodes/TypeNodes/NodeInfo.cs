@@ -135,17 +135,25 @@ public class NodeInfo<TParent, TState> : NodeInfo<TParent>
         {
             specProvider = specProvider
                 .EntriesProvider
-                .KeyedBy(x => (x.Value.State, x.Value.Path), x => x.Key)
+                .KeyedBy(x => (x.Value.State, x.Value.Path), x => x)
                 .JoinByKey(
                     _implementers
-                        .Aggregate(
-                            specProvider.ValuesProvider,
-                            (provider, implementer) =>
-                                implementer.ApplyImplementation(provider)
+                        .Select(x => x.ApplyImplementation(specProvider.ValuesProvider))
+                        .Aggregate((a, b) =>
+                            a.Collect().Combine(b.Collect())
+                                .SelectMany(IEnumerable<Implementation<TState>> (x, _) =>
+                                    [..x.Left, ..x.Right]
+                                )
                         )
-                        .KeyedBy(x => (x.State, x.Path)),
-                    (_, parent, statefulSpec) => (Parent: parent, Spec: statefulSpec)
-                )
+                        .GroupBy(x => ((x.StatefulSpec.State, x.StatefulSpec.Path), x))!,
+                    (_, kvp, implementations) => (
+                        Parent: kvp.Key,
+                        Spec: implementations
+                            .Aggregate(
+                                kvp.Value,
+                                (a, b) => b.Strategy(a)
+                            )
+                    ))
                 .EntriesProvider
                 .GroupBy(x => (x.Value.Parent, x.Value.Spec));
         }

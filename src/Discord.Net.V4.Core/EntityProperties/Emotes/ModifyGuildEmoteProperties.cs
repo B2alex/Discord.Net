@@ -15,7 +15,7 @@ public class ModifyGuildEmoteProperties : IEntityProperties<ModifyEmojiParams>
     /// <summary>
     ///     Gets or sets the roles that can access this <see cref="IGuildEmote" />.
     /// </summary>
-    public Optional<IEnumerable<EntityOrId<ulong, IRole>>?> Roles { get; set; }
+    public Optional<IEnumerable<IdOrEntity<ulong, IRole>>?> Roles { get; set; }
 
     public ModifyEmojiParams ToApiModel(ModifyEmojiParams? existing = default)
     {

@@ -9,7 +9,7 @@ public partial class Routes
         [IdHeuristic<IInvite>] string code,
         bool? withCounts = default,
         bool? withExpiration = default,
-        EntityOrId<ulong, IGuildScheduledEvent>? eventId = default
+        IdOrEntity<ulong, IGuildScheduledEvent>? eventId = default
     ) => new ApiOutRoute<Invite>(nameof(GetInvite), RequestMethod.Get,
         $"invites/{code}{RouteUtils.GetUrlEncodedQueryParams(("with_counts", withCounts), ("with_expiration", withExpiration), ("guild_scheduled_event_id", eventId))}");
 

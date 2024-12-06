@@ -6,7 +6,7 @@ public sealed class CreateGuildEmoteProperties : IEntityProperties<CreateGuildEm
 {
     public required string Name { get; set; }
     public required Image Image { get; set; }
-    public Optional<IEnumerable<EntityOrId<ulong, IRole>>> Roles { get; set; }
+    public Optional<IEnumerable<IdOrEntity<ulong, IRole>>> Roles { get; set; }
     public CreateGuildEmojiParams ToApiModel(CreateGuildEmojiParams? existing = default)
     {
         return new CreateGuildEmojiParams()

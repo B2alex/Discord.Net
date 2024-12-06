@@ -9,7 +9,7 @@ namespace Discord;
     Modifiable<ModifyStickerProperties>(nameof(Routes.ModifyGuildSticker)),
     Creatable<CreateGuildStickerProperties>(
         nameof(Routes.CreateGuildSticker),
-        nameof(IGuildActor.Stickers)
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
     ),
     FetchableOfMany(nameof(Routes.ListGuildStickers)),
     Refreshable(nameof(Routes.GetGuildSticker))

@@ -6,8 +6,11 @@ namespace Discord;
 
 [
     Loadable(nameof(Routes.GetGuildEmoji)), Deletable(nameof(Routes.DeleteGuildEmoji)),
-    Creatable<CreateGuildEmoteProperties>(nameof(Routes.CreateGuildEmoji), nameof(IGuildActor.Emotes)),
-    Modifiable<ModifyGuildEmoteProperties>(nameof(Routes.ModifyGuildEmoji)), 
+    Creatable<CreateGuildEmoteProperties>(
+        nameof(Routes.CreateGuildEmoji),
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
+    ),
+    Modifiable<ModifyGuildEmoteProperties>(nameof(Routes.ModifyGuildEmoji)),
     Refreshable(nameof(Routes.GetGuildEmoji)),
     FetchableOfMany(nameof(Routes.ListGuildEmojis))
 ]

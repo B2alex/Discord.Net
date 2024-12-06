@@ -7,8 +7,8 @@ public sealed record PageGuildScheduledEventUsersParams(
     int? PageSize = null,
     int? Total = null,
     bool? WithMembers = null,
-    EntityOrId<ulong, IUser>? Before = null,
-    EntityOrId<ulong, IUser>? After = null
+    IdOrEntity<ulong, IUser>? Before = null,
+    IdOrEntity<ulong, IUser>? After = null
 ) : IBetweenPagingParams<ulong>,
     IPagingParams<PageGuildScheduledEventUsersParams, IEnumerable<IGuildScheduledEventUserModel>>
 {

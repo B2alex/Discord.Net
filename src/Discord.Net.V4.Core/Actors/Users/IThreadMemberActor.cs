@@ -29,7 +29,7 @@ public partial interface IThreadMemberActor :
     [BackLink<IThreadChannelActor>]
     private static Task AddAsync(
         IThreadChannelActor thread,
-        EntityOrId<ulong, IUserActor> user,
+        IdOrEntity<ulong, IUserActor> user,
         RequestOptions? options = null,
         CancellationToken token = default)
     {
@@ -43,7 +43,7 @@ public partial interface IThreadMemberActor :
     [BackLink<IThreadChannelActor>]
     private static Task RemoveAsync(
         IThreadChannelActor thread,
-        EntityOrId<ulong, IUserActor> user,
+        IdOrEntity<ulong, IUserActor> user,
         RequestOptions? options = null,
         CancellationToken token = default)
     {

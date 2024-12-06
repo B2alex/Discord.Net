@@ -7,7 +7,7 @@ public partial interface ISoundboardSoundActor :
     IActor<ulong, ISoundboardSound>
 {
     Task SendAsync(
-        EntityOrId<ulong, IChannelActor> channel,
+        IdOrEntity<ulong, IChannelActor> channel,
         ulong? soundGuildId = null,
         RequestOptions? options = null,
         CancellationToken token = default)

@@ -6,8 +6,8 @@ namespace Discord;
 public sealed record PageUserGuildsParams(
     int? PageSize = 200,
     int? Total = null,
-    EntityOrId<ulong, IPartialGuild>? Before = null,
-    EntityOrId<ulong, IPartialGuild>? After = null,
+    IdOrEntity<ulong, IPartialGuild>? Before = null,
+    IdOrEntity<ulong, IPartialGuild>? After = null,
     bool? WithApproximateMemberCounts = null
 ) : IBetweenPagingParams<ulong>, IPagingParams<PageUserGuildsParams, IEnumerable<IPartialGuildModel>>
 {

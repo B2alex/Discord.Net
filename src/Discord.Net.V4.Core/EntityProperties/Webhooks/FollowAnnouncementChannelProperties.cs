@@ -6,7 +6,7 @@ public sealed class BacklinkFollowAnnouncementChannelProperties :
     IEntityProperties<FollowAnnouncementChannelParams>
 {
     [IdHeuristic<IAnnouncementChannel>]
-    public required EntityOrId<ulong, IAnnouncementChannelActor> AnnouncementChannel { get; set; }
+    public required IdOrEntity<ulong, IAnnouncementChannelActor> AnnouncementChannel { get; set; }
 
     internal ulong TargetChannelId { get; }
     
@@ -15,7 +15,7 @@ public sealed class BacklinkFollowAnnouncementChannelProperties :
         TargetChannelId = path.Require<IIntegrationChannel>();
     }
 
-    public BacklinkFollowAnnouncementChannelProperties(EntityOrId<ulong, IIntegrationChannel> targetChannel)
+    public BacklinkFollowAnnouncementChannelProperties(IdOrEntity<ulong, IIntegrationChannel> targetChannel)
     {
         TargetChannelId = targetChannel;
     }

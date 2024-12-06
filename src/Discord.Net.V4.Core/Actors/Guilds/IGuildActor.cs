@@ -15,8 +15,8 @@ namespace Discord;
 public partial interface IGuildActor :
     IActor<ulong, IGuild>,
     IHasThreadsTrait<
-        IThreadChannelActor,
-        IThreadChannelActor.Indexable.WithActive.BackLink<IGuildActor>>,
+        IThreadChannelActor.Indexable.WithActive.BackLink<IGuildActor>
+    >,
     IInvitableTrait<IGuildInviteActor, IGuildInvite>
 {
     [return: TypeHeuristic(nameof(Sounds))]
@@ -56,7 +56,7 @@ public partial interface IGuildActor :
 
     [return: TypeHeuristic(nameof(Roles))]
     IRoleActor Role(ulong id) => Roles[id];
-    
+
     IRoleActor.Enumerable.Indexable.BackLink<IGuildActor> Roles { get; }
 
     [return: TypeHeuristic(nameof(Stickers))]
@@ -103,7 +103,7 @@ public partial interface IGuildActor :
 
     async Task<int> GetPruneCountAsync(
         int? days = null,
-        Optional<IEnumerable<EntityOrId<ulong, IRole>>> includeRoles = default,
+        Optional<IEnumerable<IdOrEntity<ulong, IRole>>> includeRoles = default,
         RequestOptions? options = null,
         CancellationToken token = default)
     {
@@ -123,7 +123,7 @@ public partial interface IGuildActor :
     async Task<int?> BeginPruneAsync(
         int? days = null,
         bool? computePruneCount = null,
-        Optional<IEnumerable<EntityOrId<ulong, IRole>>> includeRoles = default,
+        Optional<IEnumerable<IdOrEntity<ulong, IRole>>> includeRoles = default,
         string? reason = null,
         RequestOptions? options = null,
         CancellationToken token = default)

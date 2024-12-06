@@ -23,9 +23,6 @@ public partial interface IApplicationRoleConnectionMetadataActor :
             token
         );
 
-        return result
-            .Select(link.CreateEntity)
-            .ToList()
-            .AsReadOnly();
+        return await result.MapAsync(link.CreateEntityAsync, token);
     }
 }

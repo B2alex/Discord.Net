@@ -8,7 +8,7 @@ namespace Discord.Net.Hanz.Tasks.Actors.Links.Nodes.Modifiers;
 
 public sealed class BackLinkNode :
     LinkNode,
-    ITypeProducerNode<BackLinkNode.BackLink>.WithParameters<ActorInfo>.Introspects<AncestorPathingIntrospection>
+    ITypeProducerNode<BackLinkNode.BackLink>.WithParameters<ActorOrTraitInfo>.Introspects<AncestorPathingIntrospection>
 {
     public record Introspection(
         ImmutableEquatableArray<TypePath> SelfBases,
@@ -16,23 +16,23 @@ public sealed class BackLinkNode :
     );
 
     public record BackLink(
-        ActorInfo ActorInfo
+        ActorOrTraitInfo Target
     )
     {
-        public bool IsCovariant => ActorInfo.IsCore;
+        public bool IsCovariant => Target.IsCore;
         public string TypeName => $"BackLink<{(IsCovariant ? "out " : string.Empty)}TSource>";
         public string ReferenceName => $"BackLink<TSource>";
     }
 
     public record ExtensionBackLink(
-        ActorInfo ActorInfo,
+        ActorOrTraitInfo Target,
         ExtensionNode.Extension Extension
-    ) : BackLink(ActorInfo);
+    ) : BackLink(Target);
 
     public record HierarchyBackLink(
-        ActorInfo ActorInfo,
+        ActorOrTraitInfo Target,
         HierarchyNode.Hierarchy Hierarchy
-    ) : BackLink(ActorInfo);
+    ) : BackLink(Target);
 
     public BackLinkNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
     {
@@ -51,14 +51,14 @@ public sealed class BackLinkNode :
                     ("TSource", ["class", "IPathable"])
                 ]),
                 Bases: new([
-                    state.ActorInfo.FormattedBackLinkType,
+                    state.Target.FormattedBackLinkType,
                     ..introspection.SemanticBases,
-                    ..introspection.AncestorBases.Select(x => $"{x.Actor}.{~path}")
+                    ..introspection.AncestorBases.Select(x => $"{x.Type}.{~path}")
                 ])
             );
 
         if (path.Equals(typeof(ActorNode), typeof(BackLinkNode)))
-            spec = spec.AddBases(state.ActorInfo.Actor.DisplayString);
+            spec = spec.AddBases(state.Target.Type.DisplayString);
 
         switch (state)
         {
@@ -76,11 +76,11 @@ public sealed class BackLinkNode :
             case HierarchyBackLink hierarchyBackLink:
                 spec = spec.AddProperties(
                     hierarchyBackLink.Hierarchy.HierarchyInfos.SelectMany(IEnumerable<PropertySpec> (info) => [
-                        HierarchyNode.FormatExtensionProperty(state.ActorInfo, info, path),
-                        HierarchyNode.FormatExtensionProperty(state.ActorInfo, info, path.ParentPath.Value) with
+                        HierarchyNode.FormatExtensionProperty(state.Target, info, path),
+                        HierarchyNode.FormatExtensionProperty(state.Target, info, path.ParentPath.Value) with
                         {
                             ExplicitInterfaceImplementation = path.ParentPath.Value,
-                            Expression = HierarchyNode.GetHierarchyPropertyName(state.ActorInfo, info)
+                            Expression = HierarchyNode.GetHierarchyPropertyName(state.Target, info)
                         },
                     ])
                 );
@@ -92,7 +92,7 @@ public sealed class BackLinkNode :
 
 
     public IncrementalValuesProvider<NodeGeneration<BackLink, TParent>> Create<TParent>(
-        IncrementalValuesProvider<NodeContext<TParent, ActorInfo>> provider,
+        IncrementalValuesProvider<NodeContext<TParent, ActorOrTraitInfo>> provider,
         ContinuationContext<BackLink, TParent> continuationContext)
     {
         return provider
@@ -117,5 +117,5 @@ public sealed class BackLinkNode :
 
     public IncrementalValuesProvider<IntrospectionResult<AncestorPathingIntrospection, BackLink>> Introspect(
         IncrementalValuesProvider<IntrospectionContext<BackLink>> provider
-    ) => Introspect(provider, x => x.ActorInfo);
+    ) => Introspect(provider, x => x.Target);
 }

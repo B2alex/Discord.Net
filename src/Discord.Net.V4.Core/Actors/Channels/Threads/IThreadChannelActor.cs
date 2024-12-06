@@ -6,10 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Discord;
 
 [
+    RelationshipName("Thread"),
     Loadable(nameof(Routes.GetChannel), typeof(ThreadChannelBase)),
     Modifiable<ModifyThreadChannelProperties>(nameof(Routes.ModifyChannel)),
-    RelationshipName("Thread"),
-    SuppressMessage("ReSharper", "PossibleInterfaceMemberAmbiguity"),
     PagedFetchableOfMany<PagePublicArchivedThreadsParams>(nameof(Routes.ListPublicArchivedThreads)),
     PagedFetchableOfMany<PagePrivateArchivedThreadsParams>(nameof(Routes.ListPrivateArchivedThreads)),
     PagedFetchableOfMany<PageJoinedPrivateArchivedThreadsParams>(nameof(Routes.ListJoinedPrivateArchivedThreads))
@@ -27,10 +26,10 @@ public partial interface IThreadChannelActor :
         Members { get; }
 
     Task JoinAsync(RequestOptions? options = null, CancellationToken token = default)
-        => Client.RestApiClient.ExecuteAsync(Routes.JoinThread(Id), options ?? Client.DefaultRequestOptions, token);
+        => Client.RestApiClient.ExecuteAsync(Routes.JoinThread(Id), options, token);
 
     Task LeaveAsync(RequestOptions? options = null, CancellationToken token = default)
-        => Client.RestApiClient.ExecuteAsync(Routes.LeaveThread(Id), options ?? Client.DefaultRequestOptions, token);
+        => Client.RestApiClient.ExecuteAsync(Routes.LeaveThread(Id), options, token);
 
     [LinkExtension]
     private interface WithActiveExtension

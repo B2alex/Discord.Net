@@ -10,7 +10,7 @@ public class ModifyTextChannelProperties : ModifyThreadableChannelProperties
     public Optional<ChannelType> Type { get; set; }
     public Optional<string?> Topic { get; set; }
     public Optional<int?> Slowmode { get; set; }
-    public Optional<EntityOrId<ulong, ICategoryChannel>?> Category { get; set; }
+    public Optional<IdOrEntity<ulong, ICategoryChannel>?> Category { get; set; }
 
     public override ModifyGuildChannelParams ToApiModel(ModifyGuildChannelParams? existing = null)
     {

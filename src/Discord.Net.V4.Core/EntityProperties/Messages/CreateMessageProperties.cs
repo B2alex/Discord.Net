@@ -26,7 +26,7 @@ public sealed class CreateMessageProperties : IEntityProperties<CreateMessagePar
     public Optional<AllowedMentions> AllowedMentions { get; set; }
     public Optional<MessageReference> MessageReference { get; set; }
     public Optional<ICollection<IMessageComponent>> Components { get; set; }
-    public Optional<IEnumerable<EntityOrId<ulong, ISticker>>> Stickers { get; set; }
+    public Optional<IEnumerable<IdOrEntity<ulong, ISticker>>> Stickers { get; set; }
     public Optional<IEnumerable<FileAttachment>> Attachments { get; set; }
     public Optional<MessageCreateFlags> Flags { get; set; }
     public Optional<bool> EnforceNonce { get; set; }

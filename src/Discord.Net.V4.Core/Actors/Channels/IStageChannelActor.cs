@@ -10,10 +10,9 @@ namespace Discord;
     Loadable(nameof(Routes.GetChannel), typeof(GuildStageChannel)),
     Creatable<CreateGuildStageChannelProperties>(
         nameof(Routes.CreateGuildChannel),
-        nameof(IGuildActor),
+        WhenBackLinkingFrom = [typeof(IGuildActor)],
         RouteGenerics = [typeof(GuildStageChannel)]
-    ),
-    SuppressMessage("ReSharper", "PossibleInterfaceMemberAmbiguity")
+    )
 ]
 public partial interface IStageChannelActor :
     IActor<ulong, IStageChannel>,
@@ -21,29 +20,5 @@ public partial interface IStageChannelActor :
     IVoiceChannelActor,
     IIntegrationChannelTrait.WithChannelFollower
 {
-    IStageInstanceActor Instance { get; }
-    
-    async Task<IStageInstance> CreateStageInstanceAsync(
-        string topic,
-        StagePrivacyLevel? privacyLevel = null,
-        bool? sendStartNotification = null,
-        EntityOrId<ulong, IGuildScheduledEvent>? scheduledEvent = null,
-        RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        var result = await Client.RestApiClient.ExecuteRequiredAsync(
-            Routes.CreateStageInstance(new CreateStageInstanceParams
-            {
-                Topic = topic,
-                ChannelId = Id,
-                PrivacyLevel = Optional.FromNullable(privacyLevel).Map(v => (int) v),
-                SendStartNotification = Optional.FromNullable(sendStartNotification),
-                GuildScheduledEventId = Optional.FromNullable(scheduledEvent).Map(v => v.Id)
-            }),
-            options ?? Client.DefaultRequestOptions,
-            token
-        );
-
-        return CreateEntity(result);
-    }
+    IStageInstanceActor.BackLink<IStageChannelActor> Instance { get; }
 }

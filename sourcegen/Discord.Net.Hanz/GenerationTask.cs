@@ -11,7 +11,7 @@ public abstract class GenerationTask
 
     private static readonly Logger _logger = Logger.CreateForTask("GenerationTaskBuilder").WithCleanLogFile();
 
-    protected Logger Logger { get; }
+    public Logger Logger { get; }
     
     public GenerationTask(IncrementalGeneratorInitializationContext context, Logger logger)
     {

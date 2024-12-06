@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Discord.Net.Hanz.Utils.Bakery;
 
-public readonly record struct GenericSpec(
+public record GenericSpec(
     string Name,
     VarianceKind Variance = VarianceKind.None
 )

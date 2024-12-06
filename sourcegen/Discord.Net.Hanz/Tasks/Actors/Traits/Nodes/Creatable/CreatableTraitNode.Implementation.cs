@@ -8,60 +8,48 @@ namespace Discord.Net.Hanz.Tasks.Actors.TraitsV2.Nodes;
 
 public sealed partial class CreatableTraitNode
 {
-    private void CreateImplementation(IncrementalGeneratorInitializationContext context)
+    private IncrementalKeyValueProvider<TraitImplementationTarget, TypeSpec> CreateImplementationsProvider()
     {
-        context.RegisterSourceOutput(
-            State
-                .MapValues(ActorNode.CreateActorContainer)
-                .Select(CreateImplementation),
-            (sourceContext, spec) => sourceContext.AddSource(
-                spec.Path,
-                spec.ToString()
-            )
-        );
+        return State.MapValues(CreateImplementation);
     }
 
-    private SourceSpec CreateImplementation(ActorInfo info, StatefulGeneration<CreatableTraitState> generation)
+    private TypeSpec CreateImplementation(
+        TraitImplementationTarget target,
+        CreatableTraitState state
+    )
     {
-        var (state, spec) = generation;
-
+        var spec = TypeSpec.From(target.Type).AddModifiers("partial");
+        
         foreach (var detail in state.Details)
         {
-            ImplementDetails(ref spec, info, detail);
+            ImplementDetails(ref spec, target, detail);
         }
 
-        return new SourceSpec(
-            $"Creatable/{info.Actor.MetadataName}",
-            "Discord",
-            new(["Discord"]),
-            new([
-                spec
-            ])
-        );
+        return spec;
     }
 
-    private void ImplementDetails(ref TypeSpec spec, ActorInfo info, TraitDetails details)
+    private void ImplementDetails(ref TypeSpec spec, TraitImplementationTarget target, TraitDetails details)
     {
         if (details.Properties.HasValue)
         {
-            ImplementCreatableWithProperties(ref spec, info, details, details.Properties.Value);
+            ImplementCreatableWithProperties(ref spec, target, details, details.Properties.Value);
             return;
         }
     }
 
     private void ImplementCreatableWithProperties(
         ref TypeSpec spec,
-        ActorInfo info,
+        TraitImplementationTarget target,
         TraitDetails details,
         EntityPropertiesTask.EntityPropertiesWithInheritance properties)
     {
         var creatableInterface = $"Discord.ICreatable<" +
-                                 $"{info.Actor}, " +
-                                 $"{info.Entity}, " +
-                                 $"{info.Id}, " +
+                                 $"{target.Type}, " +
+                                 $"{target.Entity}, " +
+                                 $"{target.Id}, " +
                                  $"{details.Properties.Value.Source.Type}, " +
                                  $"{details.Properties.Value.Source.ParamsType}, " +
-                                 $"{info.Model}>";
+                                 $"{target.Model}>";
 
         var extraParameters = new List<RouteParameter>();
 
@@ -73,7 +61,7 @@ public sealed partial class CreatableTraitNode
                         return $"path.Require<{parameter.Heuristics[0]}>()";
 
                     if (parameter.Name is "id")
-                        return $"path.Require<{info.Entity}>()";
+                        return $"path.Require<{target.Entity}>()";
 
                     if (parameter.Type.Equals(properties.Source.ParamsType))
                         return "args";
@@ -89,7 +77,7 @@ public sealed partial class CreatableTraitNode
             .AddMethods(
                 new MethodSpec(
                     "CreateRoute",
-                    $"IApiInOutRoute<{details.Properties.Value.Source.ParamsType}, {info.Model}>",
+                    $"IApiInOutRoute<{details.Properties.Value.Source.ParamsType}, {target.Model}>",
                     ExplicitInterfaceImplementation: creatableInterface,
                     Modifiers: new(["static"]),
                     Parameters: new([

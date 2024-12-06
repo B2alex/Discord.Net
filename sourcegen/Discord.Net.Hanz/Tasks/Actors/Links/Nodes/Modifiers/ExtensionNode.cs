@@ -12,16 +12,16 @@ namespace Discord.Net.Hanz.Tasks.Actors.Links.Nodes.Modifiers;
 
 public sealed class ExtensionNode :
     LinkNode,
-    ITypeProducerNode<ExtensionNode.Extension>.WithParameters<ActorInfo>.Introspects<AncestorPathingIntrospection>
+    ITypeProducerNode<ExtensionNode.Extension>.WithParameters<ActorOrTraitInfo>.Introspects<AncestorPathingIntrospection>
 {
     public record Extension(
-        ActorInfo ActorInfo,
+        ActorOrTraitInfo Target,
         string Name,
         ImmutableEquatableArray<ExtensionSpec.Property> Properties
     );
 
     public record ExtensionSpec(
-        string Actor,
+        string Target,
         string Name,
         ImmutableEquatableArray<ExtensionSpec.Property> Properties
     )
@@ -31,7 +31,7 @@ public sealed class ExtensionNode :
             string Type,
             string? Overloads,
             Property.Kind PropertyKind,
-            ActorInfo? ActorInfo = null
+            ActorOrTraitInfo? TargetInfo = null
         )
         {
             public enum Kind
@@ -111,7 +111,7 @@ public sealed class ExtensionNode :
         }
     }
 
-    private readonly IncrementalGroupingProvider<ActorInfo, ExtensionSpec> _extensions;
+    private readonly IncrementalGroupingProvider<ActorOrTraitInfo, ExtensionSpec> _extensions;
 
     public ExtensionNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
     {
@@ -141,8 +141,8 @@ public sealed class ExtensionNode :
                 }
             )
             .WhereNotNull()
-            .GroupBy(x => x.Actor)
-            .TransformKeysVia(GetTask<ActorsTask>().ActorInfos);
+            .GroupBy(x => x.Target)
+            .TransformKeysVia(TargetsProvider);
     }
 
     public TypeSpec CreateSpec(AncestorPathingIntrospection introspection, Extension extension, TypePath path)
@@ -156,7 +156,7 @@ public sealed class ExtensionNode :
                 .ToImmutableEquatableArray(),
             Bases: new([
                 ..introspection.SemanticBases,
-                ..introspection.AncestorBases.Select(x => $"{x.Actor}.{path.FormatRelative()}")
+                ..introspection.AncestorBases.Select(x => $"{x.Type}.{path.FormatRelative()}")
             ])
         );
 
@@ -168,7 +168,7 @@ public sealed class ExtensionNode :
         if (!property.IsDefinedOnPath(path))
             yield break;
 
-        if (property.PropertyKind is not ExtensionSpec.Property.Kind.Normal && property.ActorInfo is null)
+        if (property.PropertyKind is not ExtensionSpec.Property.Kind.Normal && property.TargetInfo is null)
             yield break;
 
         var hasNewKeyword = property.PropertyKind switch
@@ -184,12 +184,12 @@ public sealed class ExtensionNode :
             ExtensionSpec.Property.Kind.Normal => property.Type,
             ExtensionSpec.Property.Kind.LinkMirror =>
                 path.Equals(typeof(ActorNode), typeof(ExtensionNode))
-                    ? property.ActorInfo!.Value.FormattedLink
-                    : $"{property.ActorInfo!.Value.Actor}.{path.OfType<LinkTypeNode>().FormatRelative()}",
+                    ? property.TargetInfo!.FormattedLink
+                    : $"{property.TargetInfo!.Type}.{path.OfType<LinkTypeNode>().FormatRelative()}",
             ExtensionSpec.Property.Kind.BackLinkMirror =>
                 path.Last?.Type == typeof(BackLinkNode)
-                    ? $"{property.ActorInfo!.Value.Actor}.BackLink<TSource>"
-                    : property.ActorInfo!.Value.Actor.DisplayString,
+                    ? $"{property.TargetInfo!.Type}.BackLink<TSource>"
+                    : property.TargetInfo!.Type.DisplayString,
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -210,8 +210,8 @@ public sealed class ExtensionNode :
                 {
                     yield return new PropertySpec(
                         Name: property.Name,
-                        Type: $"{property.ActorInfo!.Value.Actor.DisplayString}.{pathProduct.FormatRelative()}",
-                        ExplicitInterfaceImplementation: $"{extension.ActorInfo.Actor}.{pathProduct}.{extension.Name}",
+                        Type: $"{property.TargetInfo!.Type.DisplayString}.{pathProduct.FormatRelative()}",
+                        ExplicitInterfaceImplementation: $"{extension.Target.Type}.{pathProduct}.{extension.Name}",
                         Expression: property.Name
                     );
                 }
@@ -220,8 +220,8 @@ public sealed class ExtensionNode :
             case ExtensionSpec.Property.Kind.BackLinkMirror when path.Last?.Type == typeof(BackLinkNode):
                 yield return new PropertySpec(
                     Name: property.Name,
-                    Type: property.ActorInfo!.Value.Actor.DisplayString,
-                    ExplicitInterfaceImplementation: $"{extension.ActorInfo.Actor}.{extension.Name}",
+                    Type: property.TargetInfo!.Type.DisplayString,
+                    ExplicitInterfaceImplementation: $"{extension.Target.Type}.{extension.Name}",
                     Expression: property.Name
                 );
                 break;
@@ -229,21 +229,21 @@ public sealed class ExtensionNode :
     }
 
     public IncrementalValuesProvider<NodeGeneration<Extension, TParent>> Create<TParent>(
-        IncrementalValuesProvider<NodeContext<TParent, ActorInfo>> provider,
+        IncrementalValuesProvider<NodeContext<TParent, ActorOrTraitInfo>> provider,
         ContinuationContext<Extension, TParent> continuationContext)
     {
         continuationContext.AddChild(
             GetNode<BackLinkNode>(),
-            x => x.ActorInfo
+            x => x.Target
         );
 
         return _extensions
             .JoinByKey(
                 provider.KeyedBy(x => x.Parameters),
-                (actorInfo, extensions, context) => extensions
+                (info, extensions, context) => extensions
                     .Select(ext =>
                         MapExtension(
-                            actorInfo,
+                            info,
                             context,
                             context.Path,
                             ext,
@@ -255,8 +255,8 @@ public sealed class ExtensionNode :
             .SelectMany((x, _) => x);
 
         NodeGeneration<Extension, TParent> MapExtension(
-            ActorInfo info,
-            NodeContext<TParent, ActorInfo> context,
+            ActorOrTraitInfo info,
+            NodeContext<TParent, ActorOrTraitInfo> context,
             TypePath path,
             ExtensionSpec spec,
             ImmutableArray<ExtensionSpec> children)
@@ -275,5 +275,5 @@ public sealed class ExtensionNode :
 
     public IncrementalValuesProvider<IntrospectionResult<AncestorPathingIntrospection, Extension>> Introspect(
         IncrementalValuesProvider<IntrospectionContext<Extension>> provider
-    ) => Introspect(provider, x => x.ActorInfo);
+    ) => Introspect(provider, x => x.Target);
 }

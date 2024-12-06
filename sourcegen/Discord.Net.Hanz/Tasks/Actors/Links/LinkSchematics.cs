@@ -143,7 +143,7 @@ public class LinkSchematics : GenerationTask
 
     public Schematic? MapNonCoreSchematic(Compilation compilation, CancellationToken token)
     {
-        if (ActorsTask.GetAssemblyTarget(compilation) is ActorsTask.AssemblyTarget.Core)
+        if (ActorsTask.GetAssemblyTarget(compilation) is AssemblyTarget.Core)
             return null;
 
         var logger = _logger

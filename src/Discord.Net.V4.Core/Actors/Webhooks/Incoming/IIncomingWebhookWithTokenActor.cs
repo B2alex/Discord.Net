@@ -36,7 +36,7 @@ public partial interface IIncomingWebhookWithTokenActor :
 
         return model is null
             ? null
-            : (Messages as IEntityProvider<IWebhookMessage, IMessageModel>).CreateEntity(model);
+            : await (Messages as IEntityProvider<IWebhookMessage, IMessageModel>).CreateEntityAsync(model, token);
     }
 
     IIncomingWebhookWithTokenActor IIncomingWebhookActor.this[string _] => this;

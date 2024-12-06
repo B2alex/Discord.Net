@@ -6,7 +6,7 @@ public class CreateGuildMediaChannelProperties : CreateGuildChannelBasePropertie
 {
     public Optional<string?> Topic { get; set; }
     public Optional<int?> Slowmode { get; set; }
-    public Optional<EntityOrId<ulong, ICategoryChannel>?> Category { get; set; }
+    public Optional<IdOrEntity<ulong, ICategoryChannel>?> Category { get; set; }
     public Optional<bool?> IsNsfw { get; set; }
     public Optional<ThreadArchiveDuration?> DefaultAutoArchiveDuration { get; set; }
     public Optional<IEmote?> DefaultReactionEmoji { get; set; }

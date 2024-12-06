@@ -9,7 +9,7 @@ namespace Discord;
     Deletable(nameof(Routes.DeleteGuildScheduledEvent)),
     Creatable<CreateGuildScheduledEventProperties>(
         nameof(Routes.CreateGuildScheduledEvent),
-        nameof(IGuildActor.ScheduledEvents)
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
     ),
     Modifiable<ModifyGuildScheduledEventProperties>(nameof(Routes.ModifyGuildScheduledEvent)),
     FetchableOfMany(nameof(Routes.ListGuildScheduledEvents)), 

@@ -9,19 +9,21 @@ namespace Discord;
     Loadable(nameof(Routes.GetChannel), typeof(GuildAnnouncementChannel)),
     Creatable<CreateGuildAnnouncementChannelProperties>(
         nameof(Routes.CreateGuildChannel),
-        nameof(IGuildActor),
+        WhenBackLinkingFrom = [typeof(IGuildActor)],
         RouteGenerics = [typeof(GuildAnnouncementChannel)]
-    ),
-    SuppressMessage("ReSharper", "PossibleInterfaceMemberAmbiguity")
+    )
 ]
 public partial interface IAnnouncementChannelActor :
     IMessageChannelTrait,
     IIntegrationChannelTrait.WithIncoming.WithChannelFollower,
-    IThreadableChannelTrait<IAnnouncementThreadChannelActor.Indexable.WithAnnouncementArchived.BackLink<IAnnouncementChannelActor>>,
+    IThreadableChannelTrait<IAnnouncementThreadChannelActor.Indexable.WithAnnouncementArchived.BackLink<
+        IAnnouncementChannelActor>>,
     IActor<ulong, IAnnouncementChannel>
 {
-    async Task<FollowedChannel> FollowAnnouncementChannelAsync(EntityOrId<ulong, ITextChannel> channel,
-        RequestOptions? options = null, CancellationToken token = default)
+    async Task<FollowedChannel> FollowAnnouncementChannelAsync(
+        IdOrEntity<ulong, ITextChannel> channel,
+        RequestOptions? options = null, CancellationToken token = default
+    )
     {
         var model = await Client.RestApiClient.ExecuteRequiredAsync(
             Routes.FollowAnnouncementChannel(

@@ -14,19 +14,12 @@ public abstract class BaseLinkTypeNode :
 
     public record Context(
         LinkTypeNode.State LinkState,
-        ActorsTask.ActorHierarchy Hierarchy
+        ImmutableEquatableArray<LinkTargetAncestor> Ancestors
     )
     {
         public LinkSchematics.Entry Entry => LinkState.Entry;
         public TypePath Path => LinkState.Path;
-        public ActorInfo ActorInfo => LinkState.ActorInfo;
-        
-        
-        public IEnumerable<ActorsTask.ActorHierarchy> Ancestors => Hierarchy.Parents;
-        public ImmutableEquatableArray<AncestorInfo> AncestorInfos => Hierarchy.ParentInfos;
-        public IEnumerable<ActorsTask.ActorHierarchy> Children => Hierarchy.Children;
-        public ImmutableEquatableArray<ActorInfo> ChildrenInfos => Hierarchy.ChildrenInfos;
-
+        public ActorOrTraitInfo Target => LinkState.Target;
     }
 
     protected abstract IncrementalValuesProvider<(Context Context, ILinkImplmenter.LinkSpec Implementation)> Create(
@@ -51,12 +44,12 @@ public abstract class BaseLinkTypeNode :
 
                 return linkContext.Some();
             })
-            .KeyedBy(x => x.Parent.ActorInfo)
+            .KeyedBy(x => x.Parent.Target)
             .JoinByKey(
-                GetTask<ActorsTask>().ActorHierarchies,
+                TargetAncestorsProvider!,
                 (info, context, ancestors) => new Context(
                     context.Parent,
-                    ancestors
+                    ancestors!
                 )
             )
             .ValuesProvider;
@@ -79,7 +72,6 @@ public abstract class BaseLinkTypeNode :
             .AddIndexers(state.Indexers)
             .AddProperties(state.Properties);
     }
-
 }
 
 // public abstract class BaseLinkTypeNode : LinkNode, ILinkImplmenter

@@ -3,7 +3,10 @@ using Microsoft.CodeAnalysis;
 
 namespace Discord.Net.Hanz.Nodes.TypeNodes;
 
-public interface ITypeProducerNode;
+public interface ITypeProducerNode
+{
+    Logger Logger { get; }
+}
 
 public interface ITypeProducerNode<TState> :  IStatefulNode<TState>
 {

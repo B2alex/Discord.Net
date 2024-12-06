@@ -9,7 +9,7 @@ namespace Discord.Net.Hanz.Tasks.Actors.TraitsV2.Nodes.Deletable;
 
 public sealed class DeletableTraitNode : TraitNode
 {
-    public IncrementalKeyValueProvider<ActorInfo, RouteInfo> DeletableActors { get; }
+    public IncrementalKeyValueProvider<TraitImplementationTarget, RouteInfo> DeletableActors { get; }
 
     public DeletableTraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
     {
@@ -37,45 +37,24 @@ public sealed class DeletableTraitNode : TraitNode
             )
             .WhereNotNull()
             .DependsOn(GetTask<ApiRouteTask>().Routes)
-            .DependsOn(GetTask<ActorsTask>().ActorInfos)
-            .MaybeSelect(x =>
-            {
-                using var logger = Logger
-                    .GetSubLogger("Mapping");
-                    
-                if (!GetTask<ApiRouteTask>().Routes.TryGetValue(x.Route, out var routeInfo))
-                {
-                    logger.Log($"{x.Actor}: no route info found for {x.Route}");
-                    return default;
-                }
-
-                if (!GetTask<ActorsTask>().ActorInfos.TryGetValue(x.Actor, out var actorInfo))
-                {
-                    logger.Log($"{x.Actor}: no actor info found for {x.Actor}");
-                    return default;
-                }
-
-                logger.Log($"{x.Actor}: mapped {actorInfo.Actor} : {routeInfo}");
-                
-                return (ActorInfo: actorInfo, RouteInfo: routeInfo).Some();
-            })
-            .KeyedBy(x => x.ActorInfo, x => x.RouteInfo);
+            .KeyedBy(x => x.Actor, x => x.Route)
+            .TransformKeyVia(TargetsProvider)
+            .TransformValuesVia(GetTask<ApiRouteTask>().Routes);
 
         context.RegisterSourceOutput(
             DeletableActors
-                .JoinByKey(PathingInfoProvider)
-                .MapValues(ActorNode.CreateActorContainer)
+                .MapValues(CreateContainer)
                 .Select(CreateImplementation)
         );
     }
 
     private static SourceSpec CreateImplementation(
-        ActorInfo info,
-        StatefulGeneration<(RouteInfo RouteInfo, ActorPathingInfo PathingInfo)> generation)
+        TraitImplementationTarget target,
+        StatefulGeneration<RouteInfo> generation)
     {
-        var ((route, pathing), spec) = generation;
+        var (route, spec) = generation;
 
-        var deletableInterface = $"Discord.IDeletable<{info.Id}, {info.Actor}>";
+        var deletableInterface = $"Discord.IDeletable<{target.Id}, {target.Type}>";
 
         spec = spec
             .AddBases(
@@ -91,20 +70,22 @@ public sealed class DeletableTraitNode : TraitNode
                     ExplicitInterfaceImplementation: deletableInterface,
                     Parameters: new([
                         ("IPathable", "path"),
-                        (info.Id.DisplayString, "id")
+                        (target.Id.DisplayString, "id")
                     ]),
                     Expression: route.AsInvocation(parameter =>
                     {
-                        if (parameter.Type.Equals(info.Id))
+                        if (parameter.Type.Equals(target.Id))
                             return "id";
 
-                        return pathing.ResolveRouteParameterUsingPathable(parameter);
+                        return parameter.Heuristics.Count > 0
+                            ? $"path.Require<{parameter.Heuristics[0]}>()"
+                            : null;
                     })
                 )
             );
 
         return new SourceSpec(
-            $"Deletable/{info.Actor.MetadataName}",
+            $"Deletable/{target.Type.MetadataName}",
             "Discord",
             Types: new([
                 spec

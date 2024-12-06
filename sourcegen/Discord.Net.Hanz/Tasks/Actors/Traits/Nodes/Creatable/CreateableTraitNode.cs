@@ -13,67 +13,82 @@ namespace Discord.Net.Hanz.Tasks.Actors.TraitsV2.Nodes;
 
 public sealed partial class CreatableTraitNode : TraitNode
 {
-    public readonly record struct CreatableTraitState(
-        string Actor,
+    public enum CreatableKind
+    {
+        Link,
+        Actor
+    }
+
+    public record CreatableTraitState(
+        string Target,
         ImmutableEquatableArray<TraitDetails> Details
     );
 
-    public readonly record struct TraitDetails(
+    public record TraitDetails(
         RouteInfo Route,
         string MethodName,
         EntityPropertiesTask.EntityPropertiesWithInheritance? Properties,
         ImmutableEquatableArray<TypeRef> RouteGenerics,
-        ImmutableEquatableArray<ActorInfo> FromBackLinks,
-        string? IdPath
+        ImmutableEquatableArray<TraitImplementationTarget> FromBackLinks,
+        string? IdPath,
+        CreatableKind Kind
     );
 
-    private readonly record struct TraitAttributeDetails(
+    private record TraitAttributeDetails(
         string Route,
         string? MethodName,
         string? Properties,
         ImmutableEquatableArray<TypeRef> RouteGenerics,
         ImmutableEquatableArray<string> FromBackLinks,
-        string? IdPath
+        string? IdPath,
+        CreatableKind Kind
     );
 
-    private readonly record struct ActorMapping(
-        string Actor,
+    private record TargetMapping(
+        string Target,
         ImmutableEquatableArray<TraitAttributeDetails> Details
     );
 
-    public IncrementalKeyValueProvider<ActorInfo, CreatableTraitState> State { get; }
+    public IncrementalKeyValueProvider<TraitImplementationTarget, CreatableTraitState> State { get; }
 
-    private IncrementalValuesProvider<ActorMapping> CreatableProvider { get; }
-    private IncrementalValuesProvider<ActorMapping> CreatableWithParametersProvider { get; }
+    private IncrementalValuesProvider<TargetMapping> CreatableProvider { get; }
 
     public CreatableTraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
     {
-        CreatableProvider = context.SyntaxProvider.ForAttributeWithMetadataName(
+        CreatableProvider = context
+            .SyntaxProvider
+            .ForAttributeWithMetadataName(
                 "Discord.CreatableAttribute",
                 (node, _) => node is InterfaceDeclarationSyntax,
                 Map
             )
-            .WhereNotNull();
-
-        CreatableWithParametersProvider = context.SyntaxProvider
-            .ForAttributeWithMetadataName(
-                "Discord.CreatableAttribute`1",
-                (node, _) => node is InterfaceDeclarationSyntax,
-                Map
+            .WhereNotNull()
+            .Concat(
+                context.SyntaxProvider
+                    .ForAttributeWithMetadataName(
+                        "Discord.CreatableAttribute`1",
+                        (node, _) => node is InterfaceDeclarationSyntax,
+                        Map
+                    )
+                    .WhereNotNull()
             )
-            .WhereNotNull();
+            .Concat(
+                context.SyntaxProvider
+                    .ForAttributeWithMetadataName(
+                        "Discord.ActorCreatableAttribute`1",
+                        (node, _) => node is InterfaceDeclarationSyntax,
+                        Map
+                    )
+                    .WhereNotNull()
+            );
 
         State = CreatableProvider
-            .Collect()
-            .Combine(CreatableWithParametersProvider.Collect())
-            .SelectMany(IEnumerable<ActorMapping> (x, _) => [..x.Left, ..x.Right])
             .DependsOn(GetTask<ApiRouteTask>(context).Routes)
-            .DependsOn(GetTask<ActorsTask>(context).ActorInfos)
             .DependsOn(GetTask<EntityPropertiesTask>(context).PropertiesWithInherited)
             .Select((mapping, _) =>
             {
                 return (
-                    mapping.Actor,
+                    Actor: mapping.Target,
                     Details: mapping
                         .Details
                         .Select(x =>
@@ -81,10 +96,11 @@ public sealed partial class CreatableTraitNode : TraitNode
                                 Detail: x,
                                 Route: GetTask<ApiRouteTask>(context).Routes.GetValueOrDefault(x.Route),
                                 FromBackLinks: x.FromBackLinks
-                                    .Select(GetTask<ActorsTask>(context).ActorInfos.GetValueOrDefault)
-                                    .Where(x => x != default)
-                                    .ToImmutableEquatableArray(),
-                                Properties: GetTask<EntityPropertiesTask>(context).PropertiesWithInherited
+                                    .Select(TargetsProvider.GetValueOrDefault)
+                                    .Where(x => x is not null)!
+                                    .ToImmutableEquatableArray<TraitImplementationTarget>(),
+                                Properties: GetTask<EntityPropertiesTask>(context)
+                                    .PropertiesWithInherited
                                     .GetValueOrDefault(x.Properties)
                             )
                         )
@@ -114,20 +130,41 @@ public sealed partial class CreatableTraitNode : TraitNode
                                 x.Properties,
                                 x.Detail.RouteGenerics,
                                 x.FromBackLinks,
-                                x.Detail.IdPath
+                                x.Detail.IdPath,
+                                x.Detail.Kind
                             )
                         )
                         .ToImmutableEquatableArray()
                 )
             )
-            .PairKeys(GetTask<ActorsTask>(context).ActorInfos);
+            .PairKeys(TargetsProvider);
 
-        CreateExtensions(context);
-        CreateImplementation(context);
+        context.RegisterSourceOutput(
+            CreateImplementationsProvider()
+                .MergeByKey(
+                    CreateExtensionsProvider(),
+                    (target, implementation, extension) => implementation.HasValue || extension.HasValue
+                        ? new SourceSpec(
+                            $"Creatable/{target.Type.MetadataName}",
+                            target.Type.Namespace!,
+                            new(["Discord", "Discord.Models"]),
+                            new([
+                                ..implementation.HasValue
+                                    ? ImmutableArray.Create(implementation.Value)
+                                    : ImmutableArray<TypeSpec>.Empty,
+                                ..extension.HasValue
+                                    ? ImmutableArray.Create(extension.Value)
+                                    : ImmutableArray<TypeSpec>.Empty
+                            ])
+                        ).Some()
+                        : default
+                )
+                .ValuesProvider
+            );
     }
 
 
-    private ActorMapping? Map(GeneratorAttributeSyntaxContext context, CancellationToken token)
+    private TargetMapping? Map(GeneratorAttributeSyntaxContext context, CancellationToken token)
     {
         if (context.SemanticModel.GetDeclaredSymbol(context.TargetNode) is not INamedTypeSymbol symbol)
             return null;
@@ -145,15 +182,16 @@ public sealed partial class CreatableTraitNode : TraitNode
             if (attribute.ConstructorArguments[0].Value is not string route)
                 continue;
 
-            foreach (var arg in attribute.ConstructorArguments)
-            {
-                logger.Log($" - arg: {arg.Kind} : {arg.Type}");
-            }
+            if (attribute.AttributeClass is null) continue;
 
-            foreach (var arg in attribute.NamedArguments)
+            CreatableKind? kind = attribute.AttributeClass?.Name switch
             {
-                logger.Log($" - named: {arg.Key} : {arg.Value.Kind} - {arg.Value.Type}");
-            }
+                "ActorCreatableAttribute" => CreatableKind.Actor,
+                "CreatableAttribute" => CreatableKind.Link,
+                _ => null
+            };
+
+            if (kind is null) continue;
 
             var routeGenerics = new List<TypeRef>();
 
@@ -166,28 +204,36 @@ public sealed partial class CreatableTraitNode : TraitNode
                 routeGenerics.AddRange(
                     routeGenericsArg.Values
                         .Where(x => x.Value is ITypeSymbol)
-                        .Select(x => new TypeRef(x.Value as ITypeSymbol))
+                        .Select(x => new TypeRef((x.Value as ITypeSymbol)!))
                 );
             }
 
-            details.Add(new TraitAttributeDetails(
-                route,
-                attribute.NamedArguments
-                    .FirstOrDefault(x => x.Key == "MethodName")
-                    .Value.Value as string,
-                attribute.AttributeClass.TypeArguments[0].ToDisplayString(),
-                routeGenerics.ToImmutableEquatableArray(),
-                attribute.ConstructorArguments.Length == 1
-                    ? ImmutableEquatableArray<string>.Empty
-                    : attribute
-                        .ConstructorArguments[attribute.ConstructorArguments.Length - 1]
-                        .Values
-                        .Select(x => x.Value as string).Where(x => x is not null)
-                        .ToImmutableEquatableArray(),
-                attribute.ConstructorArguments.Length == 3
-                    ? attribute.ConstructorArguments[1].Value as string
-                    : null
-            ));
+            var backLinksValues = attribute.NamedArguments
+                .FirstOrDefault(x => x.Key == "WhenBackLinkingFrom")
+                .Value;
+
+            var methodName = attribute.NamedArguments
+                .FirstOrDefault(x => x.Key == "MethodName")
+                .Value.Value as string;
+
+            details.Add(
+                new TraitAttributeDetails(
+                    route,
+                    methodName,
+                    attribute.AttributeClass!.TypeArguments[0].ToDisplayString(),
+                    routeGenerics.ToImmutableEquatableArray(),
+                    backLinksValues.Kind is TypedConstantKind.Array
+                        ? backLinksValues.Values
+                            .Select(x => (x.Value as ITypeSymbol)?.ToDisplayString())
+                            .Where(x => x is not null)!
+                            .ToImmutableEquatableArray<string>()
+                        : ImmutableEquatableArray<string>.Empty,
+                    attribute.ConstructorArguments.Length == 3
+                        ? attribute.ConstructorArguments[1].Value as string
+                        : null,
+                    kind.Value
+                )
+            );
         }
 
         if (details.Count == 0)

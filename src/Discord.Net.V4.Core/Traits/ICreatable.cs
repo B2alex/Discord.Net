@@ -5,23 +5,30 @@ namespace Discord;
 #pragma warning disable CS9113 // Parameter is unread.
 
 [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true)]
-internal sealed class CreatableAttribute(string route, params string[] fromBackLinks) : Attribute
+internal sealed class CreatableAttribute(string route) : Attribute
 {
     public string? MethodName { get; set; }
+    
     public Type[]? RouteGenerics { get; set; }
+    
+    public Type[]? WhenBackLinkingFrom { get; set; }
 }
 
 [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true)]
-internal sealed class CreatableAttribute<TParams>(string route, params string[] fromBackLinks) : Attribute
+internal sealed class CreatableAttribute<TParams>(string route) : Attribute
 {
     public string? MethodName { get; set; }
+    
     public Type[]? RouteGenerics { get; set; }
+    
+    public Type[]? WhenBackLinkingFrom { get; set; }
 }
 
 [AttributeUsage(AttributeTargets.Interface)]
-internal sealed class ActorCreatableAttribute<TParams>(string route, string idPath, params Type[] fromBackLinks) : Attribute
+internal sealed class ActorCreatableAttribute<TParams>(string route) : Attribute
 {
     public Type[]? RouteGenerics { get; set; }
+    public Type[]? WhenBackLinkingFrom { get; set; }
 }
 
 #pragma warning restore CS9113 // Parameter is unread.
@@ -48,23 +55,4 @@ public interface IActorCreatable<TActor, out TId, in TParams, out TApiParams, ou
     where TApi : class
 {
     static abstract IApiInOutRoute<TApiParams, TApi> CreateRoute(IPathable path, TParams args);
-}
-
-public interface ICanonicallyCreatable<TActor, TId> :
-    IClientProvider,
-    IIdentifiable<TId>,
-    IPathable
-    where TActor : ICanonicallyCreatable<TActor, TId>
-    where TId : IEquatable<TId>
-{
-    static abstract IApiRoute CreateRoute(IPathable path, TId id);
-
-    Task CreateAsync(RequestOptions? options = null, CancellationToken token = default)
-    {
-        return Client.RestApiClient.ExecuteAsync(
-            TActor.CreateRoute(this, Id),
-            options ?? Client.DefaultRequestOptions,
-            token
-        );
-    }
 }

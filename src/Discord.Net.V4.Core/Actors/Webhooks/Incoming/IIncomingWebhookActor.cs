@@ -4,9 +4,10 @@ using Discord.Models;
 
 namespace Discord;
 
-[Loadable(nameof(Routes.GetWebhook), typeof(IIncomingWebhookModel))]
-[Modifiable<ModifyWebhookProperties>(nameof(Routes.ModifyWebhook))]
-[SuppressMessage("ReSharper", "PossibleInterfaceMemberAmbiguity")]
+[
+    Loadable(nameof(Routes.GetWebhook), typeof(IIncomingWebhookModel)),
+    Modifiable<ModifyWebhookProperties>(nameof(Routes.ModifyWebhook))
+]
 public partial interface IIncomingWebhookActor :
     IGuildChannelWebhookActor,
     IActor<ulong, IIncomingWebhook>

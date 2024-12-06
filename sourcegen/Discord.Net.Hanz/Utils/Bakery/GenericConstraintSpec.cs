@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Discord.Net.Hanz.Utils.Bakery;
 
-public readonly record struct GenericConstraintSpec(
+public record GenericConstraintSpec(
     string Name,
     ImmutableEquatableArray<string>? Constraints = null
 )

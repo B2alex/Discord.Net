@@ -51,17 +51,17 @@ public class ModifyGuildProperties : IEntityProperties<ModifyGuildParams>
     /// <summary>
     ///     Gets or sets the <see cref="IVoiceChannel" /> where AFK users should be sent.
     /// </summary>
-    public Optional<EntityOrId<ulong, IVoiceChannel>?> AfkChannel { get; set; }
+    public Optional<IdOrEntity<ulong, IVoiceChannel>?> AfkChannel { get; set; }
 
     /// <summary>
     ///     Gets or sets the <see cref="ITextChannel" /> where system messages should be sent.
     /// </summary>
-    public Optional<EntityOrId<ulong, ITextChannel>?> SystemChannel { get; set; }
+    public Optional<IdOrEntity<ulong, ITextChannel>?> SystemChannel { get; set; }
 
     /// <summary>
     ///     Gets or sets the owner of this guild.
     /// </summary>
-    public Optional<EntityOrId<ulong, IUser>?> Owner { get; set; }
+    public Optional<IdOrEntity<ulong, IUser>?> Owner { get; set; }
 
     /// <summary>
     ///     Gets or sets the explicit content filter level of this guild.
@@ -106,7 +106,7 @@ public class ModifyGuildProperties : IEntityProperties<ModifyGuildParams>
     /// <summary>
     ///     Gets or sets the ID of the safety alerts channel.
     /// </summary>
-    public Optional<EntityOrId<ulong, IChannel>?> SafetyAlertsChannelId { get; set; }
+    public Optional<IdOrEntity<ulong, IChannel>?> SafetyAlertsChannelId { get; set; }
 
     public ModifyGuildParams ToApiModel(ModifyGuildParams? existing = default)
     {

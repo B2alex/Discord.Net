@@ -9,7 +9,7 @@ namespace Discord;
     Deletable(nameof(Routes.DeleteMessage)),
     Creatable<CreateMessageProperties>(
         nameof(Routes.CreateMessage),
-        nameof(IMessageChannelTrait)
+        WhenBackLinkingFrom = [typeof(IMessageChannelTrait)]
     ),
     Modifiable<ModifyMessageProperties>(nameof(Routes.ModifyMessage)),
     PagedFetchableOfMany<PageChannelMessagesParams>(nameof(Routes.GetChannelMessages)),
@@ -25,7 +25,7 @@ public partial interface IMessageActor :
     [BackLink<IGuildChannelActor>]
     private static Task BulkDeleteAsync(
         IGuildChannelActor channel,
-        IEnumerable<EntityOrId<ulong, IMessageActor>> messages,
+        IEnumerable<IdOrEntity<ulong, IMessageActor>> messages,
         RequestOptions? options = null,
         CancellationToken token = default)
     {

@@ -13,12 +13,6 @@ public record AncestorInfo(
 
 public class ActorsTask : GenerationTask
 {
-    public enum AssemblyTarget
-    {
-        Core,
-        Rest
-    }
-
     public static readonly string[] AllowedAssemblies =
     [
         "Discord.Net.V4.Core",
@@ -89,19 +83,19 @@ public class ActorsTask : GenerationTask
         public ImmutableEquatableArray<ActorInfo> ChildrenInfos { get; init; }
 
         public bool HasEntityAssignableAncestors => ParentInfos.Any(x => x.IsEntityAssignable);
-        
+
         public IEnumerable<ActorHierarchy> Parents
             => ParentInfos
                 .Select(x => _actorsTask.ActorHierarchies.GetValueOrDefault(x.ActorInfo))
-                .Where(x => x is not null);
+                .Where(x => x is not null)!;
 
-        public ImmutableEquatableArray<ActorInfo> EntityAssignableAncestors 
+        public ImmutableEquatableArray<ActorInfo> EntityAssignableAncestors
             => _entityAssignableAncestors.Value;
 
         public IEnumerable<ActorHierarchy> Children
             => ChildrenInfos
                 .Select(_actorsTask.ActorHierarchies.GetValueOrDefault)
-                .Where(x => x is not null);
+                .Where(x => x is not null)!;
 
         public bool HasAncestors => ParentInfos.Count > 0;
         public bool HasChildren => ChildrenInfos.Count > 0;
@@ -176,30 +170,36 @@ public class ActorsTask : GenerationTask
 
         ActorInfos = Actors
             .Select((x, _) => ActorInfo.Create(x))
-            .KeyedBy(x => x.Actor.DisplayString);
+            .KeyedBy(x => x.Actor.DisplayString)
+            .WithLogging(
+                Logger.GetSubLogger("ActorInfosTracing")
+            );
 
-        ActorAncestors = Actors
-            .Collect()
-            .SelectMany((actors, _) =>
-            {
-                return actors
-                    .Select(symbols => (
-                            Actor: symbols.Actor.ToDisplayString(),
-                            Ancestors: actors
-                                .Where(x => Hierarchy.Implements(symbols.Actor, x.Actor))
-                                .Select(x => (
-                                    Ancestor: x.Actor.ToDisplayString(),
-                                    IsEntityAssignable: Hierarchy.Implements(symbols.Entity, x.Entity) ||
-                                                        symbols.Entity.Equals(x.Entity, SymbolEqualityComparer.Default))
-                                )
-                                .ToImmutableEquatableArray()
-                        )
-                    );
-            })
-            .KeyedBy(x => x.Actor, x => x.Ancestors)
+        var keyedActors = Actors
+            .KeyedBy(x => x.Actor.ToDisplayString());
+
+        ActorAncestors = keyedActors
+            .MapValues((_, symbols) => TypeUtils
+                .GetBaseTypes(symbols.Actor)
+                .Concat(symbols.Actor.AllInterfaces)
+                .Where(x => keyedActors.ContainsKey(x.ToDisplayString()))
+                .Select(x =>
+                    {
+                        var key = x.ToDisplayString();
+                        var ancestorSymbols = keyedActors.GetValue(key);
+
+                        return (
+                            Ancestor: x.ToDisplayString(),
+                            IsEntityAssignable: Hierarchy.Implements(symbols.Entity, ancestorSymbols.Entity) ||
+                                                symbols.Entity.Equals(ancestorSymbols.Entity,
+                                                    SymbolEqualityComparer.Default)
+                        );
+                    }
+                )
+                .ToImmutableEquatableArray()
+            )
             .PairKeys(ActorInfos)
-            .MapValues((info, ancestors) => ancestors
-                .Where(x => ActorInfos.ContainsKey(x.Ancestor))
+            .MapValues((_, ancestors) => ancestors
                 .Select(x =>
                     new AncestorInfo(
                         ActorInfos.GetValue(x.Ancestor),
@@ -243,6 +243,9 @@ public class ActorsTask : GenerationTask
         if (node is not TypeDeclarationSyntax typeSyntax)
             return false;
 
+        if (typeSyntax.Identifier.ValueText.ToLowerInvariant().Contains("trait"))
+            return false;
+        
         while (true)
         {
             if (typeSyntax.Modifiers.IndexOf(SyntaxKind.PartialKeyword) == -1)

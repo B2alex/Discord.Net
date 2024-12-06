@@ -21,58 +21,58 @@ public class IndexableNode :
         return provider.Select((context, token) => (context, CreateInterfaceSpec(context, token)));
     }
     
-    private static string GetOverrideTarget(Context context, ActorsTask.ActorHierarchy ancestor)
-        => ancestor.HasAncestors
-            ? $"{ancestor.ActorInfo.Actor}.{context.Path.FormatRelative()}"
-            : $"{ancestor.ActorInfo.FormattedLinkType}.Indexable";
+    private string GetOverrideTarget(Context context, LinkTargetAncestor ancestor)
+        => HasAncestors(ancestor.Info)
+            ? $"{ancestor.Info.Type}.{context.Path.FormatRelative()}"
+            : $"{ancestor.Info.FormattedLinkType}.Indexable";
 
-    private static ILinkImplmenter.LinkSpec CreateInterfaceSpec(Context context, CancellationToken token)
+    private ILinkImplmenter.LinkSpec CreateInterfaceSpec(Context context, CancellationToken token)
     {
-        var redefinesLinkMembers = context.AncestorInfos.Count > 0 || !context.ActorInfo.IsCore;
+        var redefinesLinkMembers = context.Ancestors.Count > 0 || !context.Target.IsCore;
 
         var spec = new ILinkImplmenter.LinkSpec(
             Indexers: new([
                 new IndexerSpec(
-                    Type: context.ActorInfo.Actor.DisplayString,
+                    Type: context.Target.Type.DisplayString,
                     Modifiers: new(redefinesLinkMembers ? ["new"] : []),
                     Accessibility: Accessibility.Internal,
                     Parameters: new([
-                        (context.ActorInfo.FormattedIdentifiable, "identity")
+                        (context.Target.FormattedIdentifiable, "identity")
                     ]),
                     Expression: "identity.Actor ?? GetActor(identity.Id)"
                 )
             ])
         );
 
-        if (!context.ActorInfo.IsCore)
+        if (!context.Target.IsCore && context.Target is ActorInfo actorInfo)
         {
             spec = spec with
             {
                 Indexers = spec.Indexers.AddRange(
                     new IndexerSpec(
-                        Type: context.ActorInfo.CoreActor.DisplayString,
+                        Type: actorInfo.CoreActor.DisplayString,
                         Parameters: new([
-                            (context.ActorInfo.FormattedIdentifiable, "identity")
+                            (context.Target.FormattedIdentifiable, "identity")
                         ]),
                         Expression: "identity.Actor ?? GetActor(identity.Id)",
-                        ExplicitInterfaceImplementation: $"{context.ActorInfo.CoreActor}.Indexable"
+                        ExplicitInterfaceImplementation: $"{actorInfo.CoreActor}.Indexable"
                     ),
                     new IndexerSpec(
-                        Type: context.ActorInfo.CoreActor.DisplayString,
+                        Type: actorInfo.CoreActor.DisplayString,
                         Parameters: new([
-                            (context.ActorInfo.Id.DisplayString, "id")
+                            (context.Target.Id.DisplayString, "id")
                         ]),
                         Expression: "this[id]",
-                        ExplicitInterfaceImplementation: $"{context.ActorInfo.FormattedCoreLinkType}.Indexable"
+                        ExplicitInterfaceImplementation: $"{actorInfo.FormattedCoreLinkType}.Indexable"
                     )
                 ),
                 Methods = spec.Methods.AddRange(
                     new MethodSpec(
                         Name: "Specifically",
-                        ReturnType: context.ActorInfo.Actor.DisplayString,
-                        ExplicitInterfaceImplementation: $"{context.ActorInfo.FormattedCoreLinkType}.Indexable",
+                        ReturnType: actorInfo.Actor.DisplayString,
+                        ExplicitInterfaceImplementation: $"{actorInfo.FormattedCoreLinkType}.Indexable",
                         Parameters: new([
-                            (context.ActorInfo.Id.DisplayString, "id")
+                            (context.Target.Id.DisplayString, "id")
                         ]),
                         Expression: "Specifically(id)"
                     )
@@ -87,18 +87,18 @@ public class IndexableNode :
         {
             Indexers = spec.Indexers.AddRange([
                 new IndexerSpec(
-                    Type: context.ActorInfo.Actor.DisplayString,
+                    Type: context.Target.Type.DisplayString,
                     Modifiers: new(["new"]),
                     Parameters: new([
-                        (context.ActorInfo.Id.DisplayString, "id")
+                        (context.Target.Id.DisplayString, "id")
                     ]),
-                    Expression: $"(this as {context.ActorInfo.FormattedActorProvider}).GetActor(id)"
+                    Expression: $"(this as {context.Target.FormattedActorProvider}).GetActor(id)"
                 ),
                 ..context.Ancestors.Select(x =>
                     new IndexerSpec(
-                        Type: x.ActorInfo.Actor.DisplayString,
+                        Type: x.Info.Type.DisplayString,
                         Parameters: new([
-                            (context.ActorInfo.Id.DisplayString, "id")
+                            (context.Target.Id.DisplayString, "id")
                         ]),
                         ExplicitInterfaceImplementation: GetOverrideTarget(context, x),
                         Expression: "this[id]"
@@ -108,19 +108,19 @@ public class IndexableNode :
             Methods = spec.Methods.AddRange([
                 new MethodSpec(
                     Name: "Specifically",
-                    ReturnType: context.ActorInfo.Actor.DisplayString,
+                    ReturnType: context.Target.Type.DisplayString,
                     Modifiers: new(["new"]),
                     Parameters: new([
-                        (context.ActorInfo.Id.DisplayString, "id")
+                        (context.Target.Id.DisplayString, "id")
                     ]),
-                    Expression: $"(this as {context.ActorInfo.FormattedActorProvider}).GetActor(id)"
+                    Expression: $"(this as {context.Target.FormattedActorProvider}).GetActor(id)"
                 ),
                 ..context.Ancestors.Select(x =>
                     new MethodSpec(
                         Name: "Specifically",
-                        ReturnType: x.ActorInfo.Actor.DisplayString,
+                        ReturnType: x.Info.Type.DisplayString,
                         Parameters: new([
-                            (context.ActorInfo.Id.DisplayString, "id")
+                            (context.Target.Id.DisplayString, "id")
                         ]),
                         ExplicitInterfaceImplementation: GetOverrideTarget(context, x),
                         Expression: "Specifically(id)"
@@ -129,44 +129,4 @@ public class IndexableNode :
             ])
         };
     }
-
-    // public IndexableNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
-    // {
-    // }
-    //
-    // protected override bool ShouldContinue(LinkTypeNode.State linkState, CancellationToken token)
-    //     => linkState.Entry.Type.Name == "Indexable" && linkState.IsTemplate;
-    //
-    // protected override IncrementalValuesProvider<Branch<ILinkImplmenter.LinkImplementation>> CreateImplementation(
-    //     IncrementalValuesProvider<Branch<LinkInfo>> provider
-    // ) => provider.Select(Build);
-    //
-    // private ILinkImplmenter.LinkImplementation Build(LinkInfo state, CancellationToken token)
-    // {
-    //     using var logger = Logger
-    //         .GetSubLogger(state.ActorInfo.Assembly.ToString())
-    //         .GetSubLogger(nameof(Build))
-    //         .GetSubLogger(state.ActorInfo.Actor.MetadataName);
-    //     
-    //     logger.Log("Building indexable link");
-    //     logger.Log($" - {state.ActorInfo.Actor.DisplayString}");
-    //     
-    //     return new ILinkImplmenter.LinkImplementation(
-    //         CreateInterfaceSpec(state, token),
-    //         CreateImplementationSpec(state, token)
-    //     );
-    // }
-    //
-    // private static string GetOverrideTarget(LinkInfo info, AncestorInfo ancestor)
-    //     => ancestor.HasAncestors
-    //         ? $"{ancestor.ActorInfo.Actor}.{info.State.Path.FormatRelative()}"
-    //         : $"{ancestor.ActorInfo.FormattedLinkType}.Indexable";
-    //
-
-    // }
-    //
-    // private static ILinkImplmenter.LinkSpec CreateImplementationSpec(LinkInfo info, CancellationToken token)
-    // {
-    //     return ILinkImplmenter.LinkSpec.Empty;
-    // }
 }

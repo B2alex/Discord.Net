@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Immutable;
 using System.Reflection;
 using Discord.Net.Hanz.Utils.Bakery;
@@ -7,6 +8,16 @@ namespace Discord.Net.Hanz;
 
 public static class IncrementalProviderExtensions
 {
+    public static IncrementalValuesProvider<T> Concat<T>(
+        this IncrementalValuesProvider<T> provider,
+        IncrementalValuesProvider<T> other)
+    {
+        return provider
+            .Collect()
+            .Combine(other.Collect())
+            .SelectMany(IEnumerable<T> (pair, _) => [..pair.Left, ..pair.Right]);
+    }
+    
     public static IncrementalValuesProvider<U> As<T, U>(this IncrementalValuesProvider<T> provider, U? v)
         where T : U
     {

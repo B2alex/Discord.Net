@@ -36,7 +36,7 @@ public sealed class ModifyGuildUserProperties : IEntityProperties<ModifyGuildMem
     /// <summary>
     ///     Gets or sets the roles the user should have.
     /// </summary>
-    public Optional<IEnumerable<EntityOrId<ulong, IRole>>> Roles { get; set; }
+    public Optional<IEnumerable<IdOrEntity<ulong, IRole>>> Roles { get; set; }
 
     /// <summary>
     ///     Moves a user to a voice channel. If <see langword="null" />, this user will be disconnected from their current
@@ -46,7 +46,7 @@ public sealed class ModifyGuildUserProperties : IEntityProperties<ModifyGuildMem
     ///     This user MUST already be in a <see cref="IVoiceChannel" /> for this to work.
     ///     When set, this property takes precedence over <see cref="ChannelId" />.
     /// </remarks>
-    public Optional<EntityOrId<ulong, IVoiceChannel>?> Channel { get; set; }
+    public Optional<IdOrEntity<ulong, IVoiceChannel>?> Channel { get; set; }
 
     /// <summary>
     ///     Sets a timestamp how long a user should be timed out for.

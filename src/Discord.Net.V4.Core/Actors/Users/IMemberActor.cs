@@ -24,16 +24,16 @@ public partial interface IMemberActor :
     private static async Task<IMember> AddAsync(
         IGuildActor guild,
         MemberLink link,
-        EntityOrId<ulong, IUser> user,
+        IdOrEntity<ulong, IUser> user,
         string accessToken,
         string? nickname = null,
-        IEnumerable<EntityOrId<ulong, IRole>>? roles = null,
+        IEnumerable<IdOrEntity<ulong, IRole>>? roles = null,
         bool? mute = null,
         bool? deaf = null,
         RequestOptions? options = null,
         CancellationToken token = default)
     {
-        return link.CreateEntity(
+        return await link.CreateEntityAsync(
             await link.Client.RestApiClient.ExecuteRequiredAsync(
                 Routes.AddGuildMember(
                     guild.Id,
@@ -53,7 +53,8 @@ public partial interface IMemberActor :
                 ),
                 options,
                 token
-            )
+            ),
+            token
         );
     }
 
@@ -76,7 +77,7 @@ public partial interface IMemberActor :
             token
         );
 
-        return result.Select(link.CreateEntity).ToList().AsReadOnly();
+        return await result.MapAsync(link.CreateEntityAsync, token);
     }
 
     Task KickAsync(

@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Discord.Net.Hanz.Utils.Bakery;
 
-public readonly record struct TypeSpec(
+public record TypeSpec(
     string Name,
     TypeKind Kind,
     Accessibility Accessibility = Accessibility.Public,
@@ -221,7 +221,7 @@ public readonly record struct TypeSpec(
                     .OrderByDescending(x => x.Accessibility),
                 nameof(Properties),
                 ref any,
-                seperation: 2
+                separation: 2
             );
 
             AddMembers(
@@ -229,7 +229,7 @@ public readonly record struct TypeSpec(
                 Indexers,
                 nameof(Indexers),
                 ref any,
-                seperation: 2
+                separation: 2
             );
 
             AddMembers(
@@ -244,7 +244,7 @@ public readonly record struct TypeSpec(
                 Constructors,
                 nameof(Constructors),
                 ref any,
-                seperation: 2
+                separation: 2
             );
 
             AddMembers(
@@ -252,7 +252,7 @@ public readonly record struct TypeSpec(
                 Methods,
                 nameof(Methods),
                 ref any,
-                seperation: 2
+                separation: 2
             );
 
             AddMembers(
@@ -269,7 +269,7 @@ public readonly record struct TypeSpec(
                 Children,
                 nameof(Children),
                 ref any,
-                seperation: 2
+                separation: 2
             );
 
             builder.Append('}');
@@ -284,11 +284,11 @@ public readonly record struct TypeSpec(
         IEnumerable<T> members,
         string name,
         ref bool any,
-        int seperation = 1,
+        int separation = 1,
         int padding = 4
-    ) where T : struct, IEquatable<T>
+    )
     {
-        var arr = members.Where(x => !x.Equals(default)).ToArray();
+        var arr = members.Where(x => x is not null).ToArray();
 
         try
         {
@@ -296,7 +296,7 @@ public readonly record struct TypeSpec(
 
             var formatted = string
                 .Join(
-                    string.Join(string.Empty, Enumerable.Range(0, seperation).Select(_ => Environment.NewLine)),
+                    string.Join(string.Empty, Enumerable.Range(0, separation).Select(_ => Environment.NewLine)),
                     arr.Select(x => x.ToString().Prefix(padding).WithNewlinePadding(padding))
                 );
 
@@ -304,7 +304,7 @@ public readonly record struct TypeSpec(
 
             if (any)
             {
-                for (var i = 0; i != seperation; i++)
+                for (var i = 0; i != separation; i++)
                     builder.AppendLine();
             }
 

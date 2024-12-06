@@ -9,7 +9,7 @@ public sealed class CreateChannelInviteProperties : IEntityProperties<CreateChan
     public Optional<bool> IsTemporary { get; set; }
     public Optional<bool> IsUnique { get; set; }
     public Optional<InviteTargetType> TargetType { get; set; }
-    public Optional<EntityOrId<ulong, IUser>> TargetUser { get; set; }
+    public Optional<IdOrEntity<ulong, IUser>> TargetUser { get; set; }
     public Optional<ulong> TargetApplicationId { get; set; }
 
 

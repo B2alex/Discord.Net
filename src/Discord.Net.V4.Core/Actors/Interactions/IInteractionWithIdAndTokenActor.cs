@@ -30,6 +30,6 @@ public partial interface IInteractionWithIdAndTokenActor :
 
         return model is null 
             ? null 
-            : Responses.Original.CreateEntity(model);
+            : await Responses.Original.CreateEntityAsync(model, token);
     }
 }

@@ -73,7 +73,7 @@ public partial class Routes
 
     public static IApiOutRoute<GuildMember[]> ListGuildMembers([IdHeuristic<IGuild>] ulong guildId,
         int? limit = default,
-        EntityOrId<ulong, IMember>? after = default) =>
+        IdOrEntity<ulong, IMember>? after = default) =>
         new ApiOutRoute<GuildMember[]>(nameof(ListGuildMembers), RequestMethod.Get,
             $"guilds/{guildId}/members{RouteUtils.GetUrlEncodedQueryParams(("limit", limit), ("after", after?.Id))}",
             (ScopeType.Guild, guildId));
@@ -118,8 +118,8 @@ public partial class Routes
             (ScopeType.Guild, guildId));
 
     public static IApiOutRoute<Ban[]> GetGuildBans([IdHeuristic<IGuild>] ulong guildId, int? limit = default,
-        EntityOrId<ulong, IUser>? before = default,
-        EntityOrId<ulong, IUser>? after = default) =>
+        IdOrEntity<ulong, IUser>? before = default,
+        IdOrEntity<ulong, IUser>? after = default) =>
         new ApiOutRoute<Ban[]>(nameof(GetGuildBans), RequestMethod.Get,
             $"guilds/{guildId}/bans{RouteUtils.GetUrlEncodedQueryParams(("limit", limit), ("before", before?.Id), ("after", after?.Id))}",
             (ScopeType.Guild, guildId));

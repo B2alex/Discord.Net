@@ -117,10 +117,11 @@ public sealed class SourceOfTruth : GenerationTask
             var spec = targetOverride.Target with
             {
                 ExplicitInterfaceImplementation = targetOverride.ContainingType.ReferenceName,
-                Modifiers = targetOverride.Target.Modifiers.Intersect(["static"]).ToImmutableEquatableArray()
+                Modifiers = targetOverride.Target.Modifiers.Intersect(["static"]).ToImmutableEquatableArray(),
+                Accessibility = Accessibility.NotApplicable
             };
 
-            if (spec.HasGetter && spec.HasSetter)
+            if (spec is {HasGetter: true, HasSetter: true})
             {
                 return spec with
                 {
@@ -136,9 +137,9 @@ public sealed class SourceOfTruth : GenerationTask
         }
     }
 
-    private static Target? Map(GeneratorAttributeSyntaxContext context, CancellationToken token)
+    private Target? Map(GeneratorAttributeSyntaxContext context, CancellationToken token)
     {
-        if (context.TargetNode is not MethodDeclarationSyntax syntax)
+        if (context.TargetNode is not MemberDeclarationSyntax syntax)
             return null;
 
         if (syntax.Parent is not TypeDeclarationSyntax typeDeclaration)
@@ -147,12 +148,14 @@ public sealed class SourceOfTruth : GenerationTask
         if (typeDeclaration.Modifiers.IndexOf(SyntaxKind.PartialKeyword) == -1)
             return null;
 
+        using var logger = Logger.GetSubLogger(context.TargetSymbol.ContainingType.ToFullMetadataName());
+        
         return context.TargetSymbol switch
         {
             IMethodSymbol {ExplicitInterfaceImplementations.Length: 0, MethodKind: MethodKind.Ordinary} method
                 => MapMethod(method, context.SemanticModel, syntax, token),
             IPropertySymbol {ExplicitInterfaceImplementations.Length: 0} property
-                => MapProperty(property, context.SemanticModel, syntax, token),
+                => MapProperty(property, context.SemanticModel, syntax, token, logger),
             _ => null
         };
     }
@@ -161,7 +164,8 @@ public sealed class SourceOfTruth : GenerationTask
         IPropertySymbol symbol, 
         SemanticModel model,
         MemberDeclarationSyntax syntax,
-        CancellationToken token)
+        CancellationToken token,
+        Logger logger)
     {
         if (symbol.ContainingType is not { } containingType)
             return null;
@@ -185,8 +189,10 @@ public sealed class SourceOfTruth : GenerationTask
             if (interfaceProperty.IsSealed || !(interfaceProperty.IsAbstract || interfaceProperty.IsVirtual))
                 continue;
 
-            if (!MemberUtils.CanOverride(symbol, interfaceProperty, model.Compilation))
+            if (!CanOverride(interfaceProperty))
+            {
                 continue;
+            }
 
             overrideSpecs.Add(new TargetOverride<PropertySpec>(
                     new TypeRef(interfaceSymbol),
@@ -200,12 +206,54 @@ public sealed class SourceOfTruth : GenerationTask
                 new TypeRef(symbol.ContainingType),
                 syntax.GetUsingDirectivesSyntax()
                     .Select(x => x.Name?.ToString())
-                    .Where(x => x is not null)
-                    .ToImmutableEquatableArray(),
+                    .Where(x => x is not null)!
+                    .ToImmutableEquatableArray<string>(),
                 PropertySpec.From(symbol),
                 overrideSpecs.ToImmutableEquatableArray()
             )
             : null;
+
+        bool CanOverride(IPropertySymbol target)
+        {
+            if (symbol.Type is ITypeParameterSymbol typeParameter)
+            {
+                foreach (var constraint in typeParameter.ConstraintTypes)
+                {
+                    if (
+                        !target.Type.Equals(constraint, SymbolEqualityComparer.Default) &&
+                        !model.Compilation.HasImplicitConversion(constraint, target.Type)
+                    )
+                    {
+                        logger.Warn($"{symbol} cannot override {target}: constraint {constraint} is unassignable");
+                        return false;
+                    }
+                }
+
+                if (typeParameter.HasValueTypeConstraint && !target.Type.IsValueType)
+                {
+                    logger.Warn($"{symbol} cannot override {target}: not a value type");
+                    return false;
+                }
+
+                if (typeParameter.HasReferenceTypeConstraint && target.Type.IsValueType)
+                {
+                    logger.Warn($"{symbol} cannot override {target}: value type");
+                    return false;
+                }
+
+                return true;
+            }
+
+            if (target.Type.Equals(symbol.Type, SymbolEqualityComparer.Default))
+                return true;
+
+            if (model.Compilation.HasImplicitConversion(symbol.Type, target.Type))
+                return true;
+
+            logger.Warn($"{symbol}: {symbol.Type} isn't convertable to {target.Type}");
+            
+            return false;
+        }
     }
 
     private static MethodTarget? MapMethod(

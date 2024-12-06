@@ -19,17 +19,17 @@ public static class OptionalExtensions
         where T : unmanaged, Enum
         => optional.Map(v => v?.GetHashCode());
 
-    public static Optional<TId> MapToId<TId, TEntity>(this Optional<EntityOrId<TId, TEntity>> optional)
+    public static Optional<TId> MapToId<TId, TEntity>(this Optional<IdOrEntity<TId, TEntity>> optional)
         where TId : IEquatable<TId>
         where TEntity : IIdentifiable<TId>
         => optional.Map(v => v.Id);
 
-    public static Optional<TId?> MapToId<TId, TEntity>(this Optional<EntityOrId<TId, TEntity>?> optional)
+    public static Optional<TId?> MapToId<TId, TEntity>(this Optional<IdOrEntity<TId, TEntity>?> optional)
         where TId : class, IEquatable<TId>
         where TEntity : IIdentifiable<TId>
         => optional.Map(v => v?.Id);
 
-    public static Optional<TId?> MapToNullableId<TId, TEntity>(this Optional<EntityOrId<TId, TEntity>?> optional)
+    public static Optional<TId?> MapToNullableId<TId, TEntity>(this Optional<IdOrEntity<TId, TEntity>?> optional)
         where TId : struct, IEquatable<TId>
         where TEntity : IIdentifiable<TId>
         => optional.Map(v => v?.Id);

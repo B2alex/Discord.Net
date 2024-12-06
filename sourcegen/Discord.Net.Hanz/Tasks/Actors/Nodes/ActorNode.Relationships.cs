@@ -151,6 +151,39 @@ public sealed partial class ActorNode
             );
     }
 
+    public ImmutableDictionary<ActorInfo, ImmutableEquatableArray<string>> GetRelationshipPathing(ActorInfo info)
+    {
+        if (!Relationships.TryGetValue(info, out var relationshipDetails))
+            return ImmutableDictionary<ActorInfo, ImmutableEquatableArray<string>>.Empty;
+
+        var result = new Dictionary<ActorInfo, ImmutableEquatableArray<string>>();
+        var queue = new Queue<(ActorInfo ActorInfo, ImmutableEquatableArray<string> Path)>(
+            relationshipDetails.Relationships.Select(x => (x.To, ImmutableEquatableArray<string>.Empty))
+        );
+
+        while (queue.Count > 0)
+        {
+            var (target, path) = queue.Dequeue();
+            
+            if(!result.ContainsKey(target))
+                continue;
+            
+            if (!Relationships.TryGetValue(target, out var targetRelationshipDetails))
+                continue;
+
+            path = path.Add(targetRelationshipDetails.RelationshipName);
+
+            result[target] = path;
+
+            foreach (var relationship in targetRelationshipDetails.Relationships)
+            {
+                queue.Enqueue((relationship.To, path));
+            }
+        }
+        
+        return result.ToImmutableDictionary();
+    }
+
     public void CreateRelationships(IncrementalGeneratorInitializationContext context)
     {
         CreateRelationshipProviders(context);

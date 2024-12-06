@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Discord.Net.Hanz.Nodes;
 using Discord.Net.Hanz.Nodes.TypeNodes;
+using Discord.Net.Hanz.Tasks.Actors.Links;
 using Discord.Net.Hanz.Tasks.Actors.Links.Nodes.Modifiers;
 using Discord.Net.Hanz.Tasks.Actors.Links.Nodes.Types;
 using Discord.Net.Hanz.Utils.Bakery;
@@ -11,21 +12,24 @@ namespace Discord.Net.Hanz.Tasks.Actors.Nodes;
 public sealed partial class ActorNode
 {
     private record LinkContext(
-        ActorInfo ActorInfo,
-        ActorsTask.ActorHierarchy Hierarchy
+        ActorOrTraitInfo Target,
+        ImmutableEquatableArray<LinkTargetAncestor> Ancestors
     )
     {
-        public bool RedefinesRootInterfaceMemebrs =>
-            !ActorInfo.IsCore || Hierarchy.HasEntityAssignableAncestors;
+        public bool RedefinesRootInterfaceMembers =>
+            !Target.IsCore ||
+            Ancestors.Any(x => x.IsEntityAssignable is true) ||
+            Ancestors.All(x => x is null);
     }
+
+    public TypeRootProviders<ActorOrTraitInfo> LinkProviders { get; private set; }
 
     private void CreateLinks(IncrementalGeneratorInitializationContext context)
     {
-        var typeRoot = new NestedTypeRoot<ActorInfo>(
-            GetTask<ActorsTask>()
-                .ActorInfos
-                .ValuesProvider
-                .Select((x, _) => (x, TypePath.Empty.Add<ActorNode>(x.Actor.ReferenceName)))
+        var typeRoot = new NestedTypeRoot<ActorOrTraitInfo>(
+            GetTask<LinksTask>()
+                .TargetsProvider
+                .Select((_, x) => (x, TypePath.Empty.Add<ActorNode>(x.Type.ReferenceName)))
         );
 
         typeRoot.AddChild(GetNode<LinkTypeNode>());
@@ -33,27 +37,29 @@ public sealed partial class ActorNode
         typeRoot.AddChild(GetNode<ExtensionNode>());
         typeRoot.AddChild(GetNode<HierarchyNode>());
 
+        LinkProviders = typeRoot.Build(Logger.GetSubLogger("BuildTypeRoot"));
+
         context.RegisterSourceOutput(
-            typeRoot
-                .Build(Logger.GetSubLogger("BuildTypeRoot"))
+            LinkProviders
+                .SpecProvider
                 .ToKeyed((info, specs) =>
-                    TypeSpec.From(info.Actor) with
+                    TypeSpec.From(info.Type) with
                     {
                         Modifiers = new(["partial"]),
                         Children = specs.ToImmutableEquatableArray()
                     }
                 )
                 .JoinByKey(
-                    GetTask<ActorsTask>()
-                        .ActorHierarchies
+                    GetTask<LinksTask>()
+                        .TargetAncestorsProvider
                         .MapValues((info, hierarchy) => new LinkContext(info, hierarchy))
-                        .MapValues((info, context) => CreateLinkInterface(context)),
-                    (info, container, linkInterface) => container.AddNestedType(linkInterface)
+                        .MapValues((info, context) => CreateLinkInterface(context))!,
+                    (info, container, linkInterface) => container.AddNestedType(linkInterface!)
                 )
                 .Select((actorInfo, spec) =>
                     new SourceSpec(
-                        $"Links/{actorInfo.Actor.MetadataName}",
-                        actorInfo.Actor.Namespace,
+                        $"Links/{actorInfo.Type.MetadataName}",
+                        actorInfo.Type.Namespace!,
                         new ImmutableEquatableArray<string>([
                             "Discord",
                             "Discord.Models",
@@ -88,104 +94,126 @@ public sealed partial class ActorNode
             "Link",
             TypeKind.Interface,
             Bases: new([
-                context.ActorInfo.FormattedLink
+                context.Target.FormattedLink
             ])
         );
 
-        if (context.Hierarchy.HasAncestors || !context.ActorInfo.IsCore)
+        if (
+            context.Ancestors
+                .Any(x => GetTask<LinksTask>()
+                    .TargetAncestorsProvider
+                    .GetValueOrDefault(
+                        x.Info,
+                        ImmutableEquatableArray<LinkTargetAncestor>.Empty
+                    )!
+                    .Count > 0
+                )
+            ||
+            !context.Target.IsCore
+        )
         {
             linkType = linkType.AddModifiers("new");
         }
 
-        if (!context.ActorInfo.IsCore)
-            linkType = linkType.AddBases(context.ActorInfo.FormattedCoreLink);
+        if (!context.Target.IsCore && context.Target is ActorInfo actorInfo)
+            linkType = linkType.AddBases(actorInfo.FormattedCoreLink);
 
-        if (context.RedefinesRootInterfaceMemebrs)
+        if (context.RedefinesRootInterfaceMembers)
         {
             linkType = linkType
                 .AddInterfaceMethodOverload(
-                    context.ActorInfo.Actor.DisplayString,
-                    context.ActorInfo.FormattedActorProvider,
+                    context.Target.Type.DisplayString,
+                    context.Target.FormattedActorProvider,
                     "GetActor",
                     [
                         new ParameterSpec(
-                            context.ActorInfo.Id.DisplayString,
+                            context.Target.Id.DisplayString,
                             "id"
                         )
                     ],
                     expression: "GetActor(id)"
                 )
                 .AddInterfaceMethodOverload(
-                    context.ActorInfo.Entity.DisplayString,
-                    context.ActorInfo.FormattedEntityProvider,
+                    context.Target.Entity.DisplayString,
+                    context.Target.FormattedEntityProvider,
                     "CreateEntity",
                     [
                         new ParameterSpec(
-                            context.ActorInfo.Model.DisplayString,
+                            context.Target.Model.DisplayString,
                             "model"
                         )
                     ],
                     expression: "CreateEntity(model)"
                 );
-        
-            if (!context.ActorInfo.IsCore)
-            {
-                linkType = linkType
-                    .AddInterfaceMethodOverload(
-                        context.ActorInfo.CoreActor.DisplayString,
-                        context.ActorInfo.FormattedCoreActorProvider,
-                        "GetActor",
-                        [
-                            new ParameterSpec(
-                                context.ActorInfo.Id.DisplayString,
-                                "id"
-                            )
-                        ],
-                        expression: "GetActor(id)"
-                    )
-                    .AddInterfaceMethodOverload(
-                        context.ActorInfo.CoreEntity.DisplayString,
-                        context.ActorInfo.FormattedCoreEntityProvider,
-                        "CreateEntity",
-                        [
-                            new ParameterSpec(
-                                context.ActorInfo.Model.DisplayString,
-                                "model"
-                            )
-                        ],
-                        expression: "CreateEntity(model)"
-                    );
-            }
+
+            // if (!context.Target.IsCore)
+            // {
+            //     linkType = linkType
+            //         .AddInterfaceMethodOverload(
+            //             context.Target.CoreActor.DisplayString,
+            //             context.Target.FormattedCoreActorProvider,
+            //             "GetActor",
+            //             [
+            //                 new ParameterSpec(
+            //                     context.Target.Id.DisplayString,
+            //                     "id"
+            //                 )
+            //             ],
+            //             expression: "GetActor(id)"
+            //         )
+            //         .AddInterfaceMethodOverload(
+            //             context.Target.CoreEntity.DisplayString,
+            //             context.Target.FormattedCoreEntityProvider,
+            //             "CreateEntity",
+            //             [
+            //                 new ParameterSpec(
+            //                     context.Target.Model.DisplayString,
+            //                     "model"
+            //                 )
+            //             ],
+            //             expression: "CreateEntity(model)"
+            //         );
+            // }
         }
 
-        foreach (var ancestor in context.Hierarchy.Parents)
+        foreach (var ancestor in context.Ancestors)
         {
-            var ancestorActorProviderTarget = ancestor.HasEntityAssignableAncestors
-                ? $"{ancestor.ActorInfo.Actor}.Link"
-                : ancestor.ActorInfo.FormattedActorProvider;
+            var ancestorActorProviderTarget = HasEntityAssignableAncestors(ancestor.Info)
+                ? $"{ancestor.Info.Type}.Link"
+                : ancestor.Info.FormattedActorProvider;
 
-            var ancestorEntityProviderTarget = ancestor.HasEntityAssignableAncestors
-                ? $"{ancestor.ActorInfo.Actor}.Link"
-                : ancestor.ActorInfo.FormattedEntityProvider;
+            var ancestorEntityProviderTarget = HasEntityAssignableAncestors(ancestor.Info)
+                ? $"{ancestor.Info.Type}.Link"
+                : ancestor.Info.FormattedEntityProvider;
 
             linkType = linkType
-                .AddBases($"{ancestor.ActorInfo.Actor}.Link")
+                .AddBases($"{ancestor.Info.Type}.Link")
                 .AddInterfaceMethodOverload(
-                    ancestor.ActorInfo.Actor.DisplayString,
+                    ancestor.Info.Type.DisplayString,
                     ancestorActorProviderTarget,
                     "GetActor",
-                    [(ancestor.ActorInfo.Id.DisplayString, "id")],
+                    [(ancestor.Info.Id.DisplayString, "id")],
                     expression: "GetActor(id)"
                 )
                 .AddInterfaceMethodOverload(
-                    ancestor.ActorInfo.Entity.DisplayString,
+                    ancestor.Info.Entity.DisplayString,
                     ancestorEntityProviderTarget,
                     "CreateEntity",
-                    [(ancestor.ActorInfo.Model.DisplayString, "model")],
+                    [(ancestor.Info.Model.DisplayString, "model")],
                     expression: "CreateEntity(model)"
                 );
         }
 
         return linkType;
+
+        bool HasEntityAssignableAncestors(ActorOrTraitInfo info)
+            => GetTask<LinksTask>()
+                   .TargetAncestorsProvider
+                   .TryGetValue(info, out var ancestors) &&
+               (
+                   ancestors.Any(x => x.IsEntityAssignable is true)
+                   ||
+                   ancestors.All(x => x.IsEntityAssignable is null)
+               );
     }
 }

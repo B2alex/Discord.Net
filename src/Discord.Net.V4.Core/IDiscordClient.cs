@@ -18,7 +18,7 @@ public interface IDiscordClient :
 
     IGuildActor.Paged<IPartialGuild, PageUserGuildsParams>.Indexable.WithTemplates Guilds { get; }
 
-    IChannelActor.Indexable Channels { get; }
+    IChannelActor.Indexable.Hierarchy Channels { get; }
     
     IThreadChannelActor.Indexable Threads { get; }
 

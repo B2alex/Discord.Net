@@ -6,7 +6,7 @@ namespace Discord;
     Loadable(nameof(Routes.GetGuildTemplate)),
     Creatable<CreateGuildTemplateProperties>(
         nameof(Routes.CreateGuildTemplate),
-        nameof(IGuildActor)
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
     )
 ]
 public partial interface IGuildTemplateActor :
@@ -26,6 +26,6 @@ public partial interface IGuildTemplateActor :
             token
         );
 
-        return Client.Guilds.CreateEntity(model);
+        return await Client.Guilds.CreateEntityAsync(model, token);
     }
 }

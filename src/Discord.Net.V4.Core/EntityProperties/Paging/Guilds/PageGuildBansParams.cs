@@ -6,8 +6,8 @@ namespace Discord;
 public record PageGuildBansParams(
     int? PageSize = null,
     int? Total = null,
-    EntityOrId<ulong, IUser>? Before = null,
-    EntityOrId<ulong, IUser>? After = null
+    IdOrEntity<ulong, IUser>? Before = null,
+    IdOrEntity<ulong, IUser>? After = null
 ) : IBetweenPagingParams<ulong>, IPagingParams<PageGuildBansParams, IEnumerable<IBanModel>>
 {
     public static int MaxPageSize => DiscordConfig.MaxBansPerBatch;

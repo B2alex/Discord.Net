@@ -28,17 +28,17 @@ public sealed partial class FetchableTraitNode : TraitNode
     public readonly record struct FetchableDetails(
         Kind Kind,
         RouteInfo Route,
-        TypeRef? PageParams,
-        TypeRef? ApiType,
-        TypeRef? PagedEntity
+        TypeRef? PageParams = null,
+        TypeRef? ApiType = null,
+        TypeRef? PagedEntity = null
     );
 
     private readonly record struct PartialFetchableTarget(
-        string Actor,
+        string Target,
         ImmutableEquatableArray<PartialFetchableDetails> Details
     );
 
-    public IncrementalGroupingProvider<ActorInfo, FetchableDetails> FetchableProvider { get; }
+    public IncrementalGroupingProvider<TraitImplementationTarget, FetchableDetails> FetchableProvider { get; }
 
     public FetchableTraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
     {
@@ -89,7 +89,7 @@ public sealed partial class FetchableTraitNode : TraitNode
             )
             .DependsOn(GetTask<ApiRouteTask>().Routes)
             .GroupManyBy(
-                x => x.Actor,
+                x => x.Target,
                 x => x.Details
                     .Where(x => GetTask<ApiRouteTask>().Routes.ContainsKey(x.Route))
                     .Select(x =>
@@ -102,7 +102,7 @@ public sealed partial class FetchableTraitNode : TraitNode
                         )
                     )
             )
-            .TransformKeysVia(GetTask<ActorsTask>().ActorInfos);
+            .TransformKeysVia(TargetsProvider);
             
 
         CreateImplementation(context);

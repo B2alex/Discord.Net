@@ -20,5 +20,5 @@ public interface IStickerItem :
     StickerFormatType Format { get; }
 
     static IApiOutRoute<IStickerModel> IFetchable<ulong, IStickerModel>.FetchRoute(IPathable path, ulong id)
-        => ISticker.FetchRoute(path, id);
+        => IStickerActor.FetchRoute(path, id);
 }

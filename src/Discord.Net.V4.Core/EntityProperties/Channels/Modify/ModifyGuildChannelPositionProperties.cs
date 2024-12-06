@@ -4,10 +4,10 @@ namespace Discord;
 
 public class ModifyGuildChannelPositionProperties : IEntityProperties<ModifyGuildChannelPositionsParams>
 {
-    public required EntityOrId<ulong, IGuildChannel> Channel { get; set; }
+    public required IdOrEntity<ulong, IGuildChannel> Channel { get; set; }
     public Optional<int?> Position { get; set; }
     public Optional<bool?> LockPermissions { get; set; }
-    public Optional<EntityOrId<ulong, ICategoryChannel>?> Category { get; set; }
+    public Optional<IdOrEntity<ulong, ICategoryChannel>?> Category { get; set; }
 
     public ModifyGuildChannelPositionsParams ToApiModel(ModifyGuildChannelPositionsParams? existing = default)
     {

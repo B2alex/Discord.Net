@@ -8,7 +8,7 @@ public class CreateForumOrMediaThreadMessageProperties : IEntityProperties<Forum
     public Optional<ICollection<Embed>> Embeds { get; set; }
     public Optional<AllowedMentions> AllowedMentions { get; set; }
     public Optional<ICollection<IMessageComponent>> Components { get; set; }
-    public Optional<IEnumerable<EntityOrId<ulong, ISticker>>> Stickers { get; set; }
+    public Optional<IEnumerable<IdOrEntity<ulong, ISticker>>> Stickers { get; set; }
     public Optional<IEnumerable<FileAttachment>> Attachments { get; set; }
     public Optional<MessageCreateFlags> Flags { get; set; }
     

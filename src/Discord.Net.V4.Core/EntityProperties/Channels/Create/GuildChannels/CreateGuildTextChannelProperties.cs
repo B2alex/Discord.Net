@@ -8,7 +8,7 @@ public class CreateGuildTextChannelProperties : CreateGuildChannelBaseProperties
 
     public Optional<int?> Slowmode { get; set; }
 
-    public Optional<EntityOrId<ulong, ICategoryChannel>?> Category { get; set; }
+    public Optional<IdOrEntity<ulong, ICategoryChannel>?> Category { get; set; }
 
     public Optional<bool?> IsNsfw { get; set; }
 

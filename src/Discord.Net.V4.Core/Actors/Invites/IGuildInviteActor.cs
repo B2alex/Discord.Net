@@ -11,8 +11,4 @@ public partial interface IGuildInviteActor :
     IInviteActor,
     IActor<string, IGuildInvite>,
     IEntityProvider<IGuildInvite, IInviteModel>,
-    IGuildActor.CanonicalRelationship
-{
-    [SourceOfTruth]
-    internal new IGuildInvite CreateEntity(IInviteModel model);
-}
+    IGuildActor.CanonicalRelationship;

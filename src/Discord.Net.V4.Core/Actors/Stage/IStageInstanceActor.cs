@@ -7,7 +7,10 @@ namespace Discord;
     Loadable(nameof(Routes.GetStageInstance)),
     Modifiable<ModifyStageInstanceProperties>(nameof(Routes.ModifyStageInstance)),
     Deletable(nameof(Routes.DeleteStageInstance)),
-    Creatable<CreateStageInstanceProperties>(nameof(Routes.CreateStageInstance)),
+    ActorCreatable<CreateStageInstanceProperties>(
+        nameof(Routes.CreateStageInstance),
+        WhenBackLinkingFrom = [typeof(IStageChannelActor)]
+    ),
     Refreshable(nameof(Routes.GetStageInstance))
 ]
 public partial interface IStageInstanceActor :

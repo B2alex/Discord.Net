@@ -4,24 +4,61 @@ using Microsoft.CodeAnalysis;
 
 namespace Discord.Net.Hanz;
 
+public record Grouping<TKey, TValue>(
+    TKey Key,
+    ImmutableArray<TValue> Values
+)
+{
+    public virtual bool Equals(Grouping<TKey, TValue>? other)
+        => other is not null &&
+           EqualityComparer<TKey>.Default.Equals(Key, other.Key) &&
+           Values.SequenceEqual(other.Values);
+
+    public override int GetHashCode()
+        => System.HashCode.Combine(Key, Values.Aggregate(0, System.HashCode.Combine));
+}
+
 public sealed class IncrementalGroupingProvider<TKey, TValue>
 {
+    public IncrementalValuesProvider<Introspected<(TKey, TValue)>> IntrospectionProvider { get; }
+
     public IEnumerable<(TKey Key, TValue Value)> Entries
         => _groups.SelectMany(kvp => kvp.Value.Select(value => (kvp.Key, value)));
 
-    public IEnumerable<TKey> Keys => _groups.Keys;
-    public IEnumerable<TValue> Values => _groups.Values.SelectMany(x => x);
+    public IEnumerable<TKey> Keys
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _groups.Keys;
+            }
+        }
+    }
+
+    public IEnumerable<TValue> Values
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _groups.Values.SelectMany(x => x);
+            }
+        }
+    }
 
     public IncrementalValuesProvider<(TKey Key, TValue Value)> EntriesProvider { get; }
+    public IncrementalValuesProvider<Grouping<TKey, TValue>> GroupsProvider { get; }
     public IncrementalValuesProvider<TKey> KeysProvider { get; }
     public IncrementalValuesProvider<TValue> ValuesProvider { get; }
 
     private readonly Dictionary<TKey, HashSet<TValue>> _groups;
     private readonly object _lock = new();
-    
+
     public IncrementalGroupingProvider(
         IncrementalValuesProvider<Introspected<(TKey, TValue)>> provider)
     {
+        IntrospectionProvider = provider;
         _groups = [];
 
         EntriesProvider = provider
@@ -61,13 +98,24 @@ public sealed class IncrementalGroupingProvider<TKey, TValue>
                 return default;
             });
 
+        GroupsProvider = EntriesProvider
+            .Collect()
+            .SelectMany((_, _) =>
+                _groups.Select(x =>
+                    new Grouping<TKey, TValue>(
+                        x.Key,
+                        x.Value.ToImmutableArray()
+                    )
+                )
+            );
+
         KeysProvider = EntriesProvider
             .Collect()
             .SelectMany((kvp, _) => kvp
                 .Select(x => x.Key)
                 .Distinct()
             );
-        
+
         ValuesProvider = EntriesProvider.Select((x, _) => x.Value);
     }
 
@@ -158,9 +206,9 @@ public sealed class IncrementalGroupingProvider<TKey, TValue>
     public IncrementalGroupingProvider<TKey, TNewValue> TransformValues<TNewValue>(
         Func<TKey, ImmutableArray<TValue>, IEnumerable<TNewValue>> transform
     ) => new(
-        KeysProvider
-            .SelectMany((key, _) =>
-                transform(key, GetValuesOrEmpty(key)).Select(x => (key, x))
+        GroupsProvider
+            .SelectMany((group, _) =>
+                transform(group.Key, group.Values).Select(x => (group.Key, x))
             )
             .AsIntrospected()
     );
@@ -206,9 +254,7 @@ public sealed class IncrementalGroupingProvider<TKey, TValue>
 
                 if (allowDefault)
                     return ImmutableArray.Create(
-                        defaultValueFactory is not null
-                            ? defaultValueFactory(kvp.Key, kvp.Value)
-                            : (default, default)
+                        defaultValueFactory?.Invoke(kvp.Key, kvp.Value) ?? (default, default)
                     );
 
                 return ImmutableArray<(TNewKey, TNewValue)>.Empty;
@@ -273,11 +319,11 @@ public sealed class IncrementalGroupingProvider<TKey, TValue>
     )
     {
         return new IncrementalGroupingProvider<TKey, TResult>(
-            KeysProvider
+            GroupsProvider
                 .Combine(source.EntriesProvider.Collect())
                 .SelectMany(ImmutableArray<(TKey, TResult)> (pair, _) =>
                 {
-                    if (!source.TryGetValue(pair.Left, out var value))
+                    if (!source.TryGetValue(pair.Left.Key, out var value))
                     {
                         if (!includeDefault)
                             return ImmutableArray<(TKey, TResult)>.Empty;
@@ -285,7 +331,7 @@ public sealed class IncrementalGroupingProvider<TKey, TValue>
                         value = defaultValue;
                     }
 
-                    return ImmutableArray.Create((pair.Left, selector(pair.Left, GetValuesOrEmpty(pair.Left), value)));
+                    return ImmutableArray.Create((pair.Left.Key, selector(pair.Left.Key, pair.Left.Values, value)));
                 })
                 .AsIntrospected()
         );
@@ -359,16 +405,16 @@ public sealed class IncrementalGroupingProvider<TKey, TValue>
     public IncrementalKeyValueProvider<TKey, TResult> ToKeyed<TResult>(
         Func<TKey, ImmutableArray<TValue>, TResult> resultSelector
     ) => new(
-        KeysProvider
-            .Select(Keyed<TKey, TResult> (key, _) => (key, resultSelector(key, GetValuesOrEmpty(key))))
+        GroupsProvider
+            .Select(Keyed<TKey, TResult> (group, _) => (group.Key, resultSelector(group.Key, group.Values)))
             .AsIntrospected()
     );
 
     public IncrementalKeyValueProvider<TNewKey, TResult> ToKeyed<TNewKey, TResult>(
         Func<TKey, ImmutableArray<TValue>, (TNewKey, TResult)> resultSelector
     ) => new(
-        KeysProvider
-            .Select(Keyed<TNewKey, TResult> (key, _) => resultSelector(key, GetValuesOrEmpty(key)))
+        GroupsProvider
+            .Select(Keyed<TNewKey, TResult> (group, _) => resultSelector(group.Key, group.Values))
             .AsIntrospected()
     );
 
@@ -406,7 +452,7 @@ public static class GroupingExtensions
                 .AsIntrospected()
         );
     }
-    
+
     public static IncrementalGroupingProvider<TKey, TValue> GroupManyBy<TSource, TKey, TValue>(
         this IncrementalValuesProvider<TSource> source,
         Func<TSource, IEnumerable<(TKey, TValue)>> selector

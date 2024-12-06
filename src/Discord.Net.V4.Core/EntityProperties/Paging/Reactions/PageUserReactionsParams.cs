@@ -6,20 +6,20 @@ namespace Discord;
 public sealed record PageUserBasicReactionsParams(
     int? PageSize = DiscordConfig.MaxUserReactionsPerBatch,
     int? Total = null,
-    EntityOrId<ulong, IMember>? After = null
+    IdOrEntity<ulong, IMember>? After = null
 ) : PageUserReactionsParams(PageSize, Total, ReactionType.Normal, After);
 
 public sealed record PageUserSuperReactionsParams(
     int? PageSize = DiscordConfig.MaxUserReactionsPerBatch,
     int? Total = null,
-    EntityOrId<ulong, IMember>? After = null
+    IdOrEntity<ulong, IMember>? After = null
 ) : PageUserReactionsParams(PageSize, Total, ReactionType.Burst, After);
 
 public record PageUserReactionsParams(
     int? PageSize = DiscordConfig.MaxUserReactionsPerBatch,
     int? Total = null,
     ReactionType? Type = null,
-    EntityOrId<ulong, IMember>? After = null
+    IdOrEntity<ulong, IMember>? After = null
 ) :
     IDirectionalPagingParams<ulong>,
     IPagingParams<PageUserReactionsParams, IEnumerable<IUserModel>>

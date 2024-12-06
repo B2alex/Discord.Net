@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Discord.Net.Hanz.Utils.Bakery;
 
-public readonly record struct IndexerSpec(
+public record IndexerSpec(
     string Type,
     ImmutableEquatableArray<ParameterSpec>? Parameters = null,
     Accessibility Accessibility = Accessibility.NotApplicable,

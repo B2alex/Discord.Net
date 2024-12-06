@@ -1,4 +1,3 @@
-using Discord.Net.Hanz.Tasks.Traits;
 using Discord.Net.Hanz.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -79,8 +78,8 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
 
         var hierarchy = Hierarchy.GetHierarchy(type);
 
-        if (hierarchy.All(x => !LoadableTrait.IsLoadable(x.Type)))
-            return false;
+        // if (hierarchy.All(x => !LoadableTrait.IsLoadable(x.Type)))
+        //     return false;
 
         return true;
     }
@@ -114,11 +113,11 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
 
         var hierarchy = Hierarchy.GetHierarchy(classSymbol);
 
-        if (hierarchy.All(x => !LoadableTrait.IsLoadable(x.Type)))
-        {
-            logger.Warn($"Ignoring {classDeclarationSyntax.Identifier}: not loadable");
-            return null;
-        }
+        // if (hierarchy.All(x => !LoadableTrait.IsLoadable(x.Type)))
+        // {
+        //     logger.Warn($"Ignoring {classDeclarationSyntax.Identifier}: not loadable");
+        //     return null;
+        // }
 
         var coreActor = classSymbol.Interfaces.FirstOrDefault(IsActor);
 
@@ -263,7 +262,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
         return Hierarchy.GetHierarchy(coreActor)
             .Select(x => x.Type)
             .Prepend(coreActor)
-            .Where(LoadableTrait.IsLoadable)
+            //.Where(LoadableTrait.IsLoadable)
             .SelectMany(x => x
                 .GetMembers()
                 .OfType<IMethodSymbol>()

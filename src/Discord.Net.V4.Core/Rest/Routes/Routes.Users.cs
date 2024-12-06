@@ -25,8 +25,8 @@ public static partial class Routes
             body);
 
     public static IApiOutRoute<IEnumerable<PartialGuild>> GetCurrentUserGuilds(
-        EntityOrId<ulong, IPartialGuild>? before = null,
-        EntityOrId<ulong, IPartialGuild>? after = null,
+        IdOrEntity<ulong, IPartialGuild>? before = null,
+        IdOrEntity<ulong, IPartialGuild>? after = null,
         int? limit = null,
         bool? withCounts = null
     ) => new ApiOutRoute<IEnumerable<PartialGuild>>(

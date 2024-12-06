@@ -19,6 +19,6 @@ public partial interface IPollActor :
             token
         );
 
-        return Message.CreateEntity(model);
+        return await Message.CreateEntityAsync(model, token);
     }
 }

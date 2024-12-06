@@ -11,26 +11,28 @@ namespace Discord.Net.Hanz.Tasks.Actors.Links.Nodes.Modifiers;
 
 public sealed class HierarchyNode :
     LinkNode,
-    ITypeProducerNode<HierarchyNode.Hierarchy>.WithParameters<ActorInfo>.Introspects<AncestorPathingIntrospection>
+    ITypeProducerNode<HierarchyNode.Hierarchy>.WithParameters<ActorOrTraitInfo>.Introspects<
+        AncestorPathingIntrospection>
 {
     public record Hierarchy(
-        ActorInfo ActorInfo,
-        ImmutableEquatableArray<ActorInfo> HierarchyInfos
+        ActorOrTraitInfo Target,
+        ImmutableEquatableArray<ActorOrTraitInfo> HierarchyInfos
     );
 
-    private readonly IncrementalKeyValueProvider<ActorInfo, ImmutableEquatableArray<ActorInfo>> _hierarchyProvider;
+    private readonly IncrementalKeyValueProvider<ActorOrTraitInfo, ImmutableEquatableArray<ActorOrTraitInfo>>
+        _hierarchyProvider;
 
     public HierarchyNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
     {
-        _hierarchyProvider = GetTask<ActorsTask>()
-            .ActorHierarchies
+        _hierarchyProvider = GetTask<LinksTask>()
+            .TargetAncestorsProvider
             .JoinByKey(
                 context
                     .SyntaxProvider
                     .ForAttributeWithMetadataName(
                         "Discord.LinkHierarchicalRootAttribute",
                         (node, _) => node is InterfaceDeclarationSyntax,
-                        (string Actor, ImmutableEquatableArray<string>? UserSpecifiedTypes)? (sourceContext, _) =>
+                        (string Target, ImmutableEquatableArray<string>? UserSpecifiedTypes)? (sourceContext, _) =>
                         {
                             if (sourceContext.SemanticModel.GetDeclaredSymbol(sourceContext.TargetNode) is not
                                 INamedTypeSymbol
@@ -58,28 +60,29 @@ public sealed class HierarchyNode :
                         }
                     )
                     .WhereNotNull()
-                    .KeyedBy(x => x.Actor, x => x.UserSpecifiedTypes)
-                    .TransformKeyVia(GetTask<ActorsTask>().ActorInfos),
-                (info, hierarchy, userSpecifiedTypes) =>
+                    .KeyedBy(x => x.Target, x => x.UserSpecifiedTypes)
+                    .TransformKeyVia(GetTask<LinksTask>().TargetsProvider),
+                (info, _, userSpecifiedTypes) =>
                     (
                         userSpecifiedTypes?.Count > 0
                             ? userSpecifiedTypes
-                                .Select(x => GetTask<ActorsTask>().ActorInfos.GetValueOrDefault(x))
+                                .Select(x => TargetsProvider.GetValueOrDefault(x))
                                 .Where(x => x != default)
-                            : hierarchy.ChildrenInfos
-                    )
-                    .Where(x => !x.IsTrait)
-                    .ToImmutableEquatableArray()
+                            : TargetAncestorsProvider.Entries
+                                .Where(x => x.Value.Any(x => x.Info == info))
+                                .Select(x => x.Key)
+                    )!
+                    .ToImmutableEquatableArray<ActorOrTraitInfo>()
             );
     }
 
-    public static string GetHierarchyPropertyName(ActorInfo from, ActorInfo property)
+    public static string GetHierarchyPropertyName(ActorOrTraitInfo from, ActorOrTraitInfo property)
     {
         return string.Join(
             string.Empty,
-            ToNameParts(GetFriendlyName(property.Actor))
+            ToNameParts(GetFriendlyName(property.Type))
                 .Except(
-                    ToNameParts(GetFriendlyName(from.Actor))
+                    ToNameParts(GetFriendlyName(from.Type))
                 )
         );
     }
@@ -101,15 +104,15 @@ public sealed class HierarchyNode :
     }
 
     public static PropertySpec FormatExtensionProperty(
-        ActorInfo info,
-        ActorInfo property,
+        ActorOrTraitInfo info,
+        ActorOrTraitInfo property,
         TypePath path
     )
     {
         return new PropertySpec(
             Type: path.Equals(typeof(ActorNode), typeof(HierarchyNode))
                 ? property.FormattedLink
-                : $"{property.Actor}.{path.ParentPath.Value.FormatRelative()}",
+                : $"{property.Type}.{path.ParentPath!.Value.FormatRelative()}",
             Name: GetHierarchyPropertyName(info, property)
         );
     }
@@ -125,16 +128,16 @@ public sealed class HierarchyNode :
                     ..introspection.SemanticBases
                 ])
             )
-            .AddProperties(state.HierarchyInfos.Select(x => FormatExtensionProperty(state.ActorInfo, x, path)));
+            .AddProperties(state.HierarchyInfos.Select(x => FormatExtensionProperty(state.Target, x, path)));
 
         foreach (var semanticPath in introspection.SemanticBases.Where(x => x.Last == "Hierarchy"))
         {
             spec = spec.AddProperties(
                 state.HierarchyInfos.Select(x =>
-                    FormatExtensionProperty(state.ActorInfo, x, semanticPath) with
+                    FormatExtensionProperty(state.Target, x, semanticPath) with
                     {
                         ExplicitInterfaceImplementation = semanticPath,
-                        Expression = GetHierarchyPropertyName(state.ActorInfo, x)
+                        Expression = GetHierarchyPropertyName(state.Target, x)
                     }
                 )
             );
@@ -144,18 +147,18 @@ public sealed class HierarchyNode :
     }
 
     public IncrementalValuesProvider<NodeGeneration<Hierarchy, TParent>> Create<TParent>(
-        IncrementalValuesProvider<NodeContext<TParent, ActorInfo>> provider,
+        IncrementalValuesProvider<NodeContext<TParent, ActorOrTraitInfo>> provider,
         ContinuationContext<Hierarchy, TParent> continuationContext)
     {
-        continuationContext.AddChild(GetNode<BackLinkNode>(), x => x.ActorInfo);
+        continuationContext.AddChild(GetNode<BackLinkNode>(), x => x.Target);
 
         return provider
             .KeyedBy(x => x.Parameters)
             .JoinByKey(
-                _hierarchyProvider,
+                _hierarchyProvider!,
                 (info, context, hierarchy) => context
                     .WithState(
-                        new Hierarchy(info, hierarchy.ToImmutableEquatableArray()),
+                        new Hierarchy(info, hierarchy!.ToImmutableEquatableArray()),
                         context.Path.Add<HierarchyNode>("Hierarchy")
                     )
             )
@@ -164,7 +167,7 @@ public sealed class HierarchyNode :
 
     public IncrementalValuesProvider<IntrospectionResult<AncestorPathingIntrospection, Hierarchy>> Introspect(
         IncrementalValuesProvider<IntrospectionContext<Hierarchy>> provider
-    ) => Introspect(provider, x => x.ActorInfo);
+    ) => Introspect(provider, x => x.Target);
 }
 // public class HierarchyNode :
 //     LinkNode,

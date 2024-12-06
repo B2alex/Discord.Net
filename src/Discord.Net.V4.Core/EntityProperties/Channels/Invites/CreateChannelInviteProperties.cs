@@ -9,7 +9,7 @@ public sealed class CreateChannelInviteProperties : IEntityProperties<CreateChan
     public Optional<bool> Temporary { get; set; }
     public Optional<bool> Unique { get; set; }
     public Optional<InviteTargetType> TargetType { get; set; }
-    public Optional<EntityOrId<ulong, IUserActor>> TargetUser { get; set; }
+    public Optional<IdOrEntity<ulong, IUserActor>> TargetUser { get; set; }
     public Optional<ulong> TargetApplicationId { get; set; }
     
     public CreateChannelInviteParams ToApiModel(CreateChannelInviteParams? existing = default)

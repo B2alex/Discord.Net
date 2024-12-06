@@ -8,7 +8,7 @@ public partial interface IWebhookMessage :
 {
     async Task RefreshAsync(
         string webhookToken,
-        EntityOrId<ulong, IThreadChannel>? thread = null,
+        IdOrEntity<ulong, IThreadChannel>? thread = null,
         RequestOptions? options = null,
         CancellationToken token = default)
     {

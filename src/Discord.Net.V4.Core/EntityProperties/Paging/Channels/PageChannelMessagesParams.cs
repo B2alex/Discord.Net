@@ -6,9 +6,9 @@ namespace Discord;
 public sealed record PageChannelMessagesParams(
     int? PageSize = null,
     int? Total = null,
-    EntityOrId<ulong, IMessage>? Around = null,
-    EntityOrId<ulong, IMessage>? Before = null,
-    EntityOrId<ulong, IMessage>? After = null
+    IdOrEntity<ulong, IMessage>? Around = null,
+    IdOrEntity<ulong, IMessage>? Before = null,
+    IdOrEntity<ulong, IMessage>? After = null
 ) : IBetweenPagingParams<ulong>, IPagingParams<PageChannelMessagesParams, IEnumerable<IMessageModel>>
 {
     public static int MaxPageSize => DiscordConfig.MaxMessagesPerBatch;

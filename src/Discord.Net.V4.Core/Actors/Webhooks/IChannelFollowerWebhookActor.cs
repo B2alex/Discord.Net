@@ -5,9 +5,10 @@ using Discord.Models.Json;
 
 namespace Discord;
 
-[Loadable(nameof(Routes.GetWebhook), typeof(IChannelFollowerWebhookModel))]
-[Modifiable<ModifyWebhookProperties>(nameof(Routes.ModifyWebhook))]
-[SuppressMessage("ReSharper", "PossibleInterfaceMemberAmbiguity")]
+[
+    Loadable(nameof(Routes.GetWebhook), typeof(IChannelFollowerWebhookModel)),
+    Modifiable<ModifyWebhookProperties>(nameof(Routes.ModifyWebhook))
+]
 public partial interface IChannelFollowerWebhookActor :
     IGuildChannelWebhookActor,
     IActor<ulong, IChannelFollowerWebhook>
@@ -15,7 +16,7 @@ public partial interface IChannelFollowerWebhookActor :
     [BackLink<IAnnouncementChannelActor>]
     private static async Task<FollowedChannel> FollowAsync(
         IAnnouncementChannelActor newsChannelActor,
-        EntityOrId<ulong, IChannelActor> channel,
+        IdOrEntity<ulong, IChannelActor> channel,
         RequestOptions? options = null,
         CancellationToken token = default)
     {

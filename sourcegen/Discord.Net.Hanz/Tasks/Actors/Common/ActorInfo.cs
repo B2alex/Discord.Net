@@ -8,8 +8,8 @@ public interface IHasActorInfo
     ActorInfo ActorInfo { get; }
 }
 
-public readonly record struct ActorInfo(
-    ActorsTask.AssemblyTarget Assembly,
+public record ActorInfo(
+    AssemblyTarget Assembly,
     TypeRef Actor,
     TypeRef Entity,
     TypeRef Id,
@@ -17,60 +17,22 @@ public readonly record struct ActorInfo(
     TypeRef CoreActor,
     TypeRef CoreEntity,
     bool IsTrait
-)
+) : ActorOrTraitInfo(Assembly, Actor, Entity, Id, Model)
 {
-    public bool IsCore => Assembly is ActorsTask.AssemblyTarget.Core;
-
-    public string FormattedRelation
-        => $"Discord.IRelation<{Id}, {Entity}>";
-    
-    public string FormattedRelationship
-        => $"Discord.IRelationship<{Actor}, {Id}, {Entity}>";
-    public string FormattedCanonicalRelationship
-        => $"Discord.ICanonicalRelationship<{Actor}, {Id}, {Entity}>";
-    
-    public string FormattedIdentifiable
-        => $"Discord.IIdentifiable<{Id}, {Entity}, {Actor}, {Model}>";
-
     public string FormattedCoreIdentifiable
         => $"Discord.IIdentifiable<{Id}, {CoreEntity}, {CoreActor}, {Model}>";
 
-    public string FormattedBackLinkType
-        => $"Discord.IBackLink<TSource, {Actor}, {Id}, {Entity}, {Model}>";
-
-    public string FormattedBackLinkOfType(TypeRef type)
-        => $"Discord.IBackLink<{type}, {Actor}, {Id}, {Entity}, {Model}>";
-    
     public string FormattedCoreBackLinkType
-        =>
-            $"Discord.IBackLink<TSource, {CoreActor}, {Id}, {CoreEntity}, {Model}>";
-
-    public string FormattedLinkType
-        => $"Discord.ILinkType<{Actor}, {Id}, {Entity}, {Model}>";
+        => $"Discord.IBackLink<TSource, {CoreActor}, {Id}, {CoreEntity}, {Model}>";
 
     public string FormattedCoreLinkType
         => $"Discord.ILinkType<{CoreActor}, {Id}, {CoreEntity}, {Model}>";
 
-    public string FormattedLink
-        => $"Discord.ILink<{Actor}, {Id}, {Entity}, {Model}>";
-
     public string FormattedCoreLink
         => $"Discord.ILink<{CoreActor}, {Id}, {CoreEntity}, {Model}>";
 
-    public string FormattedRestLinkType =>
-        $"Discord.Rest.IRestLinkType<{Actor}, {Id}, {Entity}, {Model}>";
-
-    public string FormattedActorProvider
-        => $"Discord.IActorProvider<{Actor}, {Id}>";
-
     public string FormattedCoreActorProvider
         => $"Discord.IActorProvider<{CoreActor}, {Id}>";
-
-    public string FormattedRestActorProvider
-        => $"Discord.Rest.RestActorProvider<{Actor}, {Id}>";
-
-    public string FormattedEntityProvider
-        => $"Discord.IEntityProvider<{Entity}, {Model}>";
 
     public string FormattedCoreEntityProvider
         => $"Discord.IEntityProvider<{CoreEntity}, {Model}>";
@@ -80,7 +42,7 @@ public readonly record struct ActorInfo(
     
     public static ActorInfo Create(ActorsTask.ActorSymbols target)
     {
-        var coreActorSymbol = target.Assembly is ActorsTask.AssemblyTarget.Core
+        var coreActorSymbol = target.Assembly is AssemblyTarget.Core
             ? target.Actor
             : Hierarchy.GetHierarchy(target.Actor, false)
                 .First(x =>
@@ -94,7 +56,7 @@ public readonly record struct ActorInfo(
         
         var coreActor = new TypeRef(coreActorSymbol);
 
-        var coreEntity = target.Assembly is ActorsTask.AssemblyTarget.Core
+        var coreEntity = target.Assembly is AssemblyTarget.Core
             ? new TypeRef(target.Actor)
             : new TypeRef(
                 Hierarchy.GetHierarchy(target.Entity, false)

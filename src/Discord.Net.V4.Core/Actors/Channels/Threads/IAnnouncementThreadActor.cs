@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Discord;
 
 public partial interface IAnnouncementThreadChannelActor : 

@@ -3,6 +3,12 @@ using Microsoft.CodeAnalysis;
 
 namespace Discord.Net.Hanz.Nodes.TypeNodes;
 
+public readonly record struct TypeRootProviders<TSource>(
+    IncrementalGroupingProvider<TSource, TypeSpec> SpecProvider,
+    IncrementalValueProvider<IIntrospectionGraph> IntrospectionGraphProvider,
+    IncrementalKeyValueProvider<TSource, IntrospectionSourceTree<TSource>> IntrospectionTreeProvider
+);
+
 public class NestedTypeRoot<TSource> : ProviderNesting<TSource>
 {
     private readonly IncrementalValuesProvider<(TSource Source, TypePath Path)> _provider;
@@ -12,16 +18,19 @@ public class NestedTypeRoot<TSource> : ProviderNesting<TSource>
         _provider = provider;
     }
 
-    public IncrementalGroupingProvider<TSource, TypeSpec> Build(Logger logger)
+    public TypeRootProviders<TSource> Build(Logger logger)
     {
         var nodes = Children
             .Select(x => x(_provider))
             .ToArray();
 
-        var introspectionProvider = nodes
+        var introspectionTreesProvider = nodes
             .Select(x => x.GetStateTreeProvider())
             .Aggregate((a, b) => a.Combine(b))
-            .Select((source, trees) => new IntrospectionSourceTree<TSource>(source, trees))
+            .Select((source, trees) => new IntrospectionSourceTree<TSource>(source, trees));
+
+
+        var introspectionProvider = introspectionTreesProvider
             .Collect()
             .Select(IIntrospectionGraph (x, _) =>
             {
@@ -30,12 +39,16 @@ public class NestedTypeRoot<TSource> : ProviderNesting<TSource>
                 return graph;
             });
 
-        return nodes
-            .Select(x => x.GetTypeSpecProvider(introspectionProvider))
-            .Aggregate(
-                (a, b) => a.Combine(b)
-            )
-            .MapValues((_, x) => x.Spec);
+        return new(
+            nodes
+                .Select(x => x.GetTypeSpecProvider(introspectionProvider))
+                .Aggregate(
+                    (a, b) => a.Combine(b)
+                )
+                .MapValues((_, x) => x.Spec),
+            introspectionProvider,
+            introspectionTreesProvider.KeyedBy(x => x.Source)
+        );
     }
 
     private static void LogGraph(IntrospectionGraph<TSource> graph, Logger logger)

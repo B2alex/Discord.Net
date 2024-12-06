@@ -4,7 +4,7 @@ namespace Discord;
 
 public sealed class CreateDMProperties : IEntityProperties<CreateDMChannelParams>
 {
-    public required EntityOrId<ulong, IUser> Recipient { get; set; }
+    public required IdOrEntity<ulong, IUser> Recipient { get; set; }
     
     public CreateDMChannelParams ToApiModel(CreateDMChannelParams? existing = default)
     {

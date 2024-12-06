@@ -4,7 +4,7 @@ namespace Discord;
 
 public sealed class ModifyGuildScheduledEventProperties : IEntityProperties<ModifyGuildScheduledEventParams>
 {
-    public Optional<EntityOrId<ulong, IChannel>?> Channel { get; set; }
+    public Optional<IdOrEntity<ulong, IChannel>?> Channel { get; set; }
     public Optional<string?> Location { get; set; }
     public Optional<string> Name { get; set; }
     public Optional<GuildScheduledEventPrivacyLevel> PrivacyLevel { get; set; }

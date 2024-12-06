@@ -7,9 +7,9 @@ public class CreateGuildVoiceChannelProperties : CreateGuildChannelBasePropertie
     public Optional<int?> Bitrate { get; set; }
     public Optional<int?> UserLimit { get; set; }
     public Optional<int?> Slowmode { get; set; }
-    public Optional<EntityOrId<ulong, ICategoryChannel>?> Category { get; set; }
+    public Optional<IdOrEntity<ulong, ICategoryChannel>?> Category { get; set; }
     public Optional<bool?> IsNsfw { get; set; }
-    public Optional<EntityOrId<string, VoiceRegion>?> RtcRegion { get; set; }
+    public Optional<IdOrEntity<string, VoiceRegion>?> RtcRegion { get; set; }
     public Optional<VideoQualityMode?> VideoQualityMode { get; set; }
 
     protected override Optional<ChannelType> ChannelType => Discord.ChannelType.Voice;

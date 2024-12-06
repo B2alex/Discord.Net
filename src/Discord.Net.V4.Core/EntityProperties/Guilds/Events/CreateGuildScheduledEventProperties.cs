@@ -4,7 +4,7 @@ namespace Discord;
 
 public sealed class CreateGuildScheduledEventProperties : IEntityProperties<CreateGuildScheduledEventParams>
 {
-    public Optional<EntityOrId<ulong, IGuildChannel>> Channel { get; set; }
+    public Optional<IdOrEntity<ulong, IGuildChannel>> Channel { get; set; }
     public Optional<string> Location { get; set; }
     public required string Name { get; set; }
     public StagePrivacyLevel PrivacyLevel { get; set; } = StagePrivacyLevel.GuildOnly;

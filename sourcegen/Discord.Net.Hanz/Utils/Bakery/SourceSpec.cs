@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Discord.Net.Hanz.Utils.Bakery;
 
-public readonly record struct SourceSpec(
+public record SourceSpec(
     string Path,
     string Namespace,
     ImmutableEquatableArray<string>? Usings = null,

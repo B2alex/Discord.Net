@@ -30,14 +30,11 @@ public interface ILoadable<TSelf, TId, TEntity, TModel> :
         return await FetchAsync(options, token);
     }
 
-    [return: TypeHeuristic(nameof(CreateEntity))]
     ValueTask<TEntity?> GetAsync(CancellationToken token = default) => default;
 
-    [return: TypeHeuristic(nameof(CreateEntity))]
     ValueTask<TEntity?> FetchAsync(RequestOptions? options = null, CancellationToken token = default)
         => FetchInternalAsync(Client, (TSelf)this, TSelf.FetchRoute(this, Id), options, token);
 
-    [return: TypeHeuristic(nameof(CreateEntity))]
     internal static async ValueTask<TEntity?> FetchInternalAsync(
         IDiscordClient client,
         TSelf entityProvider,
@@ -51,6 +48,6 @@ public interface ILoadable<TSelf, TId, TEntity, TModel> :
             token
         );
 
-        return model is null ? null : entityProvider.CreateEntity(model);
+        return model is null ? null : await entityProvider.CreateEntityAsync(model, token);
     }
 }

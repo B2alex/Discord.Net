@@ -16,31 +16,31 @@ public class DefinedNode : BaseLinkTypeNode
         IncrementalValuesProvider<Context> provider
     ) => provider.Select((context, token) => (context, CreateInterfaceSpec(context, token)));
 
-    private static string GetOverrideTarget(
+    private string GetOverrideTarget(
         Context context,
-        ActorsTask.ActorHierarchy ancestor
-    ) => ancestor.HasAncestors
-        ? $"{ancestor.ActorInfo.Actor}.{context.Path.FormatRelative()}"
-        : $"{ancestor.ActorInfo.FormattedLinkType}.Defined";
+        LinkTargetAncestor ancestor
+    ) => HasAncestors(ancestor.Info)
+        ? $"{ancestor.Info.Type}.{context.Path.FormatRelative()}"
+        : $"{ancestor.Info.FormattedLinkType}.Defined";
     
     private ILinkImplmenter.LinkSpec CreateInterfaceSpec(Context context, CancellationToken token)
     {
         return new ILinkImplmenter.LinkSpec(
             Properties: new([
                 new PropertySpec(
-                    Type: $"IReadOnlyCollection<{context.ActorInfo.Id}>",
+                    Type: $"IReadOnlyCollection<{context.Target.Id}>",
                     Name: "Ids",
                     Modifiers: new(["new"])
                 ),
                 new PropertySpec(
-                    Type: $"IReadOnlyCollection<{context.ActorInfo.Id}>",
+                    Type: $"IReadOnlyCollection<{context.Target.Id}>",
                     Name: "Ids",
-                    ExplicitInterfaceImplementation: $"{context.ActorInfo.FormattedLinkType}.Defined",
+                    ExplicitInterfaceImplementation: $"{context.Target.FormattedLinkType}.Defined",
                     Expression: "Ids"
                 ),
                 ..context.Ancestors.Select(x =>
                     new PropertySpec(
-                        Type: $"IReadOnlyCollection<{x.ActorInfo.Id}>",
+                        Type: $"IReadOnlyCollection<{x.Info.Id}>",
                         Name: "Ids",
                         ExplicitInterfaceImplementation: GetOverrideTarget(context, x),
                         Expression: "Ids"

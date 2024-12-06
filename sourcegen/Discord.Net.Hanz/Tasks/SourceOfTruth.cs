@@ -1,4 +1,3 @@
-using Discord.Net.Hanz.Tasks.Traits;
 using Discord.Net.Hanz.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;

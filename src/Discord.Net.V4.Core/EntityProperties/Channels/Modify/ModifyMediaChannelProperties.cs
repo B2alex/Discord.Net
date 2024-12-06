@@ -7,7 +7,7 @@ public class ModifyMediaChannelProperties : ModifyThreadableChannelProperties
     public Optional<string?> Topic { get; set; }
     public Optional<bool?> IsNsfw { get; set; }
     public Optional<int?> Slowmode { get; set; }
-    public Optional<EntityOrId<ulong, ICategoryChannel>?> CategoryId { get; set; }
+    public Optional<IdOrEntity<ulong, ICategoryChannel>?> CategoryId { get; set; }
     public Optional<ChannelFlags> Flags { get; set; }
     public Optional<IEnumerable<ForumTag>> AvailableTags { get; set; }
     public Optional<IEmote?> DefaultReactionEmoji { get; set; }

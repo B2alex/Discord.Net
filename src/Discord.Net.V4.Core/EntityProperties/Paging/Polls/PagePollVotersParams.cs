@@ -6,7 +6,7 @@ namespace Discord;
 public record PagePollVotersParams(
     int? PageSize = DiscordConfig.MaxPollVotersPerBatch,
     int? Total = null,
-    EntityOrId<ulong, IUserActor>? After = null
+    IdOrEntity<ulong, IUserActor>? After = null
 ) : IDirectionalPagingParams<ulong>, IPagingParams<PagePollVotersParams, PollVoters>
 {
     public static int MaxPageSize => DiscordConfig.MaxPollVotersPerBatch;

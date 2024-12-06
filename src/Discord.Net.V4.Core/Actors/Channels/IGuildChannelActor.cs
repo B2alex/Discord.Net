@@ -11,7 +11,7 @@ namespace Discord;
     Deletable(nameof(Routes.DeleteChannel)),
     Creatable<CreateGuildChannelProperties>(
         nameof(Routes.CreateGuildChannel),
-        nameof(IGuildActor)
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
     ),
     LinkHierarchicalRoot,
     FetchableOfMany(nameof(Routes.GetGuildChannels))

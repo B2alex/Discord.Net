@@ -12,7 +12,7 @@ public class CreateThreadInForumOrMediaProperties : IEntityProperties<StartThrea
     
     public required CreateForumOrMediaThreadMessageProperties Message { get; set; }
     
-    public Optional<IEnumerable<EntityOrId<ulong, ForumTag>>> Tags { get; set; }
+    public Optional<IEnumerable<IdOrEntity<ulong, ForumTag>>> Tags { get; set; }
     
     public StartThreadInForumOrMediaParams ToApiModel(StartThreadInForumOrMediaParams? existing = default)
     {

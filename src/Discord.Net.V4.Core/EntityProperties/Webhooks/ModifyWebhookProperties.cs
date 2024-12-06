@@ -6,7 +6,7 @@ public sealed class ModifyWebhookProperties : IEntityProperties<ModifyWebhookPar
 {
     public Optional<string> Name { get; set; }
     public Optional<Image?> Avatar { get; set; }
-    public Optional<EntityOrId<ulong, ITextChannel>> Channel { get; set; }
+    public Optional<IdOrEntity<ulong, ITextChannel>> Channel { get; set; }
 
     public ModifyWebhookParams ToApiModel(ModifyWebhookParams? existing = default) =>
         existing ?? new ModifyWebhookParams

@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Discord.Net.Hanz.Utils.Bakery;
 
-public readonly record struct MethodSpec(
+public record MethodSpec(
     string Name,
     string ReturnType,
     Accessibility Accessibility = Accessibility.NotApplicable,

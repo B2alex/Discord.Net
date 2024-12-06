@@ -18,7 +18,7 @@ public partial interface IRoleActor :
     [BackLink<IMemberActor>]
     private static async Task AddAsync(
         IMemberActor member,
-        EntityOrId<ulong, IRoleActor> role,
+        IdOrEntity<ulong, IRoleActor> role,
         RequestOptions? options = null,
         CancellationToken token = default)
     {
@@ -32,7 +32,7 @@ public partial interface IRoleActor :
     [BackLink<IMemberActor>]
     private static async Task RemoveAsync(
         IMemberActor member,
-        EntityOrId<ulong, IRoleActor> role,
+        IdOrEntity<ulong, IRoleActor> role,
         RequestOptions? options = null,
         CancellationToken token = default)
     {

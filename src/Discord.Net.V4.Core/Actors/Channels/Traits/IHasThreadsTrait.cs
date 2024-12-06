@@ -3,17 +3,11 @@ using Discord.Models;
 namespace Discord;
 
 [Trait]
-public partial interface IHasThreadsTrait<out TThreadActor, out TThreadLink> :
+public partial interface IHasThreadsTrait<out TThreadLink> :
     IHasThreadsTrait
-    where TThreadActor : class, IThreadChannelActor
     where TThreadLink : class, 
-    ILinkType<TThreadActor, ulong, IThreadChannel, IThreadChannelModel>.Indexable
+    ThreadChannelLinkType.Indexable
 {
-    [SourceOfTruth]
-    [return: TypeHeuristic(nameof(Threads))]
-    new TThreadActor Thread(ulong id) 
-        => Threads[id];
-    
     [SourceOfTruth]
     new TThreadLink Threads { get; }
 }
@@ -21,7 +15,5 @@ public partial interface IHasThreadsTrait<out TThreadActor, out TThreadLink> :
 [Trait]
 public partial interface IHasThreadsTrait
 {
-    [return: TypeHeuristic(nameof(Threads))]
-    IThreadChannelActor Thread(ulong id) => Threads[id];
     ThreadChannelLinkType.Indexable Threads { get; }
 }

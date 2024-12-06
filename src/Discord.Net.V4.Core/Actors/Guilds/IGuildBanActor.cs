@@ -18,7 +18,7 @@ public partial interface IBanActor :
     [BackLink<IGuildActor>]
     private static Task CreateAsync(
         IGuildActor guild,
-        EntityOrId<ulong, IUserActor> user,
+        IdOrEntity<ulong, IUserActor> user,
         int? purgeMessageSeconds = null,
         RequestOptions? options = null,
         CancellationToken token = default)
@@ -40,7 +40,7 @@ public partial interface IBanActor :
     [BackLink<IGuildActor>]
     private static async Task<BulkBanResult> BulkCreateAsync(
         IGuildActor guild,
-        IEnumerable<EntityOrId<ulong, IUser>> users,
+        IEnumerable<IdOrEntity<ulong, IUser>> users,
         int? purgeMessageSeconds = null,
         RequestOptions? options = null,
         CancellationToken token = default)

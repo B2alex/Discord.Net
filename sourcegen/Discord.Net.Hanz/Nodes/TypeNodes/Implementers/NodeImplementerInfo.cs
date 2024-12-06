@@ -1,13 +1,22 @@
+using Discord.Net.Hanz.Utils.Bakery;
 using Microsoft.CodeAnalysis;
 
 namespace Discord.Net.Hanz.Nodes.TypeNodes.Implementers;
 
 public interface INodeImplementerInfo
 {
-    IncrementalValuesProvider<StatefulPathedTypeSpec<TParent>> ApplyImplementation<TParent>(
+    IncrementalValuesProvider<Implementation<TParent>> ApplyImplementation<TParent>(
         IncrementalValuesProvider<StatefulPathedTypeSpec<TParent>> provider
     );
 }
+
+public record Implementation<TParent>(
+    StatefulPathedTypeSpec<TParent> StatefulSpec,
+    ImplementationStrategy<TParent> Strategy
+);
+
+public delegate StatefulPathedTypeSpec<TParent> ImplementationStrategy<TParent>(
+    StatefulPathedTypeSpec<TParent> statefulSpec);
 
 public sealed class StatefulNodeImplementerInfo<TState> : INodeImplementerInfo
 {
@@ -20,7 +29,7 @@ public sealed class StatefulNodeImplementerInfo<TState> : INodeImplementerInfo
         _node = node;
     }
 
-    public IncrementalValuesProvider<StatefulPathedTypeSpec<TParent>> ApplyImplementation<TParent>(
+    public IncrementalValuesProvider<Implementation<TParent>> ApplyImplementation<TParent>(
         IncrementalValuesProvider<StatefulPathedTypeSpec<TParent>> provider)
     {
         return _node
@@ -37,30 +46,21 @@ public sealed class StatefulNodeImplementerInfo<TState> : INodeImplementerInfo
 
                     var statefulSpec = original.Value;
 
-                    if (result.HasValue)
-                    {
-                        var spec = statefulSpec.Spec;
-                        _node.Implement(ref spec, result.Value.State, statefulSpec.Path);
-                        return (statefulSpec with {Spec = spec}).Some();
-                    }
 
-                    return statefulSpec.Some();
+                    return new Implementation<TParent>(
+                        statefulSpec,
+                        result.HasValue
+                            ? x =>
+                            {
+                                var spec = x.Spec;
+                                _node.Implement(ref spec, result.Value.State, x.Path);
+                                return (x with {Spec = spec});
+                            }
+                            : x => x
+                    ).Some();
                 }
             )
             .ValuesProvider;
-
-        // return 
-        //     .
-        //     .MapValuesVia(
-        //         keyed,
-        //         (state, implementation, statefulSpec) =>
-        //         {
-        //             var spec = statefulSpec.Spec;
-        //             _node.Implement(ref spec, implementation.State, statefulSpec.Path);
-        //             return statefulSpec with {Spec = spec};
-        //         }
-        //     )
-        //     .ValuesProvider;
     }
 }
 
@@ -73,15 +73,21 @@ public sealed class BasicNodeImplementerInfo : INodeImplementerInfo
         _node = node;
     }
 
-    public IncrementalValuesProvider<StatefulPathedTypeSpec<TParent>> ApplyImplementation<TParent>(
+    public IncrementalValuesProvider<Implementation<TParent>> ApplyImplementation<TParent>(
         IncrementalValuesProvider<StatefulPathedTypeSpec<TParent>> provider)
     {
         return provider
             .Select((statefulSpec, _) =>
             {
-                var spec = statefulSpec.Spec;
-                _node.Implement(ref spec, statefulSpec.State, statefulSpec.Path);
-                return statefulSpec with {Spec = spec};
+                return new Implementation<TParent>(
+                    statefulSpec,
+                    x =>
+                    {
+                        var spec = x.Spec;
+                        _node.Implement(ref spec, x.State, x.Path);
+                        return x with {Spec = spec};
+                    }
+                );
             });
     }
 }

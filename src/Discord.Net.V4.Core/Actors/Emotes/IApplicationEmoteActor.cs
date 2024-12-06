@@ -8,7 +8,7 @@ namespace Discord;
     Modifiable<ModifyApplicationEmoteProperties>(nameof(Routes.ModifyApplicationEmoji)),
     Creatable<CreateApplicationEmoteProperties>(
         nameof(Routes.CreateApplicationEmoji),
-        nameof(IApplicationActor.Emotes)
+        WhenBackLinkingFrom = [typeof(ICurrentApplicationActor)]
     )
 ]
 public partial interface IApplicationEmoteActor :

@@ -23,8 +23,12 @@ public static class IntrospectExtension
     {
         var lastBatch = new HashSet<T>();
         var bucket = new HashSet<T>();
-        
-        return source.Collect().SelectMany((items, token) => Introspect(items, lastBatch, bucket, token));
+
+        return source
+            .Collect()
+            .SelectMany((items, token) =>
+                Introspect(items, lastBatch, bucket, token).Reverse()
+            );
     }
 
     private static IEnumerable<Introspected<T>> Introspect<T>(
@@ -45,7 +49,7 @@ public static class IntrospectExtension
                 yield return new(item, State.Cached);
             else
                 yield return new(item, State.Added);
-            
+
             token.ThrowIfCancellationRequested();
         }
 
@@ -54,7 +58,7 @@ public static class IntrospectExtension
             yield return new(item, State.Removed);
             token.ThrowIfCancellationRequested();
         }
-        
+
         lastBatch.Clear();
         lastBatch.UnionWith(items);
         bucket.Clear();

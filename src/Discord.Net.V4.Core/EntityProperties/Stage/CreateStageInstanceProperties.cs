@@ -7,11 +7,11 @@ public sealed class CreateStageInstanceProperties : IEntityProperties<CreateStag
     public required string Topic { get; set; }
     public Optional<StagePrivacyLevel> PrivacyLevel { get; set; }
     public Optional<bool> SendStartNotification { get; set; }
-    public Optional<EntityOrId<ulong, IGuildScheduledEventActor>> ScheduledEvent { get; set; }
+    public Optional<IdOrEntity<ulong, IGuildScheduledEventActor>> ScheduledEvent { get; set; }
     
     private readonly ulong _channelId;
     
-    public CreateStageInstanceProperties(EntityOrId<ulong, IStageChannelActor> channel)
+    public CreateStageInstanceProperties(IdOrEntity<ulong, IStageChannelActor> channel)
     {
         _channelId = channel;
     }

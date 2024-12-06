@@ -1,4 +1,3 @@
-using Discord.Net.Hanz.Tasks.Traits;
 using Discord.Net.Hanz.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -90,8 +89,8 @@ public sealed class GatewayLoadable : ISyntaxGenerationCombineTask<GatewayLoadab
 
         var hierarchy = Hierarchy.GetHierarchy(type);
 
-        if (hierarchy.All(x => !LoadableTrait.IsLoadable(x.Type)))
-            return false;
+        // if (hierarchy.All(x => !LoadableTrait.IsLoadable(x.Type)))
+        //     return false;
 
         return true;
     }
@@ -133,8 +132,8 @@ public sealed class GatewayLoadable : ISyntaxGenerationCombineTask<GatewayLoadab
 
         var hierarchy = Hierarchy.GetHierarchy(type);
 
-        if (hierarchy.All(x => !LoadableTrait.IsLoadable(x.Type)))
-            return false;
+        // if (hierarchy.All(x => !LoadableTrait.IsLoadable(x.Type)))
+        //     return false;
 
         var gatewayCacheableActor = hierarchy.FirstOrDefault(x =>
             x.Type.ToDisplayString().StartsWith("Discord.Gateway.IGatewayCachedActor<")
