@@ -1,12 +1,12 @@
-﻿using Discord;
-using Discord.Models;
+﻿using Discord.Models;
+using Discord;
 
 namespace Discord;
 
 public partial interface IVoiceChannelActor : 
     Discord.ICreatable<Discord.IVoiceChannelActor, Discord.IVoiceChannel, ulong, Discord.CreateGuildVoiceChannelProperties, Discord.Models.Json.CreateGuildChannelParams, Discord.Models.IGuildVoiceChannelModel>
 {
-    internal static new IApiInOutRoute<Discord.Models.Json.CreateGuildChannelParams, Discord.Models.IGuildVoiceChannelModel> CreateRoute(IPathable path, Discord.Models.Json.CreateGuildChannelParams args) => Discord.Rest.Routes.CreateGuildChannel<Discord.Models.Json.GuildVoiceChannel>(path.Require<Discord.IGuild>(), args);
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.CreateGuildChannelParams, Discord.Models.IGuildVoiceChannelModel> CreateRoute(IPathable path, Discord.Models.Json.CreateGuildChannelParams args) => Discord.Rest.Routes.CreateGuildChannel<Discord.Models.Json.GuildVoiceChannel>(path.Require<Discord.IGuild>(), args);
 
     static IApiInOutRoute<Discord.Models.Json.CreateGuildChannelParams, Discord.Models.IGuildVoiceChannelModel> Discord.ICreatable<Discord.IVoiceChannelActor, Discord.IVoiceChannel, ulong, Discord.CreateGuildVoiceChannelProperties, Discord.Models.Json.CreateGuildChannelParams, Discord.Models.IGuildVoiceChannelModel>.CreateRoute(IPathable path, Discord.Models.Json.CreateGuildChannelParams args) => CreateRoute(path, args);
 

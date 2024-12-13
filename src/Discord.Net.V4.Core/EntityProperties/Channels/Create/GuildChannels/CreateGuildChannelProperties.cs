@@ -1,5 +1,3 @@
-using Discord.Models.Json;
-
 namespace Discord;
 
 public class CreateGuildChannelProperties : CreateGuildChannelBaseProperties

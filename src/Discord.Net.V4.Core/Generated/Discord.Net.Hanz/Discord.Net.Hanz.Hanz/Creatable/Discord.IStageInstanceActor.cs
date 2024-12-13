@@ -1,12 +1,12 @@
-﻿using Discord;
-using Discord.Models;
+﻿using Discord.Models;
+using Discord;
 
 namespace Discord;
 
 public partial interface IStageInstanceActor : 
     Discord.ICreatable<Discord.IStageInstanceActor, Discord.IStageInstance, ulong, Discord.CreateStageInstanceProperties, Discord.Models.CreateStageInstanceParams, Discord.Models.IStageInstanceModel>
 {
-    internal static IApiInOutRoute<Discord.Models.CreateStageInstanceParams, Discord.Models.IStageInstanceModel> CreateRoute(IPathable path, Discord.Models.CreateStageInstanceParams args) => Discord.Rest.Routes.CreateStageInstance(args);
+    internal static new IApiInOutRoute<Discord.Models.CreateStageInstanceParams, Discord.Models.IStageInstanceModel> CreateRoute(IPathable path, Discord.Models.CreateStageInstanceParams args) => Discord.Rest.Routes.CreateStageInstance(args);
 
     static IApiInOutRoute<Discord.Models.CreateStageInstanceParams, Discord.Models.IStageInstanceModel> Discord.ICreatable<Discord.IStageInstanceActor, Discord.IStageInstance, ulong, Discord.CreateStageInstanceProperties, Discord.Models.CreateStageInstanceParams, Discord.Models.IStageInstanceModel>.CreateRoute(IPathable path, Discord.Models.CreateStageInstanceParams args) => CreateRoute(path, args);
 }

@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IRoleActor : 
-    Discord.IModifiable<ulong, Discord.ModifyRoleProperties, Discord.Models.Json.ModifyGuildRoleParams, Discord.Models.IRoleModel>.Actor<Discord.IRoleActor, Discord.IRole>,
-    Discord.IModifiable<ulong, Discord.ModifyRoleProperties, Discord.Models.Json.ModifyGuildRoleParams, Discord.Models.IRoleModel>
+    Discord.IModifiable<ulong, Discord.ModifyRoleProperties, Discord.Models.Json.ModifyGuildRoleParams, Discord.Models.IRoleModel>.Actor<Discord.IRoleActor, Discord.IRole>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildRoleParams, Discord.Models.IRoleModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyGuildRoleParams, Discord.Models.IRoleModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGuildRoleParams args

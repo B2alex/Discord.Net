@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGroupChannelActor : 
-    Discord.IModifiable<ulong, Discord.ModifyGroupDMProperties, Discord.Models.Json.ModifyGroupDmParams, Discord.Models.IGroupDMChannelModel>.Actor<Discord.IGroupChannelActor, Discord.IGroupChannel>,
-    Discord.IModifiable<ulong, Discord.ModifyGroupDMProperties, Discord.Models.Json.ModifyGroupDmParams, Discord.Models.IGroupDMChannelModel>
+    Discord.IModifiable<ulong, Discord.ModifyGroupDMProperties, Discord.Models.Json.ModifyGroupDmParams, Discord.Models.IGroupDMChannelModel>.Actor<Discord.IGroupChannelActor, Discord.IGroupChannel>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGroupDmParams, Discord.Models.IGroupDMChannelModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyGroupDmParams, Discord.Models.IGroupDMChannelModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGroupDmParams args

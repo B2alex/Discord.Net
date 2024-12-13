@@ -138,6 +138,12 @@ public abstract class TraitNode : Node
             )!;
     }
 
+    protected bool HasChildren(TraitImplementationTarget target)
+        => TargetAncestorsProvider.Values.Any(x => x.Any(x => x.Target == target));
+
+    protected bool HasAncestors(TraitImplementationTarget target)
+        => TargetAncestorsProvider.TryGetValue(target, out var ancestors) && ancestors.Count > 0;
+    
     protected StatefulGeneration<T> CreateContainer<T>(TraitImplementationTarget target, T state)
         => new(
             state, TypeSpec.From(target.Type) with

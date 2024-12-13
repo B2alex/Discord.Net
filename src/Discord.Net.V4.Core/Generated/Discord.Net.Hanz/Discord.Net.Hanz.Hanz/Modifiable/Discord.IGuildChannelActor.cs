@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildChannelActor : 
-    Discord.IModifiable<ulong, Discord.ModifyGuildChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildChannelModel>.Actor<Discord.IGuildChannelActor, Discord.IGuildChannel>,
-    Discord.IModifiable<ulong, Discord.ModifyGuildChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildChannelModel>
+    Discord.IModifiable<ulong, Discord.ModifyGuildChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildChannelModel>.Actor<Discord.IGuildChannelActor, Discord.IGuildChannel>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildChannelModel> ModifyRoute(
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildChannelModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGuildChannelParams args

@@ -97,7 +97,7 @@ public sealed class EntityPropertiesTask : GenerationTask
             Logger.Flush();
             return null;
         }
-
+        
         var result = new EntityProperties(
             new(symbol),
             new(entityProperties.TypeArguments[0]),

@@ -89,6 +89,17 @@ public static class IncrementalProviderExtensions
             (context, spec) => context.AddSource(spec.Path, spec.ToString())
         );
     }
+    
+    public static void RegisterSourceOutput(
+        this IncrementalGeneratorInitializationContext context,
+        IncrementalValueProvider<SourceSpec> provider
+    )
+    {
+        context.RegisterSourceOutput(
+            provider,
+            (context, spec) => context.AddSource(spec.Path, spec.ToString())
+        );
+    }
 
     public static void RegisterSourceOutput(
         this IncrementalGeneratorInitializationContext context,

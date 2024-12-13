@@ -2,6 +2,9 @@ namespace Discord.Net.Hanz;
 
 public static class StringUtils
 {
+    public static string Quote(this string str, char quoteChar = '"')
+        => $"{quoteChar}{str}{quoteChar}";
+    
     public static string WithNewlinePadding(this string str, int padding)
         => str.Replace(Environment.NewLine, $"{Environment.NewLine}{string.Empty.PadLeft(padding)}");
 

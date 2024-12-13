@@ -14,7 +14,9 @@ public record PropertySpec(
     Accessibility AutoSet = Accessibility.NotApplicable,
     string? Getter = null,
     string? Setter = null,
-    string? Expression = null
+    string? Expression = null,
+    string? EqualsClause = null,
+    bool Init = false
 )
 {
     public ImmutableEquatableArray<string> Modifiers { get; init; }
@@ -29,6 +31,8 @@ public record PropertySpec(
     public bool HasSetter
         => Setter is not null || HasAutoSetter;
 
+    private string SetterKeyword => Init ? "init" : "set";
+    
     public static PropertySpec From(IPropertySymbol symbol)
     {
         return new(
@@ -37,12 +41,8 @@ public record PropertySpec(
             symbol.DeclaredAccessibility,
             TypeUtils.GetModifiers(symbol).ToImmutableEquatableArray(),
             null,
-            symbol.GetMethod is not null
-                ? symbol.GetMethod.DeclaredAccessibility
-                : Accessibility.NotApplicable,
-            symbol.SetMethod is not null
-                ? symbol.GetMethod.DeclaredAccessibility
-                : Accessibility.NotApplicable
+            symbol.GetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable,
+            symbol.SetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable
         );
     }
 
@@ -96,10 +96,13 @@ public record PropertySpec(
                             .Append(SyntaxFacts.GetText(AutoSet))
                             .Append(' ');
 
-                    builder.Append("set; ");
+                    builder.Append(SetterKeyword).Append("; ");
                 }
 
                 builder.Append('}');
+
+                if (EqualsClause is not null)
+                    builder.Append($" = {EqualsClause};");
             }
             else
             {
@@ -134,7 +137,7 @@ public record PropertySpec(
                             .Append(SyntaxFacts.GetText(AutoSet))
                             .Append(' ');
 
-                    builder.Append("set");
+                    builder.Append(SetterKeyword);
 
                     if (Setter is not null)
                     {

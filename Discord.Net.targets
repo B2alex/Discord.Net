@@ -33,4 +33,7 @@
         <None Include="../../docs/marketing/logo/PackageLogo.png" Pack="true" PackagePath=""/>
         <None Include="../../NUGET_README.md" Pack="true" PackagePath=""/>
     </ItemGroup>
+    <PropertyGroup>
+        <DiscordOpenAPISpecPath>$(MSBuildThisFileDirectory)/discord-api-spec-3.0/openapi-3.0.yaml</DiscordOpenAPISpecPath>
+    </PropertyGroup>
 </Project>

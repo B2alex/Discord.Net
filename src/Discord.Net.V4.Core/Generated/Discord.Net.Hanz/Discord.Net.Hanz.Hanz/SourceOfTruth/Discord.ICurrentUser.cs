@@ -1,7 +1,7 @@
-﻿using Discord.Models;
-using Discord.Models.Json;
+﻿using System.Diagnostics.CodeAnalysis;
 using Discord.Rest;
-using System.Diagnostics.CodeAnalysis;
+using Discord.Models.Json;
+using Discord.Models;
 
 namespace Discord;
 

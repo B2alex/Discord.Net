@@ -1,5 +1,5 @@
-﻿using Discord;
-using Discord.Rest;
+﻿using Discord.Rest;
+using Discord;
 
 namespace Discord;
 

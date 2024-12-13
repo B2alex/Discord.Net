@@ -1,12 +1,12 @@
-﻿using Discord;
-using Discord.Models;
+﻿using Discord.Models;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildEmoteActor : 
     Discord.ICreatable<Discord.IGuildEmoteActor, Discord.IGuildEmote, ulong, Discord.CreateGuildEmoteProperties, Discord.Models.Json.CreateGuildEmojiParams, Discord.Models.ICustomEmoteModel>
 {
-    internal static IApiInOutRoute<Discord.Models.Json.CreateGuildEmojiParams, Discord.Models.ICustomEmoteModel> CreateRoute(IPathable path, Discord.Models.Json.CreateGuildEmojiParams args) => Discord.Rest.Routes.CreateGuildEmoji(path.Require<Discord.IGuild>(), args);
+    internal static new IApiInOutRoute<Discord.Models.Json.CreateGuildEmojiParams, Discord.Models.ICustomEmoteModel> CreateRoute(IPathable path, Discord.Models.Json.CreateGuildEmojiParams args) => Discord.Rest.Routes.CreateGuildEmoji(path.Require<Discord.IGuild>(), args);
 
     static IApiInOutRoute<Discord.Models.Json.CreateGuildEmojiParams, Discord.Models.ICustomEmoteModel> Discord.ICreatable<Discord.IGuildEmoteActor, Discord.IGuildEmote, ulong, Discord.CreateGuildEmoteProperties, Discord.Models.Json.CreateGuildEmojiParams, Discord.Models.ICustomEmoteModel>.CreateRoute(IPathable path, Discord.Models.Json.CreateGuildEmojiParams args) => CreateRoute(path, args);
 }

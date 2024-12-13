@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildApplicationCommandActor : 
-    Discord.IModifiable<ulong, Discord.ModifyGuildApplicationCommandProperties, Discord.Models.Json.ModifyGuildApplicationCommandParams, Discord.Models.IApplicationCommandModel>.Actor<Discord.IGuildApplicationCommandActor, Discord.IGuildApplicationCommand>,
-    Discord.IModifiable<ulong, Discord.ModifyGuildApplicationCommandProperties, Discord.Models.Json.ModifyGuildApplicationCommandParams, Discord.Models.IApplicationCommandModel>
+    Discord.IModifiable<ulong, Discord.ModifyGuildApplicationCommandProperties, Discord.Models.Json.ModifyGuildApplicationCommandParams, Discord.Models.IApplicationCommandModel>.Actor<Discord.IGuildApplicationCommandActor, Discord.IGuildApplicationCommand>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildApplicationCommandParams, Discord.Models.IApplicationCommandModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyGuildApplicationCommandParams, Discord.Models.IApplicationCommandModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGuildApplicationCommandParams args

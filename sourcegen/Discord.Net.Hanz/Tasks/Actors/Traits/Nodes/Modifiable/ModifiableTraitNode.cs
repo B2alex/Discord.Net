@@ -65,7 +65,7 @@ public sealed class ModifiableTraitNode : TraitNode
                 .Select((target, implementation) => new SourceSpec(
                     $"Modifiable/{target.Type.MetadataName}",
                     target.Type.Namespace!,
-                    new(["Discord", "Discord.Models", "Discord.Rest"]),
+                    new(["Discord", "Discord.Models", "Discord.Rest", "Discord.Models.Json"]),
                     new([
                         implementation.ActorImplementation, implementation.EntityImplementation
                     ])
@@ -225,18 +225,23 @@ public sealed class ModifiableTraitNode : TraitNode
         var actorModifiableInterface = GetActorModifiableInterface(target, state);
         var modifiableInterface = GetModifiableInterface(target, state);
 
+        var modifiers = new List<string>(){"new"};
+        
+        if(HasChildren(target))
+            modifiers.Insert(0, "virtual");
+        
         return TypeSpec
             .From(target.Type)
             .AddModifiers("partial")
-            .AddBases(actorModifiableInterface, modifiableInterface)
+            .AddBases(actorModifiableInterface)
             .AddMethods([
                 new MethodSpec(
                     "ModifyRoute",
                     $"IApiInOutRoute<{state.Properties.Source.ParamsType}, {target.Model}>",
                     Accessibility.Internal,
                     new([
-                        "new",
-                        "static"
+                        "static",
+                        ..modifiers
                     ]),
                     Parameters: new([
                         ("IPathable", "path"),

@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IApplicationEmoteActor : 
-    Discord.IModifiable<ulong, Discord.ModifyApplicationEmoteProperties, Discord.Models.Json.ModifyApplicationEmojiParams, Discord.Models.ICustomEmoteModel>.Actor<Discord.IApplicationEmoteActor, Discord.IApplicationEmote>,
-    Discord.IModifiable<ulong, Discord.ModifyApplicationEmoteProperties, Discord.Models.Json.ModifyApplicationEmojiParams, Discord.Models.ICustomEmoteModel>
+    Discord.IModifiable<ulong, Discord.ModifyApplicationEmoteProperties, Discord.Models.Json.ModifyApplicationEmojiParams, Discord.Models.ICustomEmoteModel>.Actor<Discord.IApplicationEmoteActor, Discord.IApplicationEmote>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyApplicationEmojiParams, Discord.Models.ICustomEmoteModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyApplicationEmojiParams, Discord.Models.ICustomEmoteModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyApplicationEmojiParams args

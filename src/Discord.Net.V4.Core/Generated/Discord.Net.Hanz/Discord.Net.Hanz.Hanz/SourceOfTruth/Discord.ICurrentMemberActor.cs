@@ -1,5 +1,5 @@
-﻿using Discord.Rest;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Discord.Rest;
 
 namespace Discord;
 

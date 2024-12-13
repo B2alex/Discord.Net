@@ -1,6 +1,6 @@
-﻿using Discord.Models;
+﻿using System.Diagnostics.CodeAnalysis;
 using Discord.Rest;
-using System.Diagnostics.CodeAnalysis;
+using Discord.Models;
 
 namespace Discord;
 

@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IStageInstanceActor : 
-    Discord.IModifiable<ulong, Discord.ModifyStageInstanceProperties, Discord.Models.ModifyStageInstanceParams, Discord.Models.IStageInstanceModel>.Actor<Discord.IStageInstanceActor, Discord.IStageInstance>,
-    Discord.IModifiable<ulong, Discord.ModifyStageInstanceProperties, Discord.Models.ModifyStageInstanceParams, Discord.Models.IStageInstanceModel>
+    Discord.IModifiable<ulong, Discord.ModifyStageInstanceProperties, Discord.Models.ModifyStageInstanceParams, Discord.Models.IStageInstanceModel>.Actor<Discord.IStageInstanceActor, Discord.IStageInstance>
 {
-    internal new static IApiInOutRoute<Discord.Models.ModifyStageInstanceParams, Discord.Models.IStageInstanceModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.ModifyStageInstanceParams, Discord.Models.IStageInstanceModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.ModifyStageInstanceParams args

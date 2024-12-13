@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface ICurrentUserVoiceStateActor : 
-    Discord.IModifiable<ulong, Discord.ModifyCurrentUserVoiceStateProperties, Discord.Models.Json.ModifyCurrentUserVoiceStateParams, Discord.Models.IVoiceStateModel>.Actor<Discord.ICurrentUserVoiceStateActor, Discord.ICurrentUserVoiceState>,
-    Discord.IModifiable<ulong, Discord.ModifyCurrentUserVoiceStateProperties, Discord.Models.Json.ModifyCurrentUserVoiceStateParams, Discord.Models.IVoiceStateModel>
+    Discord.IModifiable<ulong, Discord.ModifyCurrentUserVoiceStateProperties, Discord.Models.Json.ModifyCurrentUserVoiceStateParams, Discord.Models.IVoiceStateModel>.Actor<Discord.ICurrentUserVoiceStateActor, Discord.ICurrentUserVoiceState>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyCurrentUserVoiceStateParams, Discord.Models.IVoiceStateModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyCurrentUserVoiceStateParams, Discord.Models.IVoiceStateModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyCurrentUserVoiceStateParams args

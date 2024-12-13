@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildTemplateFromGuildActor : 
-    Discord.IModifiable<string, Discord.ModifyGuildTemplateProperties, Discord.Models.Json.ModifyGuildTemplateParams, Discord.Models.IGuildTemplateModel>.Actor<Discord.IGuildTemplateFromGuildActor, Discord.IGuildTemplate>,
-    Discord.IModifiable<string, Discord.ModifyGuildTemplateProperties, Discord.Models.Json.ModifyGuildTemplateParams, Discord.Models.IGuildTemplateModel>
+    Discord.IModifiable<string, Discord.ModifyGuildTemplateProperties, Discord.Models.Json.ModifyGuildTemplateParams, Discord.Models.IGuildTemplateModel>.Actor<Discord.IGuildTemplateFromGuildActor, Discord.IGuildTemplate>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildTemplateParams, Discord.Models.IGuildTemplateModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyGuildTemplateParams, Discord.Models.IGuildTemplateModel> ModifyRoute(
         IPathable path,
         string id,
         Discord.Models.Json.ModifyGuildTemplateParams args

@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IMemberActor : 
-    Discord.IModifiable<ulong, Discord.ModifyGuildUserProperties, Discord.Models.Json.ModifyGuildMemberParams, Discord.Models.IMemberModel>.Actor<Discord.IMemberActor, Discord.IMember>,
-    Discord.IModifiable<ulong, Discord.ModifyGuildUserProperties, Discord.Models.Json.ModifyGuildMemberParams, Discord.Models.IMemberModel>
+    Discord.IModifiable<ulong, Discord.ModifyGuildUserProperties, Discord.Models.Json.ModifyGuildMemberParams, Discord.Models.IMemberModel>.Actor<Discord.IMemberActor, Discord.IMember>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildMemberParams, Discord.Models.IMemberModel> ModifyRoute(
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.ModifyGuildMemberParams, Discord.Models.IMemberModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGuildMemberParams args

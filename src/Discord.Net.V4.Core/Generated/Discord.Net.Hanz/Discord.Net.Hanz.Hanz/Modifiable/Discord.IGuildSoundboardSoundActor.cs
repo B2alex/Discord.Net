@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildSoundboardSoundActor : 
-    Discord.IModifiable<ulong, Discord.ModifyGuildSoundboardSoundProperties, Discord.Models.ModifyGuildSoundboardSoundParams, Discord.Models.IGuildSoundboardSoundModel>.Actor<Discord.IGuildSoundboardSoundActor, Discord.IGuildSoundboardSound>,
-    Discord.IModifiable<ulong, Discord.ModifyGuildSoundboardSoundProperties, Discord.Models.ModifyGuildSoundboardSoundParams, Discord.Models.IGuildSoundboardSoundModel>
+    Discord.IModifiable<ulong, Discord.ModifyGuildSoundboardSoundProperties, Discord.Models.ModifyGuildSoundboardSoundParams, Discord.Models.IGuildSoundboardSoundModel>.Actor<Discord.IGuildSoundboardSoundActor, Discord.IGuildSoundboardSound>
 {
-    internal new static IApiInOutRoute<Discord.Models.ModifyGuildSoundboardSoundParams, Discord.Models.IGuildSoundboardSoundModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.ModifyGuildSoundboardSoundParams, Discord.Models.IGuildSoundboardSoundModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.ModifyGuildSoundboardSoundParams args

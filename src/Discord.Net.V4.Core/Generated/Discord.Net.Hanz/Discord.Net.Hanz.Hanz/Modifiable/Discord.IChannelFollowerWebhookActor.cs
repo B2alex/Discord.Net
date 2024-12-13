@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IChannelFollowerWebhookActor : 
-    Discord.IModifiable<ulong, Discord.ModifyWebhookProperties, Discord.Models.Json.ModifyWebhookParams, Discord.Models.IChannelFollowerWebhookModel>.Actor<Discord.IChannelFollowerWebhookActor, Discord.IChannelFollowerWebhook>,
-    Discord.IModifiable<ulong, Discord.ModifyWebhookProperties, Discord.Models.Json.ModifyWebhookParams, Discord.Models.IChannelFollowerWebhookModel>
+    Discord.IModifiable<ulong, Discord.ModifyWebhookProperties, Discord.Models.Json.ModifyWebhookParams, Discord.Models.IChannelFollowerWebhookModel>.Actor<Discord.IChannelFollowerWebhookActor, Discord.IChannelFollowerWebhook>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyWebhookParams, Discord.Models.IChannelFollowerWebhookModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyWebhookParams, Discord.Models.IChannelFollowerWebhookModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyWebhookParams args

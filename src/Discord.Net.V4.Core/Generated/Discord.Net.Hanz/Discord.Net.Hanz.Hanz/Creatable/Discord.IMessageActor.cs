@@ -1,12 +1,12 @@
-﻿using Discord;
-using Discord.Models;
+﻿using Discord.Models;
+using Discord;
 
 namespace Discord;
 
 public partial interface IMessageActor : 
     Discord.ICreatable<Discord.IMessageActor, Discord.IMessage, ulong, Discord.CreateMessageProperties, Discord.Models.Json.CreateMessageParams, Discord.Models.IMessageModel>
 {
-    internal static IApiInOutRoute<Discord.Models.Json.CreateMessageParams, Discord.Models.IMessageModel> CreateRoute(IPathable path, Discord.Models.Json.CreateMessageParams args) => Discord.Rest.Routes.CreateMessage(path.Require<Discord.IChannel>(), args);
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.CreateMessageParams, Discord.Models.IMessageModel> CreateRoute(IPathable path, Discord.Models.Json.CreateMessageParams args) => Discord.Rest.Routes.CreateMessage(path.Require<Discord.IChannel>(), args);
 
     static IApiInOutRoute<Discord.Models.Json.CreateMessageParams, Discord.Models.IMessageModel> Discord.ICreatable<Discord.IMessageActor, Discord.IMessage, ulong, Discord.CreateMessageProperties, Discord.Models.Json.CreateMessageParams, Discord.Models.IMessageModel>.CreateRoute(IPathable path, Discord.Models.Json.CreateMessageParams args) => CreateRoute(path, args);
 }

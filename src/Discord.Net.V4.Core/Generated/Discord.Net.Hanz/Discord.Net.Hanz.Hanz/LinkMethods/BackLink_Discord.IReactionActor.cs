@@ -1,6 +1,6 @@
-﻿using Discord.Models;
+﻿using Discord.Rest;
+using Discord.Models;
 using Discord;
-using Discord.Rest;
 
 namespace Discord;
 

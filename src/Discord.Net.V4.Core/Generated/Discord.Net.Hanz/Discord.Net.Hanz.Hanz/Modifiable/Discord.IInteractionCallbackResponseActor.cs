@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IInteractionCallbackResponseActor : 
-    Discord.IModifiable<ulong, Discord.ModifyWebhookMessageProperties, Discord.Models.Json.ModifyWebhookMessageParams, Discord.Models.IInteractionCallbackResponseModel>.Actor<Discord.IInteractionCallbackResponseActor, Discord.IInteractionCallbackResponse>,
-    Discord.IModifiable<ulong, Discord.ModifyWebhookMessageProperties, Discord.Models.Json.ModifyWebhookMessageParams, Discord.Models.IInteractionCallbackResponseModel>
+    Discord.IModifiable<ulong, Discord.ModifyWebhookMessageProperties, Discord.Models.Json.ModifyWebhookMessageParams, Discord.Models.IInteractionCallbackResponseModel>.Actor<Discord.IInteractionCallbackResponseActor, Discord.IInteractionCallbackResponse>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyWebhookMessageParams, Discord.Models.IInteractionCallbackResponseModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyWebhookMessageParams, Discord.Models.IInteractionCallbackResponseModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyWebhookMessageParams args

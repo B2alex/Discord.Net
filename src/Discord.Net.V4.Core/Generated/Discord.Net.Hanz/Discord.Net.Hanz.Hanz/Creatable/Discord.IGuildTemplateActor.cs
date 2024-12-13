@@ -1,12 +1,12 @@
-﻿using Discord;
-using Discord.Models;
+﻿using Discord.Models;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildTemplateActor : 
     Discord.ICreatable<Discord.IGuildTemplateActor, Discord.IGuildTemplate, string, Discord.CreateGuildTemplateProperties, Discord.Models.Json.CreateTemplateParams, Discord.Models.IGuildTemplateModel>
 {
-    internal static IApiInOutRoute<Discord.Models.Json.CreateTemplateParams, Discord.Models.IGuildTemplateModel> CreateRoute(IPathable path, Discord.Models.Json.CreateTemplateParams args) => Discord.Rest.Routes.CreateGuildTemplate(path.Require<Discord.IGuild>(), args);
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.CreateTemplateParams, Discord.Models.IGuildTemplateModel> CreateRoute(IPathable path, Discord.Models.Json.CreateTemplateParams args) => Discord.Rest.Routes.CreateGuildTemplate(path.Require<Discord.IGuild>(), args);
 
     static IApiInOutRoute<Discord.Models.Json.CreateTemplateParams, Discord.Models.IGuildTemplateModel> Discord.ICreatable<Discord.IGuildTemplateActor, Discord.IGuildTemplate, string, Discord.CreateGuildTemplateProperties, Discord.Models.Json.CreateTemplateParams, Discord.Models.IGuildTemplateModel>.CreateRoute(IPathable path, Discord.Models.Json.CreateTemplateParams args) => CreateRoute(path, args);
 }

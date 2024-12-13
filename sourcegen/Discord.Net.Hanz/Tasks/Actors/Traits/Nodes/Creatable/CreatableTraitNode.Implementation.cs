@@ -83,6 +83,11 @@ public sealed partial class CreatableTraitNode
                 details.RouteGenerics.Select(x => x.DisplayString)
             );
 
+        var modifiers = new List<string>(){"new"};
+        
+        if(HasChildren(target))
+            modifiers.Insert(0, "virtual");
+        
         spec = spec
             .AddBases(creatableInterface)
             .AddMethods([
@@ -92,7 +97,7 @@ public sealed partial class CreatableTraitNode
                     Accessibility: Accessibility.Internal,
                     Modifiers: new([
                         "static",
-                        ..ancestors.Count > 0 ? (string[]) ["new"] : [],
+                        ..modifiers,
                     ]),
                     Parameters: new([
                         ("IPathable", "path"),

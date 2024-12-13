@@ -1,6 +1,6 @@
-﻿using Discord;
+﻿using MorseCode.ITask;
 using Discord.Models;
-using MorseCode.ITask;
+using Discord;
 
 namespace Discord;
 

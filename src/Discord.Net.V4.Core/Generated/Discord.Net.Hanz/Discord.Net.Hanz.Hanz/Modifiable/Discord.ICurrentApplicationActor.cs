@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface ICurrentApplicationActor : 
-    Discord.IModifiable<ulong, Discord.ModifyCurrentApplicationProperties, Discord.Models.Json.ModifyCurrentApplicationParams, Discord.Models.IApplicationModel>.Actor<Discord.ICurrentApplicationActor, Discord.ICurrentApplication>,
-    Discord.IModifiable<ulong, Discord.ModifyCurrentApplicationProperties, Discord.Models.Json.ModifyCurrentApplicationParams, Discord.Models.IApplicationModel>
+    Discord.IModifiable<ulong, Discord.ModifyCurrentApplicationProperties, Discord.Models.Json.ModifyCurrentApplicationParams, Discord.Models.IApplicationModel>.Actor<Discord.ICurrentApplicationActor, Discord.ICurrentApplication>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyCurrentApplicationParams, Discord.Models.IApplicationModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyCurrentApplicationParams, Discord.Models.IApplicationModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyCurrentApplicationParams args

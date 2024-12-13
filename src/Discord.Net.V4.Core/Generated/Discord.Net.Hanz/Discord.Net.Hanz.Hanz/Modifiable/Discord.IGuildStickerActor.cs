@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildStickerActor : 
-    Discord.IModifiable<ulong, Discord.ModifyStickerProperties, Discord.Models.Json.ModifyGuildStickerParams, Discord.Models.IGuildStickerModel>.Actor<Discord.IGuildStickerActor, Discord.IGuildSticker>,
-    Discord.IModifiable<ulong, Discord.ModifyStickerProperties, Discord.Models.Json.ModifyGuildStickerParams, Discord.Models.IGuildStickerModel>
+    Discord.IModifiable<ulong, Discord.ModifyStickerProperties, Discord.Models.Json.ModifyGuildStickerParams, Discord.Models.IGuildStickerModel>.Actor<Discord.IGuildStickerActor, Discord.IGuildSticker>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildStickerParams, Discord.Models.IGuildStickerModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyGuildStickerParams, Discord.Models.IGuildStickerModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGuildStickerParams args

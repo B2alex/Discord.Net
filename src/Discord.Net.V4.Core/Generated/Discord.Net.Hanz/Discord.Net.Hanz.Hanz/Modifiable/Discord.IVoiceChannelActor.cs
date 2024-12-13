@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IVoiceChannelActor : 
-    Discord.IModifiable<ulong, Discord.ModifyVoiceChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildVoiceChannelModel>.Actor<Discord.IVoiceChannelActor, Discord.IVoiceChannel>,
-    Discord.IModifiable<ulong, Discord.ModifyVoiceChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildVoiceChannelModel>
+    Discord.IModifiable<ulong, Discord.ModifyVoiceChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildVoiceChannelModel>.Actor<Discord.IVoiceChannelActor, Discord.IVoiceChannel>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildVoiceChannelModel> ModifyRoute(
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IGuildVoiceChannelModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGuildChannelParams args

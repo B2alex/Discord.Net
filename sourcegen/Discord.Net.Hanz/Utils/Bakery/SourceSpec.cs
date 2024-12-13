@@ -17,7 +17,7 @@ public record SourceSpec(
     {
         var builder = new StringBuilder();
 
-        foreach (var usingDirective in Usings.Distinct())
+        foreach (var usingDirective in Usings.Distinct().OrderByDescending(x => x))
         {
             builder.Append("using ").Append(usingDirective).AppendLine(";");
         }

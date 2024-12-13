@@ -1,12 +1,12 @@
-﻿using Discord;
-using Discord.Models;
+﻿using Discord.Models;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildScheduledEventActor : 
     Discord.ICreatable<Discord.IGuildScheduledEventActor, Discord.IGuildScheduledEvent, ulong, Discord.CreateGuildScheduledEventProperties, Discord.Models.Json.CreateGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel>
 {
-    internal static IApiInOutRoute<Discord.Models.Json.CreateGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel> CreateRoute(IPathable path, Discord.Models.Json.CreateGuildScheduledEventParams args) => Discord.Rest.Routes.CreateGuildScheduledEvent(path.Require<Discord.IGuild>(), args);
+    internal static new IApiInOutRoute<Discord.Models.Json.CreateGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel> CreateRoute(IPathable path, Discord.Models.Json.CreateGuildScheduledEventParams args) => Discord.Rest.Routes.CreateGuildScheduledEvent(path.Require<Discord.IGuild>(), args);
 
     static IApiInOutRoute<Discord.Models.Json.CreateGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel> Discord.ICreatable<Discord.IGuildScheduledEventActor, Discord.IGuildScheduledEvent, ulong, Discord.CreateGuildScheduledEventProperties, Discord.Models.Json.CreateGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel>.CreateRoute(IPathable path, Discord.Models.Json.CreateGuildScheduledEventParams args) => CreateRoute(path, args);
 }

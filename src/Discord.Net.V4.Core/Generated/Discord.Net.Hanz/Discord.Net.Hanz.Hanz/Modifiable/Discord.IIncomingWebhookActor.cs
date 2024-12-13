@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IIncomingWebhookActor : 
-    Discord.IModifiable<ulong, Discord.ModifyWebhookProperties, Discord.Models.Json.ModifyWebhookParams, Discord.Models.IIncomingWebhookModel>.Actor<Discord.IIncomingWebhookActor, Discord.IIncomingWebhook>,
-    Discord.IModifiable<ulong, Discord.ModifyWebhookProperties, Discord.Models.Json.ModifyWebhookParams, Discord.Models.IIncomingWebhookModel>
+    Discord.IModifiable<ulong, Discord.ModifyWebhookProperties, Discord.Models.Json.ModifyWebhookParams, Discord.Models.IIncomingWebhookModel>.Actor<Discord.IIncomingWebhookActor, Discord.IIncomingWebhook>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyWebhookParams, Discord.Models.IIncomingWebhookModel> ModifyRoute(
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.ModifyWebhookParams, Discord.Models.IIncomingWebhookModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyWebhookParams args

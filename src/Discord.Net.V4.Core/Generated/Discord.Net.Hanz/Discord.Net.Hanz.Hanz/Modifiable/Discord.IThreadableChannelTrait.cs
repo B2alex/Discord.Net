@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IThreadableChannelTrait : 
-    Discord.IModifiable<ulong, Discord.ModifyThreadableChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IThreadableChannelModel>.Actor<Discord.IThreadableChannelTrait, Discord.IThreadableChannel>,
-    Discord.IModifiable<ulong, Discord.ModifyThreadableChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IThreadableChannelModel>
+    Discord.IModifiable<ulong, Discord.ModifyThreadableChannelProperties, Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IThreadableChannelModel>.Actor<Discord.IThreadableChannelTrait, Discord.IThreadableChannel>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IThreadableChannelModel> ModifyRoute(
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.ModifyGuildChannelParams, Discord.Models.IThreadableChannelModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGuildChannelParams args

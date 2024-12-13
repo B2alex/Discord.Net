@@ -19,10 +19,13 @@ public record TypeSpec(
     ImmutableEquatableArray<ConstructorSpec>? Constructors = null,
     ImmutableEquatableArray<MethodSpec>? Methods = null,
     ImmutableEquatableArray<GenericSpec>? Generics = null,
-    ImmutableEquatableArray<GenericConstraintSpec>? GenericConstraints = null
+    ImmutableEquatableArray<GenericConstraintSpec>? GenericConstraints = null,
+    ImmutableEquatableArray<ParameterSpec>? Parameters = null,
+    bool Record = false
 )
 {
-    public bool IsDefault => this == default;
+    public ImmutableEquatableArray<ParameterSpec> Parameters { get; init; } =
+        Parameters ?? ImmutableEquatableArray<ParameterSpec>.Empty;
 
     public ImmutableEquatableArray<string> Bases { get; init; }
         = Bases ?? ImmutableEquatableArray<string>.Empty;
@@ -54,6 +57,15 @@ public record TypeSpec(
     public ImmutableEquatableArray<GenericConstraintSpec> GenericConstraints { get; init; }
         = GenericConstraints ?? ImmutableEquatableArray<GenericConstraintSpec>.Empty;
 
+    public TypeSpec AddParameters(IEnumerable<ParameterSpec> parameters)
+        => this with {Parameters = new([..Parameters, ..parameters])};
+    
+    public TypeSpec AddParameters(params ParameterSpec[] parameters)
+        => this with {Parameters = new([..Parameters, ..parameters])};
+    
+    public TypeSpec AddBaseClass(string baseClass)
+        => this with {Bases = new([baseClass, ..Bases])};
+    
     public TypeSpec AddBases(params string[] bases)
         => this with {Bases = Bases.AddRange(bases.Where(x => !string.IsNullOrWhiteSpace(x)))};
 
@@ -102,6 +114,16 @@ public record TypeSpec(
     {
         Children = Children.Add(type)
     };
+
+    public TypeSpec AddOrReplaceNestedType(TypeSpec spec)
+    {
+        var existing = Children.FirstOrDefault(x => x.Name == spec.Name);
+
+        if (existing is null)
+            return AddNestedType(spec);
+
+        return this with {Children = Children.Remove(existing).Add(spec)};
+    }
 
     public TypeSpec AddNestedTypes(
         IEnumerable<TypeSpec> types
@@ -179,8 +201,11 @@ public record TypeSpec(
                 .Append(' ');
         }
 
+
         builder
-            .Append(Kind.ToString().ToLower())
+            .Append(
+                Record ? "record" : Kind.ToString().ToLower()
+            )
             .Append(' ')
             .Append(Name);
 
@@ -190,6 +215,14 @@ public record TypeSpec(
                 .Append('<')
                 .Append(string.Join(", ", Generics.Distinct()))
                 .Append('>');
+        }
+
+        if (Parameters.Count > 0)
+        {
+            builder
+                .Append('(')
+                .Append(string.Join(", ", Parameters))
+                .Append(')');
         }
 
         if (Bases.Count > 0)
@@ -203,7 +236,8 @@ public record TypeSpec(
         {
             builder
                 .AppendLine()
-                .Append(string.Join(Environment.NewLine, GenericConstraints.Distinct()).Prefix(4).WithNewlinePadding(4));
+                .Append(string.Join(Environment.NewLine, GenericConstraints.Distinct()).Prefix(4)
+                    .WithNewlinePadding(4));
         }
 
         if (HasBrackets)

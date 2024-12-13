@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IGuildScheduledEventActor : 
-    Discord.IModifiable<ulong, Discord.ModifyGuildScheduledEventProperties, Discord.Models.Json.ModifyGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel>.Actor<Discord.IGuildScheduledEventActor, Discord.IGuildScheduledEvent>,
-    Discord.IModifiable<ulong, Discord.ModifyGuildScheduledEventProperties, Discord.Models.Json.ModifyGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel>
+    Discord.IModifiable<ulong, Discord.ModifyGuildScheduledEventProperties, Discord.Models.Json.ModifyGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel>.Actor<Discord.IGuildScheduledEventActor, Discord.IGuildScheduledEvent>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel> ModifyRoute(
+    internal static new IApiInOutRoute<Discord.Models.Json.ModifyGuildScheduledEventParams, Discord.Models.IGuildScheduledEventModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyGuildScheduledEventParams args

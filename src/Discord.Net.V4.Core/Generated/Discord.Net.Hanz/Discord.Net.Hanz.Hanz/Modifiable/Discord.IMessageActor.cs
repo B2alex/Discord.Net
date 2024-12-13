@@ -1,14 +1,14 @@
-﻿using Discord;
+﻿using Discord.Rest;
+using Discord.Models.Json;
 using Discord.Models;
-using Discord.Rest;
+using Discord;
 
 namespace Discord;
 
 public partial interface IMessageActor : 
-    Discord.IModifiable<ulong, Discord.ModifyMessageProperties, Discord.Models.Json.ModifyMessageParams, Discord.Models.IMessageModel>.Actor<Discord.IMessageActor, Discord.IMessage>,
-    Discord.IModifiable<ulong, Discord.ModifyMessageProperties, Discord.Models.Json.ModifyMessageParams, Discord.Models.IMessageModel>
+    Discord.IModifiable<ulong, Discord.ModifyMessageProperties, Discord.Models.Json.ModifyMessageParams, Discord.Models.IMessageModel>.Actor<Discord.IMessageActor, Discord.IMessage>
 {
-    internal new static IApiInOutRoute<Discord.Models.Json.ModifyMessageParams, Discord.Models.IMessageModel> ModifyRoute(
+    internal static virtual new IApiInOutRoute<Discord.Models.Json.ModifyMessageParams, Discord.Models.IMessageModel> ModifyRoute(
         IPathable path,
         ulong id,
         Discord.Models.Json.ModifyMessageParams args

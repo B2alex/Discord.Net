@@ -1,12 +1,12 @@
-﻿using Discord;
-using Discord.Models;
+﻿using Discord.Models;
+using Discord;
 
 namespace Discord;
 
 public partial interface IApplicationEmoteActor : 
     Discord.ICreatable<Discord.IApplicationEmoteActor, Discord.IApplicationEmote, ulong, Discord.CreateApplicationEmoteProperties, Discord.Models.Json.CreateApplicationEmojiParams, Discord.Models.ICustomEmoteModel>
 {
-    internal static IApiInOutRoute<Discord.Models.Json.CreateApplicationEmojiParams, Discord.Models.ICustomEmoteModel> CreateRoute(IPathable path, Discord.Models.Json.CreateApplicationEmojiParams args) => Discord.Rest.Routes.CreateApplicationEmoji(path.Require<Discord.IApplication>(), args);
+    internal static new IApiInOutRoute<Discord.Models.Json.CreateApplicationEmojiParams, Discord.Models.ICustomEmoteModel> CreateRoute(IPathable path, Discord.Models.Json.CreateApplicationEmojiParams args) => Discord.Rest.Routes.CreateApplicationEmoji(path.Require<Discord.IApplication>(), args);
 
     static IApiInOutRoute<Discord.Models.Json.CreateApplicationEmojiParams, Discord.Models.ICustomEmoteModel> Discord.ICreatable<Discord.IApplicationEmoteActor, Discord.IApplicationEmote, ulong, Discord.CreateApplicationEmoteProperties, Discord.Models.Json.CreateApplicationEmojiParams, Discord.Models.ICustomEmoteModel>.CreateRoute(IPathable path, Discord.Models.Json.CreateApplicationEmojiParams args) => CreateRoute(path, args);
 }
