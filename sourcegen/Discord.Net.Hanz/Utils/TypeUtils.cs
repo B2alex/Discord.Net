@@ -5,6 +5,119 @@ namespace Discord.Net.Hanz.Utils;
 
 public static class TypeUtils
 {
+    public static bool IsAssignableFrom(this ITypeSymbol? baseType, ITypeSymbol? type)
+    {
+        if (baseType is null || type is null)
+        {
+            return false;
+        }
+
+        if (baseType.TypeKind is TypeKind.Interface)
+        {
+            if (type.AllInterfaces.Contains(baseType, SymbolEqualityComparer.Default))
+            {
+                return true;
+            }
+        }
+
+        for (INamedTypeSymbol? current = type as INamedTypeSymbol; current != null; current = current.BaseType)
+        {
+            if (SymbolEqualityComparer.Default.Equals(baseType, current))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    public static INamedTypeSymbol? GetCompatibleGenericBaseType(this ITypeSymbol type, INamedTypeSymbol? baseType)
+    {
+        if (baseType is null)
+        {
+            return null;
+        }
+        
+        if (baseType.TypeKind is TypeKind.Interface)
+        {
+            foreach (INamedTypeSymbol interfaceType in type.AllInterfaces)
+            {
+                if (IsMatchingGenericType(interfaceType, baseType))
+                {
+                    return interfaceType;
+                }
+            }
+        }
+
+        for (INamedTypeSymbol? current = type as INamedTypeSymbol; current != null; current = current.BaseType)
+        {
+            if (IsMatchingGenericType(current, baseType))
+            {
+                return current;
+            }
+        }
+
+        return null;
+
+        static bool IsMatchingGenericType(INamedTypeSymbol candidate, INamedTypeSymbol baseType)
+        {
+            return candidate.IsGenericType && SymbolEqualityComparer.Default.Equals(candidate.ConstructedFrom, baseType);
+        }
+    }
+    
+    public static bool HasAttribute(this ISymbol symbol, string fullName)
+        => symbol.GetAttributes().Any(attr => attr.AttributeClass?.ToDisplayString() == fullName);
+    
+    public static bool HasCodeAnalysisAttribute(this ISymbol symbol, string attributeName)
+    {
+        return symbol.GetAttributes().Any(attr =>
+            attr.AttributeClass?.Name == attributeName &&
+            attr.AttributeClass.ContainingNamespace.ToDisplayString() == "System.Diagnostics.CodeAnalysis");
+    }
+    
+    public static bool IsOutputTypeNonNullable(this ISymbol symbol, ITypeSymbol returnType)
+    {
+        if (symbol.HasCodeAnalysisAttribute("MaybeNullAttribute"))
+        {
+            return false;
+        }
+
+        if (symbol.HasCodeAnalysisAttribute("NotNullAttribute"))
+        {
+            return true;
+        }
+
+        if (returnType is ITypeParameterSymbol { HasNotNullConstraint: false })
+        {
+            return false;
+        }
+
+        return returnType.NullableAnnotation is NullableAnnotation.NotAnnotated;
+    }
+
+    public static bool IsInputTypeNonNullable(this ISymbol symbol, ITypeSymbol inputType)
+    {
+        if (symbol.HasCodeAnalysisAttribute("AllowNullAttribute"))
+        {
+            return false;
+        }
+
+        if (symbol.HasCodeAnalysisAttribute("DisallowNullAttribute"))
+        {
+            return true;
+        }
+
+        if (inputType is ITypeParameterSymbol { HasNotNullConstraint: false })
+        {
+            return false;
+        }
+
+        return inputType.NullableAnnotation is NullableAnnotation.NotAnnotated;
+    }
+    
+    public static bool IsNullableType(this ITypeSymbol type)
+        => !type.IsValueType || type.OriginalDefinition.SpecialType is SpecialType.System_Nullable_T; 
+    
     public static IEnumerable<string> GetModifiers(ISymbol symbol)
     {
         if(symbol.IsStatic)

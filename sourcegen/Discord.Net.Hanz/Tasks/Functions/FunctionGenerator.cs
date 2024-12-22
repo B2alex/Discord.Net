@@ -167,7 +167,7 @@ public sealed class FunctionGenerator : ISyntaxGenerationCombineTask<FunctionGen
         return VariableFuncArgs.IsTargetMethod(method) || TransitiveFill.IsTargetMethod(method);
     }
 
-    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, ILogger logger,
         CancellationToken token)
     {
         switch (context.Node)
@@ -229,7 +229,7 @@ public sealed class FunctionGenerator : ISyntaxGenerationCombineTask<FunctionGen
         return invocation.Expression.ToString().EndsWith(method.MethodSymbol.Name);
     }
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, ILogger logger)
     {
         var processed =
             new Dictionary<
@@ -260,15 +260,11 @@ public sealed class FunctionGenerator : ISyntaxGenerationCombineTask<FunctionGen
 
         foreach (var methodTarget in methods)
         {
-            var methodLogger = logger.WithSemanticContext(methodTarget.SemanticModel);
-
-            methodLogger.Log($"Candidate method: {methodTarget.Method.MethodSymbol.Name}");
+            logger.Log($"Candidate method: {methodTarget.Method.MethodSymbol.Name}");
         }
 
         foreach (var target in targets.OfType<InvocationGenerationTarget>())
         {
-            var targetLogger = logger.WithSemanticContext(target.SemanticModel);
-
             var targetMethods = methods
                 .Where(x =>
                     target.TargetMethods.Contains(x.Method.MethodSymbol, SymbolEqualityComparer.Default))
@@ -288,13 +284,13 @@ public sealed class FunctionGenerator : ISyntaxGenerationCombineTask<FunctionGen
                 continue;
             }
 
-            targetLogger.Log(
+            logger.Log(
                 $"Found {targetMethods.Length} candidate methods for {target.InvocationExpression.NormalizeWhitespace()}"
             );
 
             foreach (var method in targetMethods)
             {
-                targetLogger.Log($" - {method.Method.MethodSymbol}");
+                logger.Log($" - {method.Method.MethodSymbol}");
             }
 
             foreach (var targetMethod in targetMethods)
@@ -336,55 +332,51 @@ public sealed class FunctionGenerator : ISyntaxGenerationCombineTask<FunctionGen
 
                 var variableFuncArgsResult = new Dictionary<int, int>();
 
-                targetLogger.Log($"Processing {targetMethod.Method.MethodSymbol}");
+                logger.Log($"Processing {targetMethod.Method.MethodSymbol}");
 
                 if (VariableFuncArgs.IsTargetMethod(targetMethod.Method.MethodSymbol))
                 {
-                    targetLogger.Log(" - Running VariableFuncArgs");
-
-                    var taskLogger = targetLogger.GetSubLogger("VariableFuncArgs");
-
+                    logger.Log(" - Running VariableFuncArgs");
+                    
                     VariableFuncArgs.Apply(
                         ref newFunctionSyntax,
                         target.InvocationExpression,
                         targetMethod.Method,
                         target.SemanticModel,
-                        taskLogger,
+                        logger,
                         out variableFuncArgsResult
                     );
 
-                    taskLogger.Flush();
+                    logger.Flush();
                 }
 
                 if (TransitiveFill.IsTargetMethod(targetMethod.Method.MethodSymbol))
                 {
-                    targetLogger.Log(" - Running TransitiveFill");
-
-                    var taskLogger = targetLogger.GetSubLogger("TransitiveFill");
-
+                    logger.Log(" - Running TransitiveFill");
+                    
                     TransitiveFill.Apply(
                         ref newFunctionSyntax,
                         target.InvocationExpression,
                         targetMethod.Method.MethodSymbol,
                         target.SemanticModel,
-                        taskLogger,
+                        logger,
                         variableFuncArgsResult
                     );
 
-                    taskLogger.Flush();
+                    logger.Flush();
                 }
 
                 if (newFunctionSyntax.IsEquivalentTo(targetMethod.Method.MethodSyntax) &&
                     typeSyntax.IsEquivalentTo(type.Syntax))
                 {
-                    targetLogger.Warn(
+                    logger.Warn(
                         $"No structural changes found for {targetMethod.Method.MethodSymbol.ToDisplayString()}");
                     continue;
                 }
 
                 if (!type.Methods.Add(newFunctionSyntax.ToString()))
                 {
-                    targetLogger.Warn($"Skipping {targetMethod.Method.MethodSymbol}: Syntax equivalent exists");
+                    logger.Warn($"Skipping {targetMethod.Method.MethodSymbol}: Syntax equivalent exists");
                     continue;
                 }
 

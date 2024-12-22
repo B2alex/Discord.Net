@@ -18,7 +18,7 @@ public class NestedTypeRoot<TSource> : ProviderNesting<TSource>
         _provider = provider;
     }
 
-    public TypeRootProviders<TSource> Build(Logger logger)
+    public TypeRootProviders<TSource> Build(ILogger logger)
     {
         var nodes = Children
             .Select(x => x(_provider))
@@ -51,10 +51,8 @@ public class NestedTypeRoot<TSource> : ProviderNesting<TSource>
         );
     }
 
-    private static void LogGraph(IntrospectionGraph<TSource> graph, Logger logger)
+    private static void LogGraph(IntrospectionGraph<TSource> graph, ILogger logger)
     {
-        logger.WithCleanLogFile();
-
         try
         {
             logger.Log($"{graph.Trees.Length} trees:");

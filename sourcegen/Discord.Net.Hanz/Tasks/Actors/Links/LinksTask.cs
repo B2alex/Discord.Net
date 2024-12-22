@@ -22,11 +22,11 @@ public class LinksTask : GenerationTask
         TargetAncestorsProvider { get; }
 
 
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
 
     public LinksTask(
         IncrementalGeneratorInitializationContext context,
-        Logger logger
+        ILogger logger
     ) : base(context, logger)
     {
         _logger = logger;
@@ -51,10 +51,7 @@ public class LinksTask : GenerationTask
                         info is ActorTraitInfo actorTrait ? actorTrait.Some<ActorOrTraitInfo>() : default
                     )
             )
-            .KeyedBy(x => x.Type.DisplayString)
-            .WithLogging(
-                Logger.GetSubLogger("TargetsTracing")
-            );
+            .KeyedBy(x => x.Type.DisplayString);
 
         TargetAncestorsProvider = TargetsProvider
             .ValuesProvider

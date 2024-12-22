@@ -7,11 +7,10 @@ using Discord;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetChannel), typeof(GuildStageChannel)),
-    Creatable<CreateGuildStageChannelProperties>(
-        nameof(Routes.CreateGuildChannel),
-        WhenBackLinkingFrom = [typeof(IGuildActor)],
-        RouteGenerics = [typeof(GuildStageChannel)]
+    Loadable<Routes.GetChannel>,
+    Creatable<Routes.CreateGuildChannel, CreateGuildStageChannelProperties>
+    (
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
     )
 ]
 public partial interface IStageChannelActor :

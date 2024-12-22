@@ -4,9 +4,9 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetWebhookMessage)),
-    Modifiable<ModifyWebhookMessageProperties>(nameof(Routes.ModifyWebhookMessage)),
-    Deletable(nameof(Routes.DeleteWebhookMessage))
+    Loadable<Routes.GetWebhookMessage>,
+    Modifiable<Routes.UpdateWebhookMessage, ModifyWebhookMessageProperties>,
+    Deletable<Routes.DeleteWebhookMessage>
 ]
 public partial interface IWebhookMessageActor :
     IMessageActor,

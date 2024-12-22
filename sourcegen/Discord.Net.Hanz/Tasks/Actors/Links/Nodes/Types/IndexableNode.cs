@@ -8,7 +8,7 @@ namespace Discord.Net.Hanz.Tasks.Actors.Links.Nodes.Types;
 public class IndexableNode :
     BaseLinkTypeNode
 {
-    public IndexableNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public IndexableNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
     }
 

@@ -11,7 +11,7 @@ public sealed class DeletableTraitNode : TraitNode
 {
     public IncrementalKeyValueProvider<TraitImplementationTarget, RouteInfo> DeletableActors { get; }
 
-    public DeletableTraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public DeletableTraitNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         DeletableActors = context.SyntaxProvider
             .ForAttributeWithMetadataName(

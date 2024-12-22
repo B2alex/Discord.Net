@@ -5,14 +5,15 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetGuildEmoji)), Deletable(nameof(Routes.DeleteGuildEmoji)),
-    Creatable<CreateGuildEmoteProperties>(
-        nameof(Routes.CreateGuildEmoji),
+    Loadable<Routes.GetGuildEmoji>,
+    Deletable<Routes.DeleteGuildEmoji>,
+    Creatable<Routes.CreateGuildEmoji, CreateGuildEmoteProperties>
+    (
         WhenBackLinkingFrom = [typeof(IGuildActor)]
     ),
-    Modifiable<ModifyGuildEmoteProperties>(nameof(Routes.ModifyGuildEmoji)),
-    Refreshable(nameof(Routes.GetGuildEmoji)),
-    FetchableOfMany(nameof(Routes.ListGuildEmojis))
+    Modifiable<Routes.UpdateGuildEmoji, ModifyGuildEmoteProperties>,
+    Refreshable,
+    FetchableOfMany<Routes.ListGuildEmojis>,
 ]
 public partial interface IGuildEmoteActor :
     IActor<ulong, IGuildEmote>,

@@ -37,7 +37,7 @@ public sealed class AutoBackLinkNode : LinkNode
         ImmutableEquatableArray<LinkPropertyOverride>
     > _linkPropertiesOverrideProvider;
 
-    public AutoBackLinkNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public AutoBackLinkNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         var provider = GetTask<ActorsTask>()
             .Actors
@@ -155,8 +155,6 @@ public sealed class AutoBackLinkNode : LinkNode
 
     private ImmutableEquatableArray<LinkProperty> GetLinkProperties(ActorsTask.ActorSymbols symbols)
     {
-        using var logger = Logger.GetSubLogger(symbols.Actor.ToFullMetadataName()).WithCleanLogFile();
-
         var properties = new List<LinkProperty>();
 
         foreach
@@ -170,7 +168,7 @@ public sealed class AutoBackLinkNode : LinkNode
                 )
         )
         {
-            logger.Log($" - {property.Type}: {property.Name} ({property.Type.Kind})");
+            Logger.Log($" - {property.Type}: {property.Name} ({property.Type.Kind})");
 
             var parts = property.Type.ToDisplayParts();
 

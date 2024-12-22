@@ -8,12 +8,10 @@ namespace Discord.Net.Hanz;
 public abstract class GenerationTask
 {
     private static readonly Dictionary<Type, GenerationTask> _tasks = [];
-
-    private static readonly Logger _logger = Logger.CreateForTask("GenerationTaskBuilder").WithCleanLogFile();
-
-    public Logger Logger { get; }
     
-    public GenerationTask(IncrementalGeneratorInitializationContext context, Logger logger)
+    public ILogger Logger { get; }
+    
+    public GenerationTask(IncrementalGeneratorInitializationContext context, ILogger logger)
     {
         Logger = logger;
     }
@@ -21,31 +19,17 @@ public abstract class GenerationTask
     public static void Initialize(IncrementalGeneratorInitializationContext context)
     {
         _tasks.Clear();
-        _logger.Clean();
 
-        try
+        var queue = new Queue<Type>(
+            typeof(GenerationTask).Assembly.GetTypes()
+                .Where(x => !x.IsAbstract && typeof(GenerationTask).IsAssignableFrom(x))
+        );
+            
+        while (queue.Count > 0)
         {
-            var queue = new Queue<Type>(
-                typeof(GenerationTask).Assembly.GetTypes()
-                    .Where(x => !x.IsAbstract && typeof(GenerationTask).IsAssignableFrom(x))
-            );
+            var type = queue.Dequeue();
 
-            _logger.Log($"{queue.Count} tasks to initialize...");
-
-            while (queue.Count > 0)
-            {
-                var type = queue.Dequeue();
-
-                GetOrCreate(type, context);
-            }
-        }
-        catch (Exception x)
-        {
-            _logger.Log($"Failed: {x}");
-        }
-        finally
-        {
-            _logger.Flush();
+            GetOrCreate(type, context);
         }
     }
 
@@ -61,13 +45,8 @@ public abstract class GenerationTask
         {
             if (_tasks.TryGetValue(type, out var rawTask))
                 return rawTask;
-        
-            var logger = 
-                typeof(Node).IsAssignableFrom(type)
-                    ? Node.NodeLogger.GetSubLogger(type.Name)
-                    : Logger.CreateForTask(type.Name).WithCleanLogFile();
-        
-            _logger.Log($"Creating instance of {type}..");
+
+            var logger = Logging.GetLogger(new(type, typeof(Node).IsAssignableFrom(type) ? "Nodes" : "Tasks"));
         
             var instance = (GenerationTask) Activator.CreateInstance(type, context, logger);
             _tasks[type] = instance;

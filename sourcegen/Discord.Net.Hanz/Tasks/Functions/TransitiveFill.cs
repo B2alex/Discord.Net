@@ -43,14 +43,14 @@ public static class TransitiveFill
 
         public Dictionary<int, int> VariableFuncArgsMap { get; }
 
-        public Logger Logger { get; }
+        public ILogger Logger { get; }
 
         public Context(
             SemanticModel model,
             IMethodSymbol method,
             InvocationExpressionSyntax invocation,
             Dictionary<int, int> variableFuncArgsMap,
-            Logger logger)
+            ILogger logger)
         {
             SemanticModel = model;
             Method = method;
@@ -276,7 +276,7 @@ public static class TransitiveFill
         InvocationExpressionSyntax invocationExpression,
         IMethodSymbol method,
         SemanticModel semantic,
-        Logger logger,
+        ILogger logger,
         Dictionary<int, int> variableFuncArgsMap)
     {
         logger.Log($"Executing TransitiveFill on {method}");
@@ -486,7 +486,7 @@ public static class TransitiveFill
 
     private static Dictionary<ITypeParameterSymbol, ITypeSymbol> FlattenResults(
         Context context,
-        Logger logger)
+        ILogger logger)
     {
         var result = new Dictionary<ITypeParameterSymbol, ITypeSymbol>(SymbolEqualityComparer.Default);
 
@@ -644,7 +644,7 @@ public static class TransitiveFill
     private static void ResolveGenericForTypeParameter(
         ITypeParameterSymbol parameter,
         Context context,
-        Logger logger)
+        ILogger logger)
     {
         var fillType =
             GetGenericFillType(context.Method.TypeArguments.IndexOf(parameter), context, logger);
@@ -663,7 +663,7 @@ public static class TransitiveFill
     private static void ResolveGenericForParameter(
         Context context,
         IParameterSymbol parameter,
-        Logger logger)
+        ILogger logger)
     {
         var fillType = GetFillType(context.Method.Parameters.IndexOf(parameter), context, logger);
 
@@ -733,7 +733,7 @@ public static class TransitiveFill
         Context context,
         ITypeSymbol type,
         ITypeSymbol filledType,
-        Logger logger,
+        ILogger logger,
         int depth = 0)
     {
         logger.LogWithDepth($"Processing {type} : {filledType}", depth);
@@ -992,7 +992,7 @@ public static class TransitiveFill
         Context context,
         ITypeSymbol source,
         ITypeSymbol candidate,
-        Logger logger,
+        ILogger logger,
         HashSet<ITypeSymbol>? processed = null,
         int depth = 0)
     {
@@ -1104,7 +1104,7 @@ public static class TransitiveFill
     }
 
     private static void LogWithDepth(
-        this Logger logger,
+        this ILogger logger,
         string msg,
         int depth,
         LogLevel level = LogLevel.Information)
@@ -1154,7 +1154,7 @@ public static class TransitiveFill
         ITypeParameterSymbol parameter,
         ITypeSymbol requested,
         Context context,
-        Logger logger,
+        ILogger logger,
         HashSet<ITypeSymbol>? checkedType = null,
         int depth = 0)
     {
@@ -1207,7 +1207,7 @@ public static class TransitiveFill
         ITypeSymbol requested,
         ITypeSymbol constraint,
         Context context,
-        Logger logger,
+        ILogger logger,
         HashSet<ITypeSymbol>? checkedType = null,
         int depth = 0)
     {
@@ -1255,7 +1255,7 @@ public static class TransitiveFill
     private static ITypeSymbol? GetGenericFillType(
         int index,
         Context context,
-        Logger logger)
+        ILogger logger)
     {
         var typeConstraint = context.Method.TypeParameters[index];
 
@@ -1286,7 +1286,7 @@ public static class TransitiveFill
     private static ITypeSymbol? GetFillType(
         int index,
         Context context,
-        Logger logger)
+        ILogger logger)
     {
         foreach (
             var vargParameter in context.VariableFuncArgsMap

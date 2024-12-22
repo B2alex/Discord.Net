@@ -1,14 +1,15 @@
 using Discord.Models;
 using Discord.Models.Json;
 using Discord.Rest;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetGuildBan)),
-    Deletable(nameof(Routes.RemoveGuildBan)), 
-    Refreshable(nameof(Routes.GetGuildBan)),
-    PagedFetchableOfMany<PageGuildBansParams>(nameof(Routes.GetGuildBans))
+    Loadable<Routes.GetGuildBan>,
+    Deletable<Routes.UnbanUserFromGuild>,
+    Refreshable,
+    PagedFetchableOfMany<Routes.ListGuildBans, PageGuildBansParams>
 ]
 public partial interface IBanActor :
     IGuildActor.CanonicalRelationship,
@@ -16,58 +17,43 @@ public partial interface IBanActor :
     IActor<ulong, IBan>
 {
     [BackLink<IGuildActor>]
-    private static Task CreateAsync(
+    private static async ValueTask CreateAsync(
         IGuildActor guild,
         IdOrEntity<ulong, IUserActor> user,
         int? purgeMessageSeconds = null,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        return guild.Client.RestApiClient.ExecuteAsync(
-            Routes.CreateGuildBan(
-                guild.Id,
-                user.Id,
-                new CreateGuildBanParams
-                {
-                    DeleteMessageSeconds = Optional.FromNullable(purgeMessageSeconds)
-                }
-            ),
-            options ?? guild.Client.DefaultRequestOptions,
-            token
-        );
-    }
+        CancellationToken token = default
+    ) => await Routes
+        .BanUserFromGuild
+        .Create(guild.Id, user.Id)
+        .AsPipeline(
+            new CreateGuildBanParams()
+            {
+                DeleteMessageSeconds = purgeMessageSeconds.AsOptional()
+            }
+        )
+        .RunAsync(guild.Client, token);
 
     [BackLink<IGuildActor>]
-    private static async Task<BulkBanResult> BulkCreateAsync(
+    private static ValueTask<BulkBanResult> BulkCreateAsync(
         IGuildActor guild,
         IEnumerable<IdOrEntity<ulong, IUser>> users,
         int? purgeMessageSeconds = null,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        var userIds = users.Select(x => x.Id).ToArray();
-
-        if (userIds.Length > DiscordConfig.MaxBulkBansPerBatch)
-            throw new ArgumentOutOfRangeException(
-                nameof(users),
-                userIds.Length,
-                $"A max of {DiscordConfig.MaxBulkBansPerBatch} bans can be created at a time"
-            );
-
-        return BulkBanResult.Construct(
-            guild.Client,
-            await guild.Client.RestApiClient.ExecuteRequiredAsync(
-                Routes.BulkGuildBan(
-                    guild.Id,
-                    new BulkBanUsersParams()
-                    {
-                        UserIds = userIds,
-                        DeleteMessageSeconds = Optional.FromNullable(purgeMessageSeconds)
-                    }
-                ),
-                options ?? guild.Client.DefaultRequestOptions,
-                token
-            )
-        );
-    }
+        CancellationToken token = default
+    ) => Routes
+        .BulkBanUsersFromGuild
+        .Create(guild)
+        .AsPipeline(
+            new BulkBanUsersParams()
+            {
+                UserIds = users.Ids().ToArray(),
+                DeleteMessageSeconds = purgeMessageSeconds.AsOptional()
+            },
+            options
+        )
+        .Deserialize<BulkBanResponse>()
+        .Required()
+        .Construct(default(BulkBanResult))
+        .RunAsync(guild, token);
 }

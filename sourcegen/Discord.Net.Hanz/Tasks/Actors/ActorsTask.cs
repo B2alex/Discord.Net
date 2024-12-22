@@ -158,7 +158,7 @@ public class ActorsTask : GenerationTask
 
     public IncrementalKeyValueProvider<ActorInfo, ActorHierarchy> ActorHierarchies { get; }
 
-    public ActorsTask(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public ActorsTask(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         Actors = context
             .SyntaxProvider
@@ -170,10 +170,7 @@ public class ActorsTask : GenerationTask
 
         ActorInfos = Actors
             .Select((x, _) => ActorInfo.Create(x))
-            .KeyedBy(x => x.Actor.DisplayString)
-            .WithLogging(
-                Logger.GetSubLogger("ActorInfosTracing")
-            );
+            .KeyedBy(x => x.Actor.DisplayString);
 
         var keyedActors = Actors
             .KeyedBy(x => x.Actor.ToDisplayString());

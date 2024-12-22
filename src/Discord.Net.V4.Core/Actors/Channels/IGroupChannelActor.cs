@@ -6,8 +6,8 @@ using Discord.Models;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetChannel), typeof(GroupDMChannel)),
-    Modifiable<ModifyGroupDMProperties>(nameof(Routes.ModifyChannel))
+    Loadable<Routes.GetChannel>,
+    Modifiable<Routes.UpdateChannel, ModifyGroupDMProperties>
 ]
 public partial interface IGroupChannelActor :
     IMessageChannelTrait,

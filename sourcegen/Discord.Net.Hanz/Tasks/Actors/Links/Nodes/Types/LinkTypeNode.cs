@@ -23,7 +23,7 @@ public class LinkTypeNode :
         public TypePath Path { get; } = Path.Add<LinkTypeNode>(Entry.Type.ReferenceName);
     }
 
-    public LinkTypeNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public LinkTypeNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
     }
 

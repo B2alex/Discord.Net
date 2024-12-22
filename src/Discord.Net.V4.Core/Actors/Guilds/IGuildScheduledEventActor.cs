@@ -5,15 +5,15 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetGuildScheduledEvent)),
-    Deletable(nameof(Routes.DeleteGuildScheduledEvent)),
-    Creatable<CreateGuildScheduledEventProperties>(
-        nameof(Routes.CreateGuildScheduledEvent),
+    Loadable<Routes.GetGuildScheduledEvent>,
+    Deletable<Routes.DeleteGuildScheduledEvent>,
+    Creatable<Routes.CreateGuildScheduledEvent, CreateGuildScheduledEventProperties>
+    (
         WhenBackLinkingFrom = [typeof(IGuildActor)]
     ),
-    Modifiable<ModifyGuildScheduledEventProperties>(nameof(Routes.ModifyGuildScheduledEvent)),
-    FetchableOfMany(nameof(Routes.ListGuildScheduledEvents)), 
-    Refreshable(nameof(Routes.GetGuildScheduledEvent))
+    Modifiable<Routes.UpdateGuildScheduledEvent, ModifyGuildScheduledEventProperties>,
+    FetchableOfMany<Routes.ListGuildScheduledEvents>, 
+    Refreshable
 ]
 public partial interface IGuildScheduledEventActor :
     IGuildActor.CanonicalRelationship,

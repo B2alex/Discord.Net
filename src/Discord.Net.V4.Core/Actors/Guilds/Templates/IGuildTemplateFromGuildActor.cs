@@ -1,23 +1,24 @@
 using Discord.Rest;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
 [
-    Modifiable<ModifyGuildTemplateProperties>(nameof(Routes.ModifyGuildTemplate)),
-    Deletable(nameof(Routes.DeleteGuildTemplate)), 
-    Refreshable(nameof(Routes.GetGuildTemplate)),
-    FetchableOfMany(nameof(Routes.GetGuildTemplates))
+    Modifiable<Routes.UpdateGuildTemplate, ModifyGuildTemplateProperties>,
+    Deletable<Routes.DeleteGuildTemplate>, 
+    Refreshable<Routes.GetGuildTemplate>,
+    FetchableOfMany<Routes.ListGuildTemplates>
 ]
 public partial interface IGuildTemplateFromGuildActor :
     IGuildTemplateActor,
     IGuildActor.CanonicalRelationship
 {
-    Task SyncAsync(
+    async ValueTask SyncAsync(
         RequestOptions? options = null,
         CancellationToken token = default
-    ) => Client.RestApiClient.ExecuteAsync(
-        Routes.SyncGuildTemplate(Guild.Id, Id),
-        options,
-        token
-    );
+    ) => await Routes
+        .SyncGuildTemplate
+        .Create(this)
+        .AsPipeline(options)
+        .RunAsync(Client, token);
 }

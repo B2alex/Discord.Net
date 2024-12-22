@@ -25,7 +25,7 @@ public sealed class LoadableTraitNode : TraitNode
 
     private readonly IncrementalKeyValueProvider<TraitImplementationTarget, State> _stateProvider;
 
-    public LoadableTraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public LoadableTraitNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         _stateProvider = context
             .SyntaxProvider

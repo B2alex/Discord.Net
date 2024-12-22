@@ -5,7 +5,7 @@ namespace Discord.Net.Hanz.Nodes.TypeNodes;
 
 public interface ITypeProducerNode
 {
-    Logger Logger { get; }
+    ILogger Logger { get; }
 }
 
 public interface ITypeProducerNode<TState> :  IStatefulNode<TState>

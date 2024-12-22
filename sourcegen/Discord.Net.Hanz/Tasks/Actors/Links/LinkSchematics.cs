@@ -23,12 +23,8 @@ public class LinkSchematics : GenerationTask
     public IncrementalValueProvider<Schematic?> NonCoreSchematics { get; }
     public IncrementalValuesProvider<Schematic> Schematics { get; }
 
-    private readonly Logger _logger;
-
-    public LinkSchematics(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public LinkSchematics(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
-        _logger = logger;
-
         SourceSchematics = context.SyntaxProvider
             .CreateSyntaxProvider(
                 IsPotentialSchematic,
@@ -119,17 +115,13 @@ public class LinkSchematics : GenerationTask
 
         if (context.SemanticModel.GetDeclaredSymbol(syntax) is not INamedTypeSymbol symbol) return null;
 
-        var logger = _logger
-            .WithSemanticContext(context.SemanticModel)
-            .WithCleanLogFile();
-
-        logger.Log($"Processing {symbol}...");
+        Logger.Log($"Processing {symbol}...");
 
         try
         {
             var lookup = new Dictionary<string, Entry>();
 
-            var root = GetEntry(symbol, symbol, lookup, token, logger);
+            var root = GetEntry(symbol, symbol, lookup, token, Logger);
 
             if (root is null) return null;
 
@@ -137,7 +129,7 @@ public class LinkSchematics : GenerationTask
         }
         finally
         {
-            logger.Flush();
+            Logger.Flush();
         }
     }
 
@@ -145,31 +137,26 @@ public class LinkSchematics : GenerationTask
     {
         if (ActorsTask.GetAssemblyTarget(compilation) is AssemblyTarget.Core)
             return null;
-
-        var logger = _logger
-            .WithCompilationContext(compilation)
-            .WithCleanLogFile();
-
         try
         {
             var symbol = compilation.GetTypeByMetadataName("Discord.ILinkType`4");
 
             if (symbol is null)
             {
-                logger.Log("Failed to find ILinkType`4");
+                Logger.Log("Failed to find ILinkType`4");
                 return null;
             }
 
-            return MapSchematic(symbol, compilation, token, logger);
+            return MapSchematic(symbol, compilation, token, Logger);
         }
         catch (Exception x)
         {
-            logger.Warn($"Failed to map non-core schematic: {x}");
+            Logger.Warn($"Failed to map non-core schematic: {x}");
             return null;
         }
         finally
         {
-            logger.Flush();
+            Logger.Flush();
         }
     }
 
@@ -177,13 +164,9 @@ public class LinkSchematics : GenerationTask
         INamedTypeSymbol symbol,
         Compilation compilation,
         CancellationToken token,
-        Logger? logger = null)
+        ILogger? logger = null)
     {
         var lookup = new Dictionary<string, Entry>();
-
-        logger ??= _logger
-            .WithCompilationContext(compilation)
-            .WithCleanLogFile();
 
         try
         {
@@ -195,7 +178,7 @@ public class LinkSchematics : GenerationTask
         }
         finally
         {
-            logger.Flush();
+            logger?.Flush();
         }
     }
 
@@ -204,7 +187,7 @@ public class LinkSchematics : GenerationTask
         INamedTypeSymbol symbol,
         Dictionary<string, Entry> lookup,
         CancellationToken token,
-        Logger? logger = null)
+        ILogger? logger = null)
     {
         var attribute = symbol.GetAttributes()
             .FirstOrDefault(IsLinkSchematicAttribute);

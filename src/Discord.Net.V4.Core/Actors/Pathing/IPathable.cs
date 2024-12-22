@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Discord.Models;
 
 namespace Discord;
@@ -20,10 +21,10 @@ public interface IPathable
             throw new InvalidOperationException(
                 $"Expected {GetType()} to implement {typeof(T)}"
             );
-
+        
         return provider.PathId;
     }
-
+    
     internal IIdentifiable<TId, TEntity, TActor, TModel> RequireIdentity<TActor, TId, TEntity, TModel>(
         Template<IIdentifiable<TId, TEntity, TActor, TModel>> template
     )
@@ -67,24 +68,24 @@ public interface IPathable
                 identity = IIdentifiable<TId, TEntity, TActor, TModel>.Of(relation.RelationshipId);
                 return true;
         }
-
+    
         identity = null;
         return false;
     }
-
+    
     ulong Require<TEntity>()
         where TEntity : class, IEntity<ulong>
         => Require<ulong, TEntity>();
-
+    
     ulong? Optionally<TEntity>()
         where TEntity : class, IEntity<ulong>
         => TryGet<ulong, TEntity>(out var id) ? id : null;
-
+    
     TId? Optionally<TId, TEntity>()
         where TEntity : class, IEntity<TId>
         where TId : struct, IEquatable<TId>
         => TryGet<TId, TEntity>(out var id) ? id : null;
-
+    
     TId Require<TId, TEntity>()
         where TEntity : class, IEntity<TId>
         where TId : IEquatable<TId>
@@ -97,7 +98,7 @@ public interface IPathable
             _ => throw new KeyNotFoundException($"Cannot find path from {GetType().Name} to {typeof(TEntity).Name}")
         };
     }
-
+    
     bool TryGet<TId, TEntity>([MaybeNullWhen(false)] out TId id)
         where TEntity : class, IEntity<TId>
         where TId : IEquatable<TId>

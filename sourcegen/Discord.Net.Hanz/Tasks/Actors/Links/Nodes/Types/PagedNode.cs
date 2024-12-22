@@ -16,7 +16,7 @@ public class PagedNode : BaseLinkTypeNode
         public string AsyncPagedType => $"IAsyncPaged<{PagedType}>";
     }
     
-    public PagedNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public PagedNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
     }
     

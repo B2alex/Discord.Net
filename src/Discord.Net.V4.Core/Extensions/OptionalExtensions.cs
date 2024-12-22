@@ -4,6 +4,12 @@ namespace Discord;
 
 public static class OptionalExtensions
 {
+    public static Optional<T> AsOptional<T>(this T? value) where T : struct
+        => value.HasValue ? Optional.Some(value.Value) : default; 
+    
+    public static Optional<T> AsOptional<T>(this T? value) where T : class
+        => value is not null ? Optional.Some(value) : default; 
+    
     public static Optional<T> OptionalIf<T>(this T value, Predicate<T> predicate)
         => predicate(value) ? Optional.Some(value) : Optional<T>.Unspecified;
 

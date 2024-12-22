@@ -68,7 +68,7 @@ public abstract class TraitNode : Node
     protected IncrementalKeyValueProvider<TraitImplementationTarget, ImmutableEquatableArray<TraitTargetAncestor>>
         TargetAncestorsProvider { get; }
 
-    protected TraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    protected TraitNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         PathingInfoProvider = GetTask<ActorsTask>()
             .ActorHierarchies

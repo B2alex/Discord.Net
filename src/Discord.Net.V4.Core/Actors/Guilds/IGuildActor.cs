@@ -2,15 +2,16 @@ using Discord.Models;
 using Discord.Models.Json;
 using Discord.Rest;
 using System.Collections.Immutable;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetGuild)),
-    Modifiable<ModifyGuildProperties>(nameof(Routes.ModifyGuild)),
-    Deletable(nameof(Routes.DeleteGuild)),
-    Refreshable(nameof(Routes.GetGuild)),
-    PagedFetchableOfMany<PageUserGuildsParams, IPartialGuild>(nameof(Routes.GetCurrentUserGuilds))
+    Loadable<Routes.GetGuild>,
+    Modifiable<Routes.UpdateGuild, ModifyGuildProperties>,
+    Deletable<Routes.DeleteGuild>,
+    Refreshable,
+    PagedFetchableOfMany<Routes.ListMyGuilds, PageUserGuildsParams, IPartialGuild>
 ]
 public partial interface IGuildActor :
     IActor<ulong, IGuild>,
@@ -76,86 +77,96 @@ public partial interface IGuildActor :
 
     #region Methods
 
-    Task LeaveAsync(
+    async ValueTask LeaveAsync(
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        return Client.RestApiClient.ExecuteAsync(
-            Routes.LeaveGuild(Id),
-            options ?? Client.DefaultRequestOptions,
-            token
-        );
-    }
+        CancellationToken token = default
+    ) => await Routes
+        .LeaveGuild
+        .Create(this)
+        .AsPipeline(options)
+        .RunAsync(Client, token);
 
-    async Task<MfaLevel> ModifyMFALevelAsync(
+    async ValueTask<MfaLevel> ModifyMFALevelAsync(
         MfaLevel level,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        var result = await Client.RestApiClient.ExecuteRequiredAsync(
-            Routes.ModifyGuildMfaLevel(Id, new ModifyGuildMfaLevelParams {Level = (int) level}),
-            options ?? Client.DefaultRequestOptions,
-            token
-        );
+        CancellationToken token = default
+    ) => await Routes
+        .SetGuildMfaLevel
+        .Create(this)
+        .AsPipeline(
+            new ModifyGuildMfaLevelParams {Level = (int) level},
+            options
+        )
+        .Deserialize<MfaLevel>()
+        .RunAsync(Client, token);
 
-        return (MfaLevel) result.Level;
-    }
-
-    async Task<int> GetPruneCountAsync(
+    ValueTask<int> GetPruneCountAsync(
         int? days = null,
-        Optional<IEnumerable<IdOrEntity<ulong, IRole>>> includeRoles = default,
+        IEnumerable<IdOrEntity<ulong, IRole>>? includeRoles = null,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        var result = await Client.RestApiClient.ExecuteRequiredAsync(
-            Routes.GetGuildPruneCount(
-                Id,
-                days,
-                ~includeRoles.Map(v => v.Select(v => v.Id).ToArray())
-            ),
-            options ?? Client.DefaultRequestOptions,
-            token
-        );
+        CancellationToken token = default
+    ) => Routes
+        .PreviewPruneGuild
+        .Create(this)
+        .WithDays(days.AsOptional())
+        .WithIncludeRoles(
+            includeRoles
+                .AsOptional()
+                .Map(x =>
+                    new CSVString(
+                        x.Select(x => x.Id.ToString())
+                    ).ToString()
+                )
+        )
+        .AsPipeline(options)
+        .Deserialize<GuildPruneCount>()
+        .Required()
+        .Transform(x => x.Pruned)
+        .RunAsync(Client, token);
 
-        return result.Pruned;
-    }
-
-    async Task<int?> BeginPruneAsync(
+    ValueTask<int> BeginPruneAsync(
         int? days = null,
         bool? computePruneCount = null,
-        Optional<IEnumerable<IdOrEntity<ulong, IRole>>> includeRoles = default,
+        IEnumerable<IdOrEntity<ulong, IRole>>? includedRoles = null,
         string? reason = null,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        var result = await Client.RestApiClient.ExecuteAsync(
-            Routes.BeginGuildPrune(Id,
-                new BeginGuildPruneParams
-                {
-                    Days = Optional.FromNullable(days),
-                    Reason = Optional.FromNullable(reason),
-                    ComputePruneCount = Optional.FromNullable(computePruneCount),
-                    IncludeRoleIds = includeRoles.Map(v => v.Select(v => v.Id).ToArray())
-                }),
-            options ?? Client.DefaultRequestOptions,
-            token
-        );
+        CancellationToken token = default
+    ) => Routes
+        .PruneGuild
+        .Create(this)
+        .AsPipeline(
+            new BeginGuildPruneParams()
+            {
+                Days = days.AsOptional(),
+                ComputePruneCount = computePruneCount.AsOptional(),
+                IncludeRoleIds = includedRoles
+                    .AsOptional()
+                    .Map(x => x
+                        .Select(x => x.Id)
+                        .ToArray()
+                    ),
+                Reason = reason.AsOptional()
+            },
+            options
+        )
+        .Deserialize<GuildPruneCount>()
+        .Required()
+        .Transform(x => x.Pruned)
+        .RunAsync(Client, token);
 
-        return result?.Pruned;
-    }
-
-    async Task<IReadOnlyCollection<VoiceRegion>> GetGuildVoiceRegionsAsync(
+    ValueTask<IReadOnlyCollection<IVoiceRegion>> GetGuildVoiceRegionsAsync(
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        var result = await Client.RestApiClient.ExecuteRequiredAsync(
-            Routes.GetGuildVoiceRegions(Id),
-            options ?? Client.DefaultRequestOptions,
-            token
-        );
-
-        return result.Select(v => VoiceRegion.Construct(Client, v)).ToImmutableArray();
-    }
+        CancellationToken token = default
+    ) => Routes
+        .ListGuildVoiceRegions
+        .Create(this)
+        .AsPipeline(options)
+        .Deserialize<IEnumerable<IVoiceRegionModel>>()
+        .Required()
+        .Transform(static (models, client, token) => models
+            .MapAsync(client.VoiceRegions.CreateEntityAsync, token)
+        )
+        .RunAsync(Client, token);
 
     #endregion
 

@@ -188,34 +188,6 @@ namespace Discord.Models;
         typeof(Discord.Converters.OptionalConverter<int?>),
         typeof(Discord.Converters.OptionalConverter<int[]>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.PresenceUpdatePayloadData>),
-        typeof(Discord.Converters.OptionalConverter<System.Collections.Generic.Dictionary<string, string>?>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.IApplicationCommandOptionModel[]>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.InstallParams>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ApplicationIntegrationTypesConfig>),
-        typeof(Discord.Converters.OptionalConverter<ulong?>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ForumTag[]>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.TriggerMetadata>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.AutoModerationAction[]>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Overwrite[]?>),
-        typeof(Discord.Converters.OptionalConverter<bool?>),
-        typeof(Discord.Converters.OptionalConverter<Discord.DiscordEmojiId?>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ForumTag[]?>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Overwrite[]>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Role[]>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.CreateGuildChannelParams[]>),
-        typeof(Discord.Converters.OptionalConverter<ulong[]?>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.WelcomeScreenChannel[]>),
-        typeof(Discord.Converters.OptionalConverter<uint>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.GuildScheduledEventEntityMetadata>),
-        typeof(Discord.Converters.OptionalConverter<System.DateTimeOffset>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.GuildScheduledEventEntityMetadata?>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Embed[]>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.AllowedMentions>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.MessageReference>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.MessageComponent[]>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.CreatePollParams>),
-        typeof(Discord.Converters.OptionalConverter<double?>),
-        typeof(Discord.Converters.OptionalConverter<System.Collections.Generic.Dictionary<string, string>>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ActivityTimestamps>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.IEmojiModel?>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ActivityParty>),
@@ -223,13 +195,18 @@ namespace Discord.Models;
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ActivitySecrets>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ActivityButton[]>),
         typeof(Discord.Converters.OptionalConverter<long[]>),
+        typeof(Discord.Converters.OptionalConverter<System.DateTimeOffset>),
         typeof(Discord.Converters.OptionalConverter<object>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ApplicationCommandInteractionInteractionDataOption[]>),
         typeof(Discord.Converters.OptionalConverter<PartialUser>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.PartialGuild>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.InstallParams>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ApplicationIntegrationTypesConfig>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ApplicationIntegrationTypeConfiguration>),
         typeof(Discord.Converters.OptionalConverter<System.Collections.Generic.IDictionary<string, string>>),
+        typeof(Discord.Converters.OptionalConverter<System.Collections.Generic.Dictionary<string, string>>),
         typeof(Discord.Converters.OptionalConverter<int[]?>),
+        typeof(Discord.Converters.OptionalConverter<System.Collections.Generic.Dictionary<string, string>?>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ApplicationCommandOptionChoice<long>[]>),
         typeof(Discord.Converters.OptionalConverter<long>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ApplicationCommandOptionChoice<double>[]>),
@@ -240,11 +217,18 @@ namespace Discord.Models;
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.AuditLogOptions>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ActionMetadata>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.TriggerMetadata?>),
+        typeof(Discord.Converters.OptionalConverter<ulong?>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Embed[]>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.AllowedMentions>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.MessageComponent[]>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Overwrite[]>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ForumTag[]>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.DefaultReactionModel>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ThreadMember>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Sticker[]>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.WelcomeScreen>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.RoleTags>),
+        typeof(Discord.Converters.OptionalConverter<bool?>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.IntegrationAccount>),
         typeof(Discord.Converters.OptionalConverter<Discord.DiscordEmojiId>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.SelectMenuOption[]>),
@@ -266,6 +250,7 @@ namespace Discord.Models;
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Application>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.GuildScheduledEvent>),
         typeof(Discord.Converters.OptionalConverter<float>),
+        typeof(Discord.Converters.OptionalConverter<uint>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.EmbedAuthor>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.EmbedFooter>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.EmbedVideo>),
@@ -278,6 +263,7 @@ namespace Discord.Models;
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Attachment[]>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.MessageActivity>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.MessageApplication>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.MessageReference>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Message?>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.MessageInteractionMetadata>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ThreadChannelBase>),
@@ -288,7 +274,21 @@ namespace Discord.Models;
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ClientStatus>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Activity[]>),
         typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Integration[]>),
-        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.WebhookSourceChannel>)]
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.WebhookSourceChannel>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.IApplicationCommandOptionModel[]>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.TriggerMetadata>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.AutoModerationAction[]>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Overwrite[]?>),
+        typeof(Discord.Converters.OptionalConverter<Discord.DiscordEmojiId?>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.ForumTag[]?>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.Role[]>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.CreateGuildChannelParams[]>),
+        typeof(Discord.Converters.OptionalConverter<ulong[]?>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.WelcomeScreenChannel[]>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.GuildScheduledEventEntityMetadata>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.GuildScheduledEventEntityMetadata?>),
+        typeof(Discord.Converters.OptionalConverter<Discord.Models.Json.CreatePollParams>),
+        typeof(Discord.Converters.OptionalConverter<double?>)]
 )]
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AllReactionsRemoved))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.AllReactionsRemoved>))]
@@ -406,136 +406,6 @@ namespace Discord.Models;
 [System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.UpdateVoiceStatePayloadData>))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.UnavailableGuild))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.UnavailableGuild>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGlobalApplicationCommandParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGlobalApplicationCommandParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildApplicationCommandParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildApplicationCommandParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyApplicationCommandPermissionsParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyApplicationCommandPermissionsParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGlobalApplicationCommandParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGlobalApplicationCommandParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildApplicationCommandParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildApplicationCommandParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyCurrentApplicationParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyCurrentApplicationParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateTestEntitlementParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateTestEntitlementParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.BulkDeleteMessagesParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.BulkDeleteMessagesParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateDMChannelParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateDMChannelParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGroupDMChannelParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGroupDMChannelParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.FollowAnnouncementChannelParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.FollowAnnouncementChannelParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.GroupDmAddRecipientParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.GroupDmAddRecipientParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyChannelParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyChannelParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyChannelPermissionsParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyChannelPermissionsParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGroupDmParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGroupDmParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyThreadChannelParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyThreadChannelParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.StartThreadFromMessageParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.StartThreadFromMessageParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.StartThreadInForumOrMediaParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.StartThreadInForumOrMediaParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.StartThreadParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.StartThreadParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateAutoModRuleParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateAutoModRuleParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyAutoModRuleParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyAutoModRuleParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.BeginGuildPruneParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.BeginGuildPruneParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.BulkBanUsersParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.BulkBanUsersParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildBanParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildBanParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildChannelParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildChannelParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildChannelParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildChannelParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildChannelPositionsParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildChannelPositionsParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateApplicationEmojiParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateApplicationEmojiParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildEmojiParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildEmojiParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyApplicationEmojiParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyApplicationEmojiParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyEmojiParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyEmojiParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AddGuildMemberParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.AddGuildMemberParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyCurrentMemberParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyCurrentMemberParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildMemberParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildMemberParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildMfaLevelParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildMfaLevelParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildWelcomeScreenParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildWelcomeScreenParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildWidgetParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildWidgetParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildRoleParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildRoleParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildRoleParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildRoleParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildRolePositionParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildRolePositionParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildScheduledEventParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildScheduledEventParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildScheduledEventParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildScheduledEventParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildStickerParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildStickerParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildFromTemplateParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildFromTemplateParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateTemplateParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateTemplateParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildTemplateParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildTemplateParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateChannelInviteParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateChannelInviteParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateMessageParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateMessageParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyMessageParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyMessageParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreatePollParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreatePollParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.CreateGuildSoundboardSoundParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.CreateGuildSoundboardSoundParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.ModifyGuildSoundboardSoundParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.ModifyGuildSoundboardSoundParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.CreateStageInstanceParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.CreateStageInstanceParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.ModifyStageInstanceParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.ModifyStageInstanceParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyCurrentUserParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyCurrentUserParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyUserRoleConnectionParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyUserRoleConnectionParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyCurrentUserVoiceStateParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyCurrentUserVoiceStateParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyUserVoiceStateParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyUserVoiceStateParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateWebhookParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateWebhookParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ExecuteWebhookParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ExecuteWebhookParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyWebhookMessageParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyWebhookMessageParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyWebhookParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyWebhookParams>))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyWebhookWithTokenParams))]
-[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyWebhookWithTokenParams>))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Activity))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.Activity>))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ActivityAssets))]
@@ -914,6 +784,138 @@ namespace Discord.Models;
 [System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.WebhookSourceChannel>))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Webhook))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.Webhook>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGlobalApplicationCommandParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGlobalApplicationCommandParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildApplicationCommandParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildApplicationCommandParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyApplicationCommandPermissionsParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyApplicationCommandPermissionsParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGlobalApplicationCommandParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGlobalApplicationCommandParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildApplicationCommandParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildApplicationCommandParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyCurrentApplicationParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyCurrentApplicationParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateTestEntitlementParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateTestEntitlementParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.BulkDeleteMessagesParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.BulkDeleteMessagesParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateDMChannelParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateDMChannelParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGroupDMChannelParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGroupDMChannelParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.FollowAnnouncementChannelParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.FollowAnnouncementChannelParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.GroupDmAddRecipientParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.GroupDmAddRecipientParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyChannelParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyChannelParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyChannelPermissionsParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyChannelPermissionsParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGroupDmParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGroupDmParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyThreadChannelParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyThreadChannelParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.StartThreadFromMessageParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.StartThreadFromMessageParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.StartThreadInForumOrMediaParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.StartThreadInForumOrMediaParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.StartThreadParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.StartThreadParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateAutoModRuleParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateAutoModRuleParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyAutoModRuleParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyAutoModRuleParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.BeginGuildPruneParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.BeginGuildPruneParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.BulkBanUsersParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.BulkBanUsersParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildBanParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildBanParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildChannelParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildChannelParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildChannelParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildChannelParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildChannelPositionsParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildChannelPositionsParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateApplicationEmojiParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateApplicationEmojiParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildEmojiParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildEmojiParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyApplicationEmojiParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyApplicationEmojiParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyEmojiParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyEmojiParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AddGuildMemberParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.AddGuildMemberParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyCurrentMemberParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyCurrentMemberParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildMemberParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildMemberParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildMfaLevelParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildMfaLevelParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildWelcomeScreenParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildWelcomeScreenParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildWidgetParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildWidgetParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildRoleParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildRoleParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildRoleParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildRoleParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildRolePositionParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildRolePositionParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildScheduledEventParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildScheduledEventParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildScheduledEventParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildScheduledEventParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildStickerParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildStickerParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildFromTemplateParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateGuildFromTemplateParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateTemplateParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateTemplateParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyGuildTemplateParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyGuildTemplateParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateChannelInviteParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateChannelInviteParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateMessageParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateMessageParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyMessageParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyMessageParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreatePollParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreatePollParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.CreateGuildSoundboardSoundParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.CreateGuildSoundboardSoundParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.ModifyGuildSoundboardSoundParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.ModifyGuildSoundboardSoundParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.SendSoundboardSoundParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.SendSoundboardSoundParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.CreateStageInstanceParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.CreateStageInstanceParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.ModifyStageInstanceParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.ModifyStageInstanceParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyCurrentUserParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyCurrentUserParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyUserRoleConnectionParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyUserRoleConnectionParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyCurrentUserVoiceStateParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyCurrentUserVoiceStateParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyUserVoiceStateParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyUserVoiceStateParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateWebhookParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.CreateWebhookParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ExecuteWebhookParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ExecuteWebhookParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyWebhookMessageParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyWebhookMessageParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyWebhookParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyWebhookParams>))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ModifyWebhookWithTokenParams))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.Json.ModifyWebhookWithTokenParams>))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.IApplicationCommandPermissionUpdatedPayloadData))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(IEnumerable<Discord.Models.IApplicationCommandPermissionUpdatedPayloadData>))]
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.IGuildApplicationCommandPermissionsModel))]
@@ -1158,29 +1160,6 @@ namespace Discord.Models;
 [System.Text.Json.Serialization.JsonSerializable(typeof(int?))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(int[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.PresenceUpdatePayloadData))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(System.Collections.Generic.Dictionary<string, string>))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.IApplicationCommandOptionModel[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.InstallParams))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ApplicationIntegrationTypesConfig))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(ulong?))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ForumTag[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.TriggerMetadata))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AutoModerationAction[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Overwrite[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(bool?))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.DiscordEmojiId?))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Role[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildChannelParams[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.WelcomeScreenChannel[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(uint))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.GuildScheduledEventEntityMetadata))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(System.DateTimeOffset))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Embed[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AllowedMentions))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.MessageReference))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.MessageComponent[]))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreatePollParams))] // extra from GenerateOptions
-[System.Text.Json.Serialization.JsonSerializable(typeof(double?))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ActivityTimestamps))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.IEmojiModel))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ActivityParty))] // extra from GenerateOptions
@@ -1188,12 +1167,16 @@ namespace Discord.Models;
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ActivitySecrets))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ActivityButton[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(long[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(System.DateTimeOffset))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(object))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ApplicationCommandInteractionInteractionDataOption[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(PartialUser))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.PartialGuild))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.InstallParams))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ApplicationIntegrationTypesConfig))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ApplicationIntegrationTypeConfiguration))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(System.Collections.Generic.IDictionary<string, string>))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(System.Collections.Generic.Dictionary<string, string>))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ApplicationCommandOptionChoice<long>[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(long))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ApplicationCommandOptionChoice<double>[]))] // extra from GenerateOptions
@@ -1203,11 +1186,19 @@ namespace Discord.Models;
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AuditLogChange[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AuditLogOptions))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ActionMetadata))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.TriggerMetadata))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(ulong?))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Embed[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AllowedMentions))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.MessageComponent[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Overwrite[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ForumTag[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.DefaultReactionModel))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ThreadMember))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Sticker[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.WelcomeScreen))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.RoleTags))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(bool?))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.IntegrationAccount))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.DiscordEmojiId))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.SelectMenuOption[]))] // extra from GenerateOptions
@@ -1229,6 +1220,7 @@ namespace Discord.Models;
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Application))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.GuildScheduledEvent))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(float))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(uint))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.EmbedAuthor))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.EmbedFooter))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.EmbedVideo))] // extra from GenerateOptions
@@ -1241,6 +1233,7 @@ namespace Discord.Models;
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Attachment[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.MessageActivity))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.MessageApplication))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.MessageReference))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.MessageInteractionMetadata))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.ThreadChannelBase))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.StickerItem[]))] // extra from GenerateOptions
@@ -1251,6 +1244,15 @@ namespace Discord.Models;
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Activity[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Integration[]))] // extra from GenerateOptions
 [System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.WebhookSourceChannel))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.IApplicationCommandOptionModel[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.AutoModerationAction[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.DiscordEmojiId?))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.Role[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreateGuildChannelParams[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.WelcomeScreenChannel[]))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.GuildScheduledEventEntityMetadata))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(Discord.Models.Json.CreatePollParams))] // extra from GenerateOptions
+[System.Text.Json.Serialization.JsonSerializable(typeof(double?))] // extra from GenerateOptions
 public sealed partial class ModelJsonContext : JsonSerializerContext
 {
     internal global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<global::Discord.Models.Json.GatewayMessage> CreateGatewayMessageTypeInfoNoConverter(global::System.Text.Json.JsonSerializerOptions options)

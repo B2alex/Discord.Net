@@ -7,11 +7,9 @@ namespace Discord.Net.Hanz.Nodes;
 
 public abstract class Node : GenerationTask
 {
-    public static Logger NodeLogger = Net.Hanz.Logger.CreateForTask("Nodes");
-
     private readonly IncrementalGeneratorInitializationContext _context;
 
-    protected Node(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    protected Node(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         _context = context;
     }
@@ -47,10 +45,6 @@ public abstract class Node : GenerationTask
         CancellationToken token
     ) where TState : IPathedState
     {
-        using var logger = Logger
-            .GetSubLogger(nameof(BuildGraph))
-            .GetSubLogger(GetType().Name);
-
         var result = new List<StatefulGeneration<TState>>();
         var stack = new Stack<StatefulGeneration<TState>>();
 
@@ -61,7 +55,7 @@ public abstract class Node : GenerationTask
             if (stack.Count == 0)
             {
                 stack.Push(generation);
-                logger.Log($"stack: += {spec.Name} -> {state.Path}");
+                Logger.Log($"stack: += {spec.Name} -> {state.Path}");
                 continue;
             }
 
@@ -69,11 +63,11 @@ public abstract class Node : GenerationTask
 
             if (pathDepth == 1)
             {
-                logger.Log($"stack: building tree size of {stack.Count}");
+                Logger.Log($"stack: building tree size of {stack.Count}");
                 BuildTree();
             }
 
-            logger.Log($"stack: += {spec.Name} -> {state.Path}");
+            Logger.Log($"stack: += {spec.Name} -> {state.Path}");
             stack.Push(generation);
         }
 
@@ -87,14 +81,14 @@ public abstract class Node : GenerationTask
             start:
 
             var part = stack.Pop();
-            logger.Log($" - part = {part.Spec.Name}");
+            Logger.Log($" - part = {part.Spec.Name}");
 
             var group = new List<TypeSpec>() {part.Spec};
             var deferred = new Queue<StatefulGeneration<TState>>();
 
             if (stack.Count == 0)
             {
-                logger.Log("   - single size tree added to result");
+                Logger.Log("   - single size tree added to result");
                 result.Add(part);
                 return;
             }
@@ -102,7 +96,7 @@ public abstract class Node : GenerationTask
             while (stack.Count > 0)
             {
                 var previous = stack.Pop();
-                logger.Log($" - prev = {previous.Spec.Name}");
+                Logger.Log($" - prev = {previous.Spec.Name}");
 
                 if (deferred.Count > 0)
                 {
@@ -112,7 +106,7 @@ public abstract class Node : GenerationTask
 
                         if (previous.State.Path.IsParentTo(deferredPart.State.Path))
                         {
-                            logger.Log($"   - deferred {deferredPart.Spec.Name} added to prev");
+                            Logger.Log($"   - deferred {deferredPart.Spec.Name} added to prev");
                             previous = previous with {Spec = previous.Spec.AddNestedType(deferredPart.Spec)};
                             continue;
                         }
@@ -123,7 +117,7 @@ public abstract class Node : GenerationTask
 
                 if (previous.State.Path.IsParentTo(part.State.Path))
                 {
-                    logger.Log($"   - {group.Count} types are children to previous type {previous.State.Path}");
+                    Logger.Log($"   - {group.Count} types are children to previous type {previous.State.Path}");
 
                     previous = previous with {Spec = previous.Spec.AddNestedTypes(group)};
 
@@ -131,13 +125,13 @@ public abstract class Node : GenerationTask
 
                     if (previous.State.Path.CountOfType(GetType()) == 1)
                     {
-                        logger.Log("     - previous is a root, adding to results");
+                        Logger.Log("     - previous is a root, adding to results");
                         // its a root
                         result.Add(previous);
 
                         if (stack.Count > 0)
                         {
-                            logger.Log("     - stack has more elements, reiterating...");
+                            Logger.Log("     - stack has more elements, reiterating...");
                             goto start;
                         }
 
@@ -147,13 +141,13 @@ public abstract class Node : GenerationTask
                     if (stack.Count == 0)
                     {
                         // we have a non root, with no roots on the stack, this is an error
-                        logger.Warn($"non-root {previous.Spec.Name}: {previous.State.Path} has no parent on stack");
+                        Logger.Warn($"non-root {previous.Spec.Name}: {previous.State.Path} has no parent on stack");
                         throw new InvalidOperationException(
                             $"non-root {previous.Spec.Name}: {previous.State.Path} has no parent on stack"
                         );
                     }
 
-                    logger.Log($"   - part <- {previous.Spec.Name}");
+                    Logger.Log($"   - part <- {previous.Spec.Name}");
                     // set the part we're working with to the modified previous
                     part = previous;
                     group.Add(part.Spec);
@@ -166,7 +160,7 @@ public abstract class Node : GenerationTask
                     if (previous.State.Path.CountOfType(GetType()) == 1)
                     {
                         // should not happen
-                        logger.Warn(
+                        Logger.Warn(
                             $"dual-root stack {previous.Spec.Name}: {previous.State.Path} | {part.Spec.Name}: {part.State.Path}");
                         throw new InvalidOperationException(
                             $"non-root {previous.Spec.Name}: {previous.State.Path} has no parent on stack"
@@ -174,13 +168,13 @@ public abstract class Node : GenerationTask
                     }
 
                     group.Add(previous.Spec);
-                    logger.Log($"   - group += {previous.Spec.Name} ({group.Count})");
+                    Logger.Log($"   - group += {previous.Spec.Name} ({group.Count})");
                     continue;
                 }
 
                 if ((previous.State.Path & part.State.Path).CountOfType(GetType()) >= 1)
                 {
-                    logger.Log($"   - deferring {part.Spec.Name}: {part.State.Path}");
+                    Logger.Log($"   - deferring {part.Spec.Name}: {part.State.Path}");
 
                     // the two parts share a common ancestor in the graph.
                     // we can defer the part until the ancestor appears.
@@ -189,25 +183,25 @@ public abstract class Node : GenerationTask
                     part = previous;
                     group.Clear();
                     group.Add(part.Spec);
-                    logger.Log($"   - part <- {previous.Spec.Name}");
+                    Logger.Log($"   - part <- {previous.Spec.Name}");
 
                     continue;
                 }
 
                 // we cant do anything with this node
-                logger.Warn(
+                Logger.Warn(
                     $"Unknown node: {previous.Spec.Name}: {previous.State.Path} | {part.Spec.Name}: {part.State.Path}");
             }
 
             if (deferred.Count > 0)
             {
-                logger.Log($" - pushing {deferred.Count} deferred nodes onto the stack");
+                Logger.Log($" - pushing {deferred.Count} deferred nodes onto the stack");
 
                 while (deferred.Count > 0)
                 {
                     var deferredPart = deferred.Dequeue();
                     stack.Push(deferredPart);
-                    logger.Log($"   += {deferredPart.Spec.Name}: {deferredPart.State.Path}");
+                    Logger.Log($"   += {deferredPart.Spec.Name}: {deferredPart.State.Path}");
                 }
             }
         }

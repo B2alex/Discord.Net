@@ -57,7 +57,7 @@ public class ModelLinking : ISyntaxGenerationCombineTask<ModelLinking.Generation
     public bool IsValid(SyntaxNode node, CancellationToken token = default)
         => node is InterfaceDeclarationSyntax iface && iface.Members.Any(x => x.AttributeLists.Count > 0);
 
-    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, ILogger logger,
         CancellationToken token = default)
     {
         if (context.Node is not InterfaceDeclarationSyntax interfaceSyntax) return null;
@@ -107,7 +107,7 @@ public class ModelLinking : ISyntaxGenerationCombineTask<ModelLinking.Generation
     }
 
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, ILogger logger)
     {
         if (targets.Length == 0) return;
 

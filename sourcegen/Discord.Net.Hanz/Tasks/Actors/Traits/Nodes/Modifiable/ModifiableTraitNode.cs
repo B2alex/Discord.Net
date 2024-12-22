@@ -26,7 +26,7 @@ public sealed class ModifiableTraitNode : TraitNode
 
     private readonly IncrementalKeyValueProvider<TraitImplementationTarget, ModifiableState> _stateProvider;
 
-    public ModifiableTraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public ModifiableTraitNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         _stateProvider = context
             .SyntaxProvider

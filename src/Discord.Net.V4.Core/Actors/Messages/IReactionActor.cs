@@ -1,58 +1,61 @@
 using Discord.Models;
 using Discord.Rest;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
-[Deletable(nameof(Routes.DeleteAllReactionsForEmoji))]
+[Deletable<Routes.DeleteAllMessageReactionsByEmoji>]
 public partial interface IReactionActor :
     IActor<DiscordEmojiId, IReaction>,
     IMessageActor.CanonicalRelationship,
     IEntityProvider<IReaction, IReactionModel>
 {
     IUserActor.Paged<PageUserReactionsParams>.Indexable.WithCurrent.BackLink<IReactionActor> Users { get; }
-    
+
     [OnVertex]
-    private static Task AddAsync(
+    private static async ValueTask AddAsync(
         ICurrentUserActor.BackLink<IReactionActor> target,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        return target.Client.RestApiClient.ExecuteAsync(
-            Routes.CreateReaction(
-                target.Source.Message.Channel.Id,
-                target.Source.Message.Id,
-                target.Source.Id
-            ),
-            options ?? target.Client.DefaultRequestOptions,
-            token
-        );
-    }
-    
+        CancellationToken token = default
+    ) => await Routes
+        .AddMyMessageReaction
+        .Create(target)
+        .AsPipeline(options)
+        .RunAsync(target, token);
+
     [BackLink<IMessageActor>]
-    private static Task RemoveAllAsync(
+    private static async ValueTask RemoveAllAsync(
         IMessageActor message,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        return message.Client.RestApiClient.ExecuteAsync(
-            Routes.DeleteAllReactions(message.Channel.Id, message.Id),
-            options ?? message.Client.DefaultRequestOptions,
-            token
-        );
-    }
-    
+        CancellationToken token = default
+    ) => await Routes
+        .DeleteAllMessageReactions
+        .Create(message)
+        .AsPipeline(options)
+        .RunAsync(message, token);
+
     [OnVertex]
-    private static Task RemoveAsync(
+    private static async ValueTask RemoveAsync(
         IUserActor.BackLink<IReactionActor> target,
         RequestOptions? options = null,
-        CancellationToken token = default)
+        CancellationToken token = default
+    )
     {
-        return target.Client.RestApiClient.ExecuteAsync(
-            target is ICurrentUserActor.Link
-                ? Routes.DeleteOwnReaction(target.Source.Message.Channel.Id, target.Source.Message.Id, target.Source.Id)
-                : Routes.DeleteUserReaction(target.Source.Message.Channel.Id, target.Source.Message.Id, target.Source.Id, target.Id),
-            options ?? target.Client.DefaultRequestOptions,
-            token
-        );
+        if (target is ICurrentUserActor.Link)
+        {
+            await Routes
+                .DeleteMyMessageReaction
+                .Create(target)
+                .AsPipeline(options)
+                .RunAsync(target, token);
+        }
+        else
+        {
+            await Routes
+                .DeleteUserMessageReaction
+                .Create(target)
+                .AsPipeline(options)
+                .RunAsync(target, token);
+        }
     }
 }

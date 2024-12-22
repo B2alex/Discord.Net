@@ -37,7 +37,7 @@ public sealed partial class ActorNode
         typeRoot.AddChild(GetNode<ExtensionNode>());
         typeRoot.AddChild(GetNode<HierarchyNode>());
 
-        LinkProviders = typeRoot.Build(Logger.GetSubLogger("BuildTypeRoot"));
+        LinkProviders = typeRoot.Build(Logger);
 
         context.RegisterSourceOutput(
             LinkProviders
@@ -74,17 +74,6 @@ public sealed partial class ActorNode
                         ])
                     )
                 )
-                .Select((x, _) =>
-                {
-                    using var logger = Logger
-                        .GetSubLogger("Output")
-                        .GetSubLogger(x.Path.Split('/')[1])
-                        .WithCleanLogFile();
-
-                    logger.Log(x.ToString());
-
-                    return x;
-                })
         );
     }
 

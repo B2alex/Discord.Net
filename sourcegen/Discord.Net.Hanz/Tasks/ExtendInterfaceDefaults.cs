@@ -57,7 +57,7 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
     public bool IsValid(SyntaxNode node, CancellationToken token = default)
         => node is ClassDeclarationSyntax {AttributeLists.Count: > 0};
 
-    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, ILogger logger,
         CancellationToken token)
     {
         if (context.Node is not ClassDeclarationSyntax target) return null;
@@ -144,7 +144,7 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
 
     public static ImmutableArray<ITypeSymbol>? GetTargetInterfaces(
         ITypeSymbol symbol,
-        Logger logger)
+        ILogger logger)
     {
         var attribute = symbol.GetAttributes().FirstOrDefault(x =>
             x.AttributeClass?.ToDisplayString() == "Discord.ExtendInterfaceDefaultsAttribute"
@@ -265,7 +265,7 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
         ITypeSymbol exampleCase,
         INamedTypeSymbol target,
         SemanticModel semanticModel,
-        Logger? logger = null)
+        ILogger? logger = null)
     {
         var heuristic = (
                 targetMember is IMethodSymbol method
@@ -357,9 +357,9 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
 
                 foreach (var searchMember in searchMembers)
                 {
-                    if (searchMember is null || heuristicMember.Kind != searchMember.Kind ||
-                        !SourceOfTruth.IsTarget(searchMember, out _))
-                        continue;
+                    // if (searchMember is null || heuristicMember.Kind != searchMember.Kind ||
+                    //     !SourceOfTruth.IsTarget(searchMember, out _))
+                    //     continue;
 
                     var searchMemberType = MemberUtils.GetMemberType(searchMember);
 
@@ -463,7 +463,7 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
         return exampleCase;
     }
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, ILogger logger)
     {
         if (targets.Length == 0) return;
 
@@ -480,14 +480,12 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
             {
                 continue;
             }
-
-            var targetLogger = logger.WithSemanticContext(target.SemanticModel);
-
-            targetLogger.Log($"Processing {target.ClassSymbol}:");
+            
+            logger.Log($"Processing {target.ClassSymbol}:");
 
             foreach (var item in GetTemplateExtensionInterfaces(target.ClassSymbol))
             {
-                targetLogger.Log($" - {item}");
+                logger.Log($" - {item}");
             }
 
             var declaration = SyntaxFactory.ClassDeclaration(
@@ -520,11 +518,11 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
                 target.SemanticModel
             );
 
-            targetLogger.Log($"{target.ClassSymbol}: {proxiedMembers.Count} proxied members:");
+            logger.Log($"{target.ClassSymbol}: {proxiedMembers.Count} proxied members:");
 
             foreach (var member in proxiedMembers)
             {
-                targetLogger.Log($" - {member.Symbol}");
+                logger.Log($" - {member.Symbol}");
             }
 
             var implemented = new HashSet<ISymbol>(SymbolEqualityComparer.Default);
@@ -545,17 +543,17 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
                             ref proxiedMembers)
                     )
                     {
-                        targetLogger.Log($"{target.ClassSymbol} Skipping {member} (implemented by proxy)");
+                        logger.Log($"{target.ClassSymbol} Skipping {member} (implemented by proxy)");
                         continue;
                     }
 
                     if (implemented.Any(x => MemberUtils.Conflicts(x, member)) || !implemented.Add(member))
                     {
-                        targetLogger.Log($"{target.ClassSymbol}: Skipping {member} (conflicting member)");
+                        logger.Log($"{target.ClassSymbol}: Skipping {member} (conflicting member)");
                         continue;
                     }
 
-                    targetLogger.Log($"{target.ClassSymbol}: Adding {member}");
+                    logger.Log($"{target.ClassSymbol}: Adding {member}");
 
                     var baseOverridableImplementation = baseTreeMembers
                         .FirstOrDefault(y =>
@@ -576,20 +574,20 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
 
                     if (bases.Contains(target.ClassSymbol) && baseOverridableImplementation is null)
                     {
-                        targetLogger.Log($"{target.ClassSymbol}: {member} -> virtual");
+                        logger.Log($"{target.ClassSymbol}: {member} -> virtual");
                         modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.VirtualKeyword));
                     }
 
                     if (baseOverridableImplementation is not null)
                     {
-                        targetLogger.Log(
+                        logger.Log(
                             $"{target.ClassSymbol}: {member} -> override ({baseOverridableImplementation})");
                         modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.OverrideKeyword));
                     }
 
                     if (shouldBeNew)
                     {
-                        targetLogger.Log($"{target.ClassSymbol}: {member} -> new");
+                        logger.Log($"{target.ClassSymbol}: {member} -> new");
                         modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.NewKeyword));
                     }
 
@@ -605,7 +603,7 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
                                 property.Type,
                                 target.ClassSymbol,
                                 target.SemanticModel,
-                                targetLogger
+                                logger
                             );
 
                             declaration = declaration.AddMembers(
@@ -667,10 +665,10 @@ public class ExtendInterfaceDefaults : ISyntaxGenerationCombineTask<ExtendInterf
                                 methodSymbol.ReturnType,
                                 target.ClassSymbol,
                                 target.SemanticModel,
-                                targetLogger
+                                logger
                             );
 
-                            targetLogger.Log($"Chose return type {returnType}");
+                            logger.Log($"Chose return type {returnType}");
 
                             var hasDifferentReturnType =
                                 !returnType.Equals(methodSymbol.ReturnType, SymbolEqualityComparer.Default);

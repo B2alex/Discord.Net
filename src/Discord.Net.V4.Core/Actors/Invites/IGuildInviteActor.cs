@@ -4,8 +4,8 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Deletable(nameof(Routes.DeleteInvite)),
-    FetchableOfMany(nameof(Routes.GetGuildInvites))
+    Deletable<Routes.InviteRevoke>,
+    FetchableOfMany<Routes.ListGuildInvites>
 ]
 public partial interface IGuildInviteActor :
     IInviteActor,

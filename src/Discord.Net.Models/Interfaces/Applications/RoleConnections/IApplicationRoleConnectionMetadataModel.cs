@@ -1,6 +1,7 @@
 namespace Discord.Models;
 
-public interface IApplicationRoleConnectionMetadataModel : IEntityModel<string>
+public interface IApplicationRoleConnectionMetadataModel : 
+    IEntityModel<string>
 {
     int Type { get; }
     string Key { get; }

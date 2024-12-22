@@ -34,7 +34,7 @@ public sealed class BackLinkNode :
         HierarchyNode.Hierarchy Hierarchy
     ) : BackLink(Target);
 
-    public BackLinkNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public BackLinkNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
     }
 

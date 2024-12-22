@@ -5,11 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetChannel), typeof(GuildCategoryChannel)),
-    Creatable<CreateGuildCategoryChannelProperties>(
-        nameof(Routes.CreateGuildChannel),
-        WhenBackLinkingFrom = [typeof(IGuildActor)],
-        RouteGenerics = [typeof(GuildCategoryChannel)]
+    Loadable<Routes.GetChannel>,
+    Creatable<Routes.CreateGuildChannel, CreateGuildCategoryChannelProperties>
+    (
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
     )
 ]
 public partial interface ICategoryChannelActor :

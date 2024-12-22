@@ -94,16 +94,13 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
             .FirstOrDefault() as INamedTypeSymbol;
     }
 
-    public GenerationContext? GetTargetForGeneration(
-        GeneratorSyntaxContext context,
-        Logger logger,
+    public GenerationContext? GetTargetForGeneration(GeneratorSyntaxContext context,
+        ILogger logger,
         CancellationToken token = default)
     {
         if (context.Node is not ClassDeclarationSyntax classDeclarationSyntax)
             return null;
-
-        logger = logger.WithSemanticContext(context.SemanticModel);
-
+        
         if (ModelExtensions.GetDeclaredSymbol(context.SemanticModel, classDeclarationSyntax) is not INamedTypeSymbol
             classSymbol)
         {
@@ -186,7 +183,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
     private static INamedTypeSymbol? GetActorInterface(INamedTypeSymbol type)
         => type.Interfaces.FirstOrDefault(x => x.ToDisplayString().StartsWith("Discord.IActor"));
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationContext?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationContext?> targets, ILogger logger)
     {
         foreach (var target in Hierarchy
                      .OrderByHierarchy(
@@ -198,9 +195,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
         {
             if (target is null)
                 continue;
-
-            var targetLogger = logger.WithSemanticContext(target.SemanticModel);
-
+            
             var syntax = SyntaxUtils.CreateSourceGenClone(target.Syntax);
 
             var shouldOverride = TypeUtils.GetBaseTypes(target.ClassSymbol).Any(bases.Contains);
@@ -215,7 +210,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
                     target.RestEntitySymbol,
                     shouldBeVirtual,
                     shouldOverride,
-                    targetLogger
+                    logger
                 ))
             {
                 continue;
@@ -227,7 +222,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
                     target.CoreActor,
                     bestMatch,
                     shouldOverride,
-                    targetLogger
+                    logger
                 ))
             {
                 continue;
@@ -238,7 +233,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
                     target.SemanticModel,
                     target.CoreActor,
                     target.RestEntitySymbol,
-                    targetLogger
+                    logger
                 ))
             {
                 continue;
@@ -292,7 +287,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
         SemanticModel semanticModel,
         INamedTypeSymbol coreActor,
         INamedTypeSymbol restEntity,
-        Logger logger
+        ILogger logger
     )
     {
         var addedOverloads = new HashSet<string>();
@@ -352,7 +347,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
         INamedTypeSymbol coreActor,
         IMethodSymbol? bestMatch,
         bool shouldOverride,
-        Logger logger
+        ILogger logger
     )
     {
         var modifier = shouldOverride ? " new" : string.Empty;
@@ -463,7 +458,7 @@ public class RestLoadable : ISyntaxGenerationCombineTask<RestLoadable.Generation
         INamedTypeSymbol restEntityType,
         bool shouldBeVirtual,
         bool shouldOverride,
-        Logger logger)
+        ILogger logger)
     {
         var modifier = shouldOverride ? " override" : shouldBeVirtual ? " virtual" : string.Empty;
 

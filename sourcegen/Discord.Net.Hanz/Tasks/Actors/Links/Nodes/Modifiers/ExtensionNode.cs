@@ -113,7 +113,7 @@ public sealed class ExtensionNode :
 
     private readonly IncrementalGroupingProvider<ActorOrTraitInfo, ExtensionSpec> _extensions;
 
-    public ExtensionNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public ExtensionNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         _extensions = context.SyntaxProvider
             .ForAttributeWithMetadataName(

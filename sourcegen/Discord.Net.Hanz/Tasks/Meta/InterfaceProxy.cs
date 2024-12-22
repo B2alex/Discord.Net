@@ -76,7 +76,7 @@ public sealed class InterfaceProxy : GenerationTask
         }
     }
 
-    public InterfaceProxy(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public InterfaceProxy(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         context.RegisterSourceOutput(
             context

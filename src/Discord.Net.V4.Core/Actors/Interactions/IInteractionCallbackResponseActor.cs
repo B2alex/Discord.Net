@@ -3,8 +3,8 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Modifiable<ModifyWebhookMessageProperties>(nameof(Routes.ModifyOriginalInteractionResponse)),
-    Deletable(nameof(Routes.DeleteOriginalInteractionResponse))
+    Modifiable<Routes.UpdateOriginalWebhookMessage, ModifyWebhookMessageProperties>,
+    Deletable<Routes.DeleteOriginalWebhookMessage>,
 ]
 public partial interface IInteractionCallbackResponseActor :
     IActor<ulong, IInteractionCallbackResponse>,

@@ -77,7 +77,7 @@ public static class VariableFuncArgs
         InvocationExpressionSyntax invocationExpression,
         FunctionGenerator.MethodTarget target,
         SemanticModel semanticModel,
-        Logger logger,
+        ILogger logger,
         out Dictionary<int, int> result
     )
     {

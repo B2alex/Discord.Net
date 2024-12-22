@@ -2091,6 +2091,10 @@ namespace Discord.Models
             {
                 return Create_ModifyStageInstanceParams(options);
             }
+            if (type == typeof(global::Discord.Models.SendSoundboardSoundParams))
+            {
+                return Create_SendSoundboardSoundParams(options);
+            }
             if (type == typeof(global::Discord.Optional<bool?>))
             {
                 return Create_OptionalNullableBoolean(options);
@@ -4298,6 +4302,10 @@ namespace Discord.Models
             if (type == typeof(global::System.Collections.Generic.IEnumerable<global::Discord.Models.ModifyStageInstanceParams>))
             {
                 return Create_IEnumerableModifyStageInstanceParams(options);
+            }
+            if (type == typeof(global::System.Collections.Generic.IEnumerable<global::Discord.Models.SendSoundboardSoundParams>))
+            {
+                return Create_IEnumerableSendSoundboardSoundParams(options);
             }
             if (type == typeof(global::System.Collections.Generic.IEnumerable<ulong>))
             {

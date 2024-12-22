@@ -144,9 +144,8 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
         return (name = (attribute.ConstructorArguments[0].Value as string)!) is not null;
     }
 
-    public GenerationTarget? GetTargetForGeneration(
-        GeneratorSyntaxContext context,
-        Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context,
+        ILogger logger,
         CancellationToken token = default)
     {
         if (context.Node is not ClassDeclarationSyntax syntax) return null;
@@ -203,7 +202,7 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
         );
     }
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, ILogger logger)
     {
         if (targets.Length == 0) return;
 
@@ -214,7 +213,7 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
     private static void ExecuteProcessors(
         SourceProductionContext context,
         IEnumerable<ProcessorGenerationTarget> targets,
-        Logger logger)
+        ILogger logger)
     {
         var processorGenerationTargets = targets as ProcessorGenerationTarget[] ?? targets.ToArray();
 
@@ -326,7 +325,7 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
     private static void ExecuteEvents(
         SourceProductionContext context,
         IEnumerable<EventGenerationTarget> targets,
-        Logger logger)
+        ILogger logger)
     {
         var eventGeneratorTargets = targets as EventGenerationTarget[] ?? targets.ToArray();
 
@@ -339,9 +338,7 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
         foreach (var target in eventGeneratorTargets)
         {
             if (target is null) continue;
-
-            var targetLogger = logger.WithSemanticContext(target.SemanticModel);
-
+            
             if (target.Package.DeclaringSyntaxReferences.Length == 0) continue;
 
             if (
@@ -389,7 +386,7 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
             foreach (var eventDelegate in target.SubscribableAttributes.Values
                          .Where(x => x.DelegateInvokeMethod is not null))
             {
-                targetLogger.Log($"{target.EventClass}: Adding {eventDelegate} delegate");
+                logger.Log($"{target.EventClass}: Adding {eventDelegate} delegate");
 
                 companionSyntax = companionSyntax.AddBaseListTypes(
                     SyntaxFactory.SimpleBaseType(
@@ -403,7 +400,7 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
                     ref handlerInterface,
                     eventDelegate.DelegateInvokeMethod!,
                     target,
-                    targetLogger
+                    logger
                 );
             }
 
@@ -573,7 +570,7 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
         ref InterfaceDeclarationSyntax handlerInterface,
         IMethodSymbol delegateMethod,
         EventGenerationTarget target,
-        Logger logger)
+        ILogger logger)
     {
         var parsedParameters = delegateMethod.Parameters
             .ToDictionary<IParameterSymbol, Parameter, IParameterSymbol>(
@@ -1084,7 +1081,7 @@ public sealed class Events : ISyntaxGenerationCombineTask<Events.GenerationTarge
         ITypeSymbol type,
         EventParameterDegree degree,
         INamedTypeSymbol payload,
-        Logger logger)
+        ILogger logger)
     {
         var name = ToTitle(parameter.ParameterSymbol.Name);
 

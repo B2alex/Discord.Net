@@ -1,6 +1,7 @@
 using Discord.Models.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Discord.Converters;
 

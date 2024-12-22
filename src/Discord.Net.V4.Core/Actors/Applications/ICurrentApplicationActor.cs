@@ -3,8 +3,8 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetCurrentApplication)),
-    Modifiable<ModifyCurrentApplicationProperties>(nameof(Routes.ModifyCurrentApplication))
+    Loadable<Routes.GetMyApplication>,
+    Modifiable<Routes.UpdateMyApplication, ModifyCurrentApplicationProperties>
 ]
 public partial interface ICurrentApplicationActor : 
     IApplicationActor,

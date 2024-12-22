@@ -24,7 +24,7 @@ public sealed class BackLinkMethodNode : Node
         string MethodName
     );
 
-    public BackLinkMethodNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public BackLinkMethodNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         context.RegisterSourceOutput(
             context

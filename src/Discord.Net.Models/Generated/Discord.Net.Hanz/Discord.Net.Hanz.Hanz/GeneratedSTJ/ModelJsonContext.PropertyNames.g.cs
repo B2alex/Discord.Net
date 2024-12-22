@@ -168,7 +168,7 @@ namespace Discord.Models
         private static readonly global::System.Text.Json.JsonEncodedText PropName_banned_users = global::System.Text.Json.JsonEncodedText.Encode("banned_users");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_failed_users = global::System.Text.Json.JsonEncodedText.Encode("failed_users");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_user_ids = global::System.Text.Json.JsonEncodedText.Encode("user_ids");
-        private static readonly global::System.Text.Json.JsonEncodedText PropName_DeleteMessageSeconds = global::System.Text.Json.JsonEncodedText.Encode("DeleteMessageSeconds");
+        private static readonly global::System.Text.Json.JsonEncodedText PropName_delete_message_seconds = global::System.Text.Json.JsonEncodedText.Encode("delete_message_seconds");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_messages = global::System.Text.Json.JsonEncodedText.Encode("messages");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_ids = global::System.Text.Json.JsonEncodedText.Encode("ids");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_guild_Id = global::System.Text.Json.JsonEncodedText.Encode("guild_Id");
@@ -197,7 +197,6 @@ namespace Discord.Models
         private static readonly global::System.Text.Json.JsonEncodedText PropName_recipient_id = global::System.Text.Json.JsonEncodedText.Encode("recipient_id");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_access_tokens = global::System.Text.Json.JsonEncodedText.Encode("access_tokens");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_nicks = global::System.Text.Json.JsonEncodedText.Encode("nicks");
-        private static readonly global::System.Text.Json.JsonEncodedText PropName_delete_message_seconds = global::System.Text.Json.JsonEncodedText.Encode("delete_message_seconds");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_region = global::System.Text.Json.JsonEncodedText.Encode("region");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_verification_level = global::System.Text.Json.JsonEncodedText.Encode("verification_level");
         private static readonly global::System.Text.Json.JsonEncodedText PropName_default_message_notifications = global::System.Text.Json.JsonEncodedText.Encode("default_message_notifications");

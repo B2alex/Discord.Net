@@ -56,7 +56,7 @@ public class CovariantOverride : ISyntaxGenerationCombineTask<CovariantOverride.
     public bool IsValid(SyntaxNode node, CancellationToken token)
         => node is MethodDeclarationSyntax {AttributeLists.Count: > 0};
 
-    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, ILogger logger,
         CancellationToken token)
     {
         if (context.Node is not MethodDeclarationSyntax {AttributeLists.Count: > 0} method)
@@ -93,7 +93,7 @@ public class CovariantOverride : ISyntaxGenerationCombineTask<CovariantOverride.
         public ClassDeclarationSyntax Syntax { get; set; } = syntax;
     }
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, ILogger logger)
     {
         var toGenerate = new Dictionary<string, GenerationResult>();
 
@@ -102,9 +102,7 @@ public class CovariantOverride : ISyntaxGenerationCombineTask<CovariantOverride.
             foreach (var target in targets)
             {
                 if (target?.ClassDeclarationSyntax.BaseList is null) continue;
-
-                var targetLogger = logger.WithSemanticContext(target.SemanticModel);
-
+                
                 var targetTypeSymbol = target.SemanticModel.GetDeclaredSymbol(target.ClassDeclarationSyntax);
 
                 if (targetTypeSymbol is null) continue;
@@ -114,7 +112,7 @@ public class CovariantOverride : ISyntaxGenerationCombineTask<CovariantOverride.
 
                 if (targetReturnType is null)
                 {
-                    targetLogger.Warn(
+                    logger.Warn(
                         $"No return type can be resolved from {target.MethodDeclarationSyntax.ReturnType}");
                     continue;
                 }
@@ -123,7 +121,7 @@ public class CovariantOverride : ISyntaxGenerationCombineTask<CovariantOverride.
                     IMethodSymbol
                     targetMethodSymbol)
                 {
-                    targetLogger.Warn(
+                    logger.Warn(
                         $"No method symbol can be resolved from {target.MethodDeclarationSyntax.Identifier}");
                     continue;
                 }
@@ -133,7 +131,7 @@ public class CovariantOverride : ISyntaxGenerationCombineTask<CovariantOverride.
                     var typeInfo = ModelExtensions.GetTypeInfo(target.SemanticModel, baseType.Type).Type;
                     if (typeInfo is not INamedTypeSymbol namedTypeSymbol)
                     {
-                        targetLogger.Warn($"No type info could be found for {baseType.Type}");
+                        logger.Warn($"No type info could be found for {baseType.Type}");
                         continue;
                     }
 
@@ -148,20 +146,20 @@ public class CovariantOverride : ISyntaxGenerationCombineTask<CovariantOverride.
                         // verify we can override the member
                         if (!member.IsVirtual && !member.IsOverride)
                         {
-                            targetLogger.Warn(
+                            logger.Warn(
                                 $"Member {baseType.Type}.{member.Name} shares the same name, but isn't virtual");
                             continue;
                         }
 
                         if (!IsTypeOrAssignable(target.SemanticModel.Compilation, targetReturnType, member.ReturnType))
                         {
-                            targetLogger.Warn($"{member.ReturnType} is not assignable to {targetReturnType}");
+                            logger.Warn($"{member.ReturnType} is not assignable to {targetReturnType}");
                             continue;
                         }
 
                         if (member.Parameters.Length != targetMethodSymbol.Parameters.Length)
                         {
-                            targetLogger.Warn(
+                            logger.Warn(
                                 $"{member} has mismatch parameter count {member.Parameters.Length} <> {targetMethodSymbol.Parameters.Length}");
                             continue;
                         }
@@ -184,7 +182,7 @@ public class CovariantOverride : ISyntaxGenerationCombineTask<CovariantOverride.
                             if (parameter.Source.Type.Equals(parameter.Target.Type, SymbolEqualityComparer.Default))
                                 continue;
 
-                            targetLogger.Warn($"{parameter.Target} is not assignable to {parameter.Source}");
+                            logger.Warn($"{parameter.Target} is not assignable to {parameter.Source}");
                             goto end_member;
                         }
 

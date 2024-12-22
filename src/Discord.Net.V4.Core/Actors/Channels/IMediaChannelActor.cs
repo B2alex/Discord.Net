@@ -6,12 +6,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetChannel), typeof(GuildMediaChannel)),
-    Modifiable<ModifyMediaChannelProperties>(nameof(Routes.ModifyChannel)),
-    Creatable<CreateGuildMediaChannelProperties>(
-        nameof(Routes.CreateGuildChannel),
-        WhenBackLinkingFrom = [typeof(IGuildActor)],
-        RouteGenerics = [typeof(GuildMediaChannel)]
+    Loadable<Routes.GetChannel>,
+    Modifiable<Routes.UpdateChannel, ModifyMediaChannelProperties>,
+    Creatable<Routes.CreateGuildChannel, CreateGuildMediaChannelProperties>
+    (
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
     )
 ]
 public partial interface IMediaChannelActor :

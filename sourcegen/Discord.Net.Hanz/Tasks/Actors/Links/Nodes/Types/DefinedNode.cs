@@ -5,7 +5,7 @@ namespace Discord.Net.Hanz.Tasks.Actors.Links.Nodes.Types;
 
 public class DefinedNode : BaseLinkTypeNode
 {
-    public DefinedNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public DefinedNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
     }
     

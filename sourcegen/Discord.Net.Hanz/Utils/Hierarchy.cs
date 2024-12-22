@@ -11,7 +11,7 @@ public static class Hierarchy
         this ITypeSymbol type,
         Func<INamedTypeSymbol, bool> predicate,
         out INamedTypeSymbol match,
-        Logger? logger = null
+        ILogger? logger = null
     )
     {
         try
@@ -82,7 +82,7 @@ public static class Hierarchy
     public static HashSet<INamedTypeSymbol> AllInterfacesWrtVariance(
         this ITypeSymbol seed,
         SemanticModel model,
-        Logger? logger = null)
+        ILogger? logger = null)
     {
         var result = new HashSet<INamedTypeSymbol>(seed.AllInterfaces, SymbolEqualityComparer.Default);
 

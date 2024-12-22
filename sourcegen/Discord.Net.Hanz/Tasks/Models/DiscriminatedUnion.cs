@@ -19,7 +19,7 @@ public sealed class DiscriminatedUnion
         SemanticModel semanticModel,
         JsonModels.Context jsonContext,
         SourceProductionContext context,
-        Logger logger
+        ILogger logger
     )
     {
         if (symbol.TypeKind is not TypeKind.Class)
@@ -42,7 +42,7 @@ public sealed class DiscriminatedUnion
         IEnumerable<DiscriminatedUnionPropertyInfo> properties,
         JsonModels.Context jsonContext,
         SourceProductionContext context,
-        Logger logger)
+        ILogger logger)
     {
         var typeName = root.ToDisplayString();
 
@@ -245,7 +245,7 @@ public sealed class DiscriminatedUnion
         string? propertyName,
         JsonModels.Context jsonContext,
         SourceProductionContext context,
-        Logger logger)
+        ILogger logger)
     {
         var unionTypes = GetUnionTypes(jsonContext.Targets, root, propertyName);
 
@@ -379,7 +379,7 @@ public sealed class DiscriminatedUnion
         ITypeSymbol symbol,
         string propertyName,
         List<UnionType> unionTypes,
-        Logger logger,
+        ILogger logger,
         out IPropertySymbol? unionProperty,
         IPropertySymbol? property = null
     )

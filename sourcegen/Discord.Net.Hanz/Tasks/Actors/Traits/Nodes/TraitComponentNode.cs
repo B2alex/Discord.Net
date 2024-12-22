@@ -46,7 +46,7 @@ public sealed class TraitComponentNode : TraitNode
 
     private readonly IncrementalKeyValueProvider<ITraitInfo, State> _componentsProvider;
 
-    public TraitComponentNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public TraitComponentNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         var componentsProvider = context
             .SyntaxProvider

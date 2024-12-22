@@ -255,13 +255,11 @@ public sealed partial class ActorNode
 
         if (relationship.Relationships.Count > 0)
         {
-            using var logger = Logger.GetSubLogger("Relationships").GetSubLogger(info.Actor.MetadataName);
-
-            logger.Log($"Relationships for {relationship.ActorInfo.Actor}:");
+            Logger.Log($"Relationships for {relationship.ActorInfo.Actor}:");
 
             foreach (var actorRelationship in relationship.Relationships)
             {
-                logger.Log($" -> {actorRelationship.Kind}: {actorRelationship.To.Actor}");
+                Logger.Log($" -> {actorRelationship.Kind}: {actorRelationship.To.Actor}");
             }
 
             var queue = new Queue<(ActorInfo ActorInfo, ImmutableArray<string> Path)>(
@@ -292,10 +290,10 @@ public sealed partial class ActorNode
                 }
             }
 
-            logger.Log($"Result: {canonicalResult.Count} entries:");
+            Logger.Log($"Result: {canonicalResult.Count} entries:");
             foreach (var result in canonicalResult)
             {
-                logger.Log($" -> {result.ActorInfo.Actor} : {string.Join(".", result.Path)}");
+                Logger.Log($" -> {result.ActorInfo.Actor} : {string.Join(".", result.Path)}");
             }
 
             type = type

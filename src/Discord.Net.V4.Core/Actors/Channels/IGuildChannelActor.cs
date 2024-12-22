@@ -2,19 +2,20 @@ using Discord.Models;
 using Discord.Models.Json;
 using Discord.Rest;
 using System.Diagnostics.CodeAnalysis;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetChannel), typeof(GuildChannelBase)),
-    Modifiable<ModifyGuildChannelProperties>(nameof(Routes.ModifyChannel)),
-    Deletable(nameof(Routes.DeleteChannel)),
-    Creatable<CreateGuildChannelProperties>(
-        nameof(Routes.CreateGuildChannel),
+    Loadable<Routes.GetChannel>,
+    Modifiable<Routes.UpdateChannel, ModifyGuildChannelProperties>,
+    Deletable<Routes.DeleteChannel>,
+    Creatable<Routes.CreateGuildChannel, CreateGuildChannelProperties>
+    (
         WhenBackLinkingFrom = [typeof(IGuildActor)]
     ),
-    LinkHierarchicalRoot,
-    FetchableOfMany(nameof(Routes.GetGuildChannels))
+    FetchableOfMany<Routes.ListGuildChannels>,
+    LinkHierarchicalRoot
 ]
 public partial interface IGuildChannelActor :
     IGuildActor.CanonicalRelationship,
@@ -22,19 +23,18 @@ public partial interface IGuildChannelActor :
     IActor<ulong, IGuildChannel>
 {
     [BackLink<IGuildActor>]
-    private static Task ModifyPositionsAsync(
+    private static async Task ModifyPositionsAsync(
         IGuildActor guild,
         IEnumerable<ModifyGuildChannelPositionProperties> positions,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        return guild.Client.RestApiClient.ExecuteAsync(
-            Routes.ModifyGuildChannelPositions(
-                guild.Id,
-                positions.Select(x => x.ToApiModel()).ToArray()
-            ),
-            options ?? guild.Client.DefaultRequestOptions,
-            token
-        );
-    }
+        CancellationToken token = default
+    ) => await Routes.BulkUpdateGuildChannels
+        .Create(guild)
+        .AsPipeline(
+            positions
+                .Select(x => x.ToApiModel())
+                .AsCollectionParams(),
+            options
+        )
+        .RunAsync(guild.Client, token);
 }

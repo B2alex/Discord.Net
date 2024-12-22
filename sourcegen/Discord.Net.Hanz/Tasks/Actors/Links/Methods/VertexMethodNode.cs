@@ -29,7 +29,7 @@ public sealed class VertexMethodNode : Node
             };
     }
 
-    public VertexMethodNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public VertexMethodNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         context.RegisterSourceOutput(
             context

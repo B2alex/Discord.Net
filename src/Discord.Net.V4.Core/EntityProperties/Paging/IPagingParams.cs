@@ -1,12 +1,13 @@
 using System.Runtime.CompilerServices;
+using Discord.Rest;
 
 namespace Discord;
 
-public interface IPagingParams<in TSelf, TApiModel> : IPagingParams
-    where TSelf : class, IPagingParams<TSelf, TApiModel>
+public interface IPagingParams<TRoute, in TApiModel> : IPagingParams
+    where TRoute : IRouteOperation<TRoute>
     where TApiModel : class
 {
-    static abstract IApiOutRoute<TApiModel>? GetRoute(TSelf? self, IPathable path, TApiModel? lastRequest);
+    TRoute? GetNext(TRoute route, TApiModel? previousApiResult);
 }
 
 public interface IPagingParams

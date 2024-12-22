@@ -16,7 +16,7 @@ public static class ExtendedModel
         SemanticModel semanticModel,
         JsonModels.Context jsonContext,
         SourceProductionContext context,
-        Logger logger
+        ILogger logger
     )
     {
         var extendedMembers = symbol.GetMembers()

@@ -31,11 +31,7 @@ public sealed partial class FetchableTraitNode
         TraitImplementationTarget target,
         StatefulGeneration<FetchableDetails> generation)
     {
-        using var logger = Logger
-            .GetSubLogger("Implement")
-            .GetSubLogger(target.Type.MetadataName);
-
-        logger.Log($"Implementing {generation.State.Kind}...");
+        Logger.Log($"Implementing {generation.State.Kind}...");
 
         var spec = generation.Spec;
 
@@ -52,7 +48,7 @@ public sealed partial class FetchableTraitNode
                 break;
         }
 
-        logger.Log($"Spec:\n{spec}");
+        Logger.Log($"Spec:\n{spec}");
 
         return generation with {Spec = spec};
     }

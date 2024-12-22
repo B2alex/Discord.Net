@@ -3,12 +3,11 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetGuildSoundboardSound)),
-    Creatable<CreateGuildSoundboardSoundProperties>(nameof(Routes.CreateGuildSoundboardSound)),
-    Modifiable<ModifyGuildSoundboardSoundProperties>(nameof(Routes.ModifyGuildSoundboardSound)),
-    Deletable(nameof(Routes.DeleteGuildSoundboardSound)),
-    FetchableOfMany(nameof(Routes.ListGuildSoundboardSounds)),
-    Fetchable(nameof(Routes.GetGuildSoundboardSound))
+    Loadable<Routes.GetGuildSoundboardSound>,
+    Creatable<Routes.CreateGuildSoundboardSound, CreateGuildSoundboardSoundProperties>,
+    Modifiable<Routes.UpdateGuildSoundboardSound, ModifyGuildSoundboardSoundProperties>,
+    Deletable<Routes.DeleteGuildSoundboardSound>,
+    FetchableOfMany<Routes.ListGuildSoundboardSounds>
 ]
 public partial interface IGuildSoundboardSoundActor :
     ISoundboardSoundActor,

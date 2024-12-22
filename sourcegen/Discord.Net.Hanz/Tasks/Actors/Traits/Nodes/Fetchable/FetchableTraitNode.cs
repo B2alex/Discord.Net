@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Discord.Net.Hanz.Tasks.Actors.Common;
 using Discord.Net.Hanz.Tasks.ApiRoutes;
+using Discord.Net.Hanz.Utils;
 using Discord.Net.Hanz.Utils.Bakery;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -40,7 +41,7 @@ public sealed partial class FetchableTraitNode : TraitNode
 
     public IncrementalGroupingProvider<TraitImplementationTarget, FetchableDetails> FetchableProvider { get; }
 
-    public FetchableTraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public FetchableTraitNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         FetchableProvider = context
             .SyntaxProvider
@@ -125,17 +126,23 @@ public sealed partial class FetchableTraitNode : TraitNode
             .ToImmutableEquatableArray();
 
         if (details.Count == 0) return null;
+        
+        Logger.Log($"{details.Count} details:");
+
+        foreach (var detail in details)
+        {
+            Logger.Log($"{detail.Kind}: {detail.Route}");
+        }
 
         return new(symbol.ToDisplayString(), details);
     }
 
     private PartialFetchableDetails? MapDetails(INamedTypeSymbol symbol, AttributeData attribute)
     {
-        if (attribute.ConstructorArguments.Length != 1)
+        if (attribute.AttributeClass?.TypeArguments.Length == 0)
             return null;
 
-        if (attribute.ConstructorArguments[0].Value is not string route)
-            return null;
+        var route = attribute.AttributeClass!.TypeArguments[0].Name;
 
         Kind? kind = attribute.AttributeClass?.Name switch
         {
@@ -152,12 +159,12 @@ public sealed partial class FetchableTraitNode : TraitNode
         TypeRef? pagedType = null;
 
         if (
-            attribute.AttributeClass?.TypeArguments.Length > 0 &&
-            !TryExtractParamsTypeInfo(attribute.AttributeClass.TypeArguments[0], out paramsType, out apiType)
+            attribute.AttributeClass?.TypeArguments.Length > 1 &&
+            !TryExtractParamsTypeInfo(attribute.AttributeClass.TypeArguments[1], out paramsType, out apiType)
         ) return null;
 
-        pagedType = attribute.AttributeClass?.TypeArguments.Length > 1
-            ? new TypeRef(attribute.AttributeClass.TypeArguments[1])
+        pagedType = attribute.AttributeClass?.TypeArguments.Length > 2
+            ? new TypeRef(attribute.AttributeClass.TypeArguments[2])
             : null;
 
         return (kind.Value, route, paramsType, apiType, pagedType);

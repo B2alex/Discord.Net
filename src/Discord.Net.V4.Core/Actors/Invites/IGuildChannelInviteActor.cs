@@ -3,8 +3,8 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Creatable<CreateChannelInviteProperties>(nameof(Routes.CreateChannelInvite)),
-    FetchableOfMany(nameof(Routes.GetChannelInvites))
+    Creatable<Routes.CreateChannelInvite, CreateChannelInviteProperties>,
+    FetchableOfMany<Routes.ListChannelInvites>
 ]
 public partial interface IGuildChannelInviteActor :
     IGuildInviteActor,

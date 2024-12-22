@@ -41,7 +41,7 @@ public sealed class TraitsTask : GenerationTask
 
     public TraitsTask(
         IncrementalGeneratorInitializationContext context,
-        Logger logger
+        ILogger logger
     ) : base(context, logger)
     {
         var traitsProvider = context
@@ -55,10 +55,7 @@ public sealed class TraitsTask : GenerationTask
             .KeyedBy(x => x.Symbols.Trait.ToDisplayString());
 
         Traits = traitsProvider
-            .MapValues((_, x) => x.Symbols.ToInfo())
-            .WithLogging(
-                Logger.GetSubLogger("TraitTracing")
-            );
+            .MapValues((_, x) => x.Symbols.ToInfo());
 
         TraitAncestors = traitsProvider
             .MapValues((_, mapping) =>

@@ -12,7 +12,7 @@ public class EnumerableNode : BaseLinkTypeNode
 
     public EnumerableNode(
         IncrementalGeneratorInitializationContext context,
-        Logger logger
+        ILogger logger
     ) : base(context, logger)
     {
         // _extraParametersProvider = GetTask<ActorsTask>(context)

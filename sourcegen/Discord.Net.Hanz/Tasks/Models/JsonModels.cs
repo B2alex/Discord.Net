@@ -8,6 +8,8 @@ using System.Text;
 
 namespace Discord.Net.Hanz.Tasks;
 
+
+
 public static class JsonModels
 {
     public sealed class JsonModelTarget(
@@ -82,7 +84,7 @@ public static class JsonModels
     private static IEnumerable<JsonModelTarget> FormatGenericTarget(
         JsonModelTarget target, 
         INamedTypeSymbol named,
-        Logger logger)
+        ILogger logger)
     {
         var variance = new List<ITypeSymbol[]>();
 
@@ -129,12 +131,17 @@ public static class JsonModels
         }
     }
 
+    // public static void Initialize(IncrementalGeneratorInitializationContext context)
+    // {
+    //     
+    // }
+    
     public static void Execute(
         SourceProductionContext context,
         (ImmutableArray<JsonModelTarget?> Left, Compilation Right) input,
         string? projectName,
         string? rootNamespace,
-        Logger logger)
+        ILogger logger)
     {
         var (potentialTargets, compilation) = input;
 
@@ -606,7 +613,7 @@ public static class JsonModels
         Compilation compilation,
         SourceText toRunAgainst,
         Context jsonContext,
-        Logger logger)
+        ILogger logger)
     {
         ParseOptions options;
         if (compilation is CSharpCompilation {SyntaxTrees.Length: > 0} csharpCompilation)
@@ -684,7 +691,7 @@ public static class JsonModels
         GeneratedSourceResult source,
         Context jsonContext,
         out SyntaxTree syntaxTree,
-        Logger logger)
+        ILogger logger)
     {
         syntaxTree = source.SyntaxTree;
         SyntaxNode rootNode = syntaxTree.GetRoot();

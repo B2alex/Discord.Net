@@ -4,8 +4,8 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetInvite)),
-    Refreshable(nameof(Routes.GetInvite))
+    Loadable<Routes.InviteResolve>,
+    Refreshable
 ]
 public partial interface IInviteActor :
     IActor<string, IInvite>;

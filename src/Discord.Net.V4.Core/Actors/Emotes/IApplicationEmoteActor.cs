@@ -3,11 +3,11 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Deletable(nameof(Routes.DeleteApplicationEmoji)),
-    Loadable(nameof(Routes.GetApplicationEmoji)),
-    Modifiable<ModifyApplicationEmoteProperties>(nameof(Routes.ModifyApplicationEmoji)),
-    Creatable<CreateApplicationEmoteProperties>(
-        nameof(Routes.CreateApplicationEmoji),
+    Deletable<Routes.DeleteApplicationEmoji>,
+    Loadable<Routes.GetApplicationEmoji>,
+    Modifiable<Routes.UpdateApplicationEmoji, ModifyApplicationEmoteProperties>,
+    Creatable<Routes.CreateApplicationEmoji, CreateApplicationEmoteProperties>
+    (
         WhenBackLinkingFrom = [typeof(ICurrentApplicationActor)]
     )
 ]

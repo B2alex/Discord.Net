@@ -1,27 +1,30 @@
+using Discord.Models;
 using Discord.Rest;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
-[FetchableOfMany(nameof(Routes.ListDefaultSoundboardSounds))]
+[FetchableOfMany<Routes.GetSoundboardDefaultSounds>]
 public partial interface ISoundboardSoundActor :
     IActor<ulong, ISoundboardSound>
 {
-    Task SendAsync(
+    async ValueTask SendAsync(
         IdOrEntity<ulong, IChannelActor> channel,
         ulong? soundGuildId = null,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        return Client.RestApiClient.ExecuteAsync(
-            Routes.SendSoundboardSound(
-                channel.Id,
-                Id,
-                this is IGuildSoundboardSoundActor guildSound 
-                    ? guildSound.Guild.Id 
-                    : soundGuildId
-            ),
-            options,
-            token
-        );
-    }
+        CancellationToken token = default
+    ) => await Routes
+        .SendSoundboardSound
+        .Create(channel.Id)
+        .AsPipeline(
+            new SendSoundboardSoundParams()
+            {
+                SoundId = Id,
+                SourceGuildId = this is IGuildSoundboardSoundActor guildSound
+                    ? guildSound.Id
+                    : default
+            },
+            options
+        )
+        .RunAsync(Client, token);
 }

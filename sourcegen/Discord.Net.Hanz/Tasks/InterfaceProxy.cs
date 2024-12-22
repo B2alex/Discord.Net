@@ -61,7 +61,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
         return classDeclarationSyntax.Members.Any(x => x is PropertyDeclarationSyntax {AttributeLists.Count: > 0});
     }
 
-    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, ILogger logger,
         CancellationToken token)
     {
         if (context.Node is not ClassDeclarationSyntax target) return null;
@@ -221,7 +221,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
         HashSet<INamedTypeSymbol> currentTypesTemplateTargets,
         IEnumerable<INamedTypeSymbol> targetInterfaces,
         SemanticModel semanticModel,
-        Logger? logger = null)
+        ILogger? logger = null)
     {
         if (
             GatewayLoadable.TryGetBrokerTypes(propertyType, out var id, out var entity, out var model) &&
@@ -270,7 +270,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
         return correctedTargetInterfaces;
     }
 
-    private static void DedupeInstanceMemberConflicts(List<ProxiedMember> members, SemanticModel model, Logger logger)
+    private static void DedupeInstanceMemberConflicts(List<ProxiedMember> members, SemanticModel model, ILogger logger)
     {
         var potentials = members
             .Where(x => x is {ShouldImplementOwnMember: true, Symbol: IMethodSymbol})
@@ -354,7 +354,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
         }
     }
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, ILogger logger)
     {
         if (targets.Length == 0) return;
 
@@ -377,8 +377,6 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
         {
             if (target is null) continue;
 
-            var targetLogger = logger.WithSemanticContext(target.SemanticModel);
-
             var templateTargets = ExtendInterfaceDefaults.GetTemplateExtensionInterfaces(target.Symbol);
 
             var members = new List<ProxiedMember>();
@@ -388,7 +386,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
                 var extendedMembers =
                     ExtendInterfaceDefaults.GetTargetInterfaces(
                         property.Key.Type,
-                        targetLogger
+                        logger
                     ) is { } extendedTargets
                         ? ExtendInterfaceDefaults.GetTargetMembersForImplementation(
                             extendedTargets,
@@ -402,7 +400,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
                         property.Key,
                         property.Value,
                         target.SemanticModel,
-                        targetLogger,
+                        logger,
                         extendedTargets.OfType<INamedTypeSymbol>(),
                         extendedMembers,
                         templateTargets
@@ -410,7 +408,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
                 );
             }
 
-            DedupeInstanceMemberConflicts(members, target.SemanticModel, targetLogger);
+            DedupeInstanceMemberConflicts(members, target.SemanticModel, logger);
 
             if (prepared.TryGetValue(target.Symbol, out var existing))
                 existing.Members.AddRange(members);
@@ -422,9 +420,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
         {
             if (generated.ContainsKey(target.Key.ToFullMetadataName()))
                 continue;
-
-            var targetLogger = logger.WithSemanticContext(target.Value.Target.SemanticModel);
-
+            
             var children = prepared
                 .Where(x => TypeUtils
                     .GetBaseTypes(x.Key)
@@ -465,7 +461,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
             {
                 if (!generatedMembers.Add(member.Symbol))
                 {
-                    targetLogger.Log($"{target.Key}: Skipping {member.Symbol} (already implemented)");
+                    logger.Log($"{target.Key}: Skipping {member.Symbol} (already implemented)");
                     continue;
                 }
 
@@ -475,7 +471,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
                     parents,
                     children,
                     target.Value.Target.SemanticModel,
-                    targetLogger
+                    logger
                 );
             }
 
@@ -592,7 +588,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
             bool canImplementExplicitInterfaceMember,
             bool canProxyToSelfImplementation,
             SemanticModel model,
-            Logger? logger = null)
+            ILogger? logger = null)
         {
             Symbol = symbol;
             MemberInterface = memberInterface;
@@ -631,7 +627,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
         IPropertySymbol proxiedProperty,
         List<INamedTypeSymbol> specifiedTypes,
         SemanticModel semanticModel,
-        Logger? logger = null,
+        ILogger? logger = null,
         IEnumerable<INamedTypeSymbol>? extendedTargets = null,
         ImmutableHashSet<ISymbol>? extendedMembers = null,
         HashSet<INamedTypeSymbol>? templateTargets = null)
@@ -914,7 +910,7 @@ public class InterfaceProxy : ISyntaxGenerationCombineTask<InterfaceProxy.Genera
         Dictionary<INamedTypeSymbol, List<ProxiedMember>> parents,
         Dictionary<INamedTypeSymbol, List<ProxiedMember>> children,
         SemanticModel semanticModel,
-        Logger logger,
+        ILogger logger,
         Action<ISymbol>? onAdd = null
     )
     {

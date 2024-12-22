@@ -1,19 +1,20 @@
 using Discord.Models;
 using Discord.Models.Json;
 using Discord.Rest;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetChannelMessage)),
-    Deletable(nameof(Routes.DeleteMessage)),
-    Creatable<CreateMessageProperties>(
-        nameof(Routes.CreateMessage),
+    Loadable<Routes.GetMessage>,
+    Deletable<Routes.DeleteMessage>,
+    Creatable<Routes.CreateMessage, CreateMessageProperties>
+    (
         WhenBackLinkingFrom = [typeof(IMessageChannelTrait)]
     ),
-    Modifiable<ModifyMessageProperties>(nameof(Routes.ModifyMessage)),
-    PagedFetchableOfMany<PageChannelMessagesParams>(nameof(Routes.GetChannelMessages)),
-    Refreshable(nameof(Routes.GetChannelMessage))
+    Modifiable<Routes.UpdateMessage, ModifyMessageProperties>,
+    PagedFetchableOfMany<Routes.ListMessages, PageChannelMessagesParams>,
+    Refreshable
 ]
 public partial interface IMessageActor :
     IMessageChannelTrait.CanonicalRelationship,
@@ -23,32 +24,20 @@ public partial interface IMessageActor :
     IReactionActor.Indexable.BackLink<IMessageActor> Reactions { get; }
 
     [BackLink<IGuildChannelActor>]
-    private static Task BulkDeleteAsync(
+    private static async ValueTask BulkDeleteAsync(
         IGuildChannelActor channel,
         IEnumerable<IdOrEntity<ulong, IMessageActor>> messages,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        var ids = messages.Select(x => x.Id).ToArray();
-
-        if (ids.Length is < DiscordConfig.MinBulkDeleteMessages or > DiscordConfig.MaxMessagesPerBatch)
-            throw new ArgumentOutOfRangeException(
-                nameof(messages),
-                ids.Length,
-                $"{nameof(ids)} must contain at least {DiscordConfig.MinBulkDeleteMessages} ids and at most " +
-                $"{DiscordConfig.MaxBulkDeleteMessages} ids."
-            );
-
-        return channel.Client.RestApiClient.ExecuteAsync(
-            Routes.BulkDeleteMessages(
-                new BulkDeleteMessagesParams()
-                {
-                    Messages = ids
-                },
-                channel.Id
-            ),
-            options ?? channel.Client.DefaultRequestOptions,
-            token
-        );
-    }
+        CancellationToken token = default
+    ) => await Routes
+        .BulkDeleteMessages
+        .Create(channel)
+        .AsPipeline(
+            new BulkDeleteMessagesParams()
+            {
+                Messages = messages.Ids().ToArray()
+            },
+            options
+        )
+        .RunAsync(channel, token);
 }

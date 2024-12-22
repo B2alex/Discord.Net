@@ -22,7 +22,7 @@ public sealed class HierarchyNode :
     private readonly IncrementalKeyValueProvider<ActorOrTraitInfo, ImmutableEquatableArray<ActorOrTraitInfo>>
         _hierarchyProvider;
 
-    public HierarchyNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public HierarchyNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         _hierarchyProvider = GetTask<LinksTask>()
             .TargetAncestorsProvider

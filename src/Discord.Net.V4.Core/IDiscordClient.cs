@@ -12,6 +12,8 @@ public interface IDiscordClient :
 {
     IRestApiClient RestApiClient { get; }
     
+    IVoiceRegionActor.Enumerable VoiceRegions { get; }
+    
     ISoundboardSoundActor.Enumerable.Indexable Sounds { get; }
     
     IApplicationActor.Indexable.WithCurrent Applications { get; }

@@ -2,7 +2,8 @@ using Discord.Models.Json;
 
 namespace Discord;
 
-public class ModifyGuildChannelPositionProperties : IEntityProperties<ModifyGuildChannelPositionsParams>
+public class ModifyGuildChannelPositionProperties : 
+    IEntityProperties<ModifyGuildChannelPositionsParams>
 {
     public required IdOrEntity<ulong, IGuildChannel> Channel { get; set; }
     public Optional<int?> Position { get; set; }

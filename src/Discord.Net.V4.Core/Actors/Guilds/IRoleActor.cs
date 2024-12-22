@@ -1,45 +1,42 @@
 using Discord.Models;
 using Discord.Models.Json;
 using Discord.Rest;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetGuildRole)),
-    Deletable(nameof(Routes.DeleteGuildRole)),
-    Creatable<CreateRoleProperties>(nameof(Routes.CreateGuildRole)),
-    Modifiable<ModifyRoleProperties>(nameof(Routes.ModifyGuildRole)),
-    FetchableOfMany(nameof(Routes.GetGuildRoles))
+    Loadable<Routes.GetGuildRole>,
+    Deletable<Routes.DeleteGuildRole>,
+    Creatable<Routes.CreateGuildRole, CreateRoleProperties>,
+    Modifiable<Routes.UpdateGuildRole, ModifyRoleProperties>,
+    FetchableOfMany<Routes.ListGuildRoles>
 ]
 public partial interface IRoleActor :
     IGuildActor.CanonicalRelationship,
     IActor<ulong, IRole>
 {
     [BackLink<IMemberActor>]
-    private static async Task AddAsync(
+    private static async ValueTask AddAsync(
         IMemberActor member,
         IdOrEntity<ulong, IRoleActor> role,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        await member.Client.RestApiClient.ExecuteAsync(
-            Routes.AddGuildMemberRole(member.Guild.Id, member.Id, role.Id),
-            options ?? member.Client.DefaultRequestOptions,
-            token
-        );
-    }
+        CancellationToken token = default
+    ) => await Routes
+        .AddGuildMemberRole
+        .Create(member.Guild.Id, member.Id, role.Id)
+        .AsPipeline(options)
+        .RunAsync(member, token);
 
     [BackLink<IMemberActor>]
-    private static async Task RemoveAsync(
+    private static async ValueTask RemoveAsync(
         IMemberActor member,
         IdOrEntity<ulong, IRoleActor> role,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        await member.Client.RestApiClient.ExecuteAsync(
-            Routes.RemoveGuildMemberRole(member.Guild.Id, member.Id, role.Id),
-            options ?? member.Client.DefaultRequestOptions,
-            token
-        );
-    }
+        CancellationToken token = default
+    ) => await Routes
+        .DeleteGuildMemberRole
+        .Create(member.Guild.Id, member.Id, role.Id)
+        .AsPipeline(options)
+        .RunAsync(member, token);
 }

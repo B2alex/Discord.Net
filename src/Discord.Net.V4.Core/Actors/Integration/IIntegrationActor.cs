@@ -4,8 +4,8 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Deletable(nameof(Routes.DeleteGuildIntegration)), 
-    FetchableOfMany(nameof(Routes.GetGuildIntegrations))
+    Deletable<Routes.DeleteGuildIntegration>, 
+    FetchableOfMany<Routes.ListGuildIntegrations>
 ]
 public partial interface IIntegrationActor :
     IGuildActor.CanonicalRelationship,

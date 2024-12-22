@@ -54,9 +54,8 @@ public sealed class ContainerizedTrait : ISyntaxGenerationTask<ContainerizedTrai
     public bool IsValid(SyntaxNode node, CancellationToken token = default)
         => node is InterfaceDeclarationSyntax iface && iface.Modifiers.IndexOf(SyntaxKind.PartialKeyword) != -1;
 
-    public GenerationTarget? GetTargetForGeneration(
-        GeneratorSyntaxContext context,
-        Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context,
+        ILogger logger,
         CancellationToken token = default)
     {
         if (context.SemanticModel.Compilation.Assembly.Name != "Discord.Net.V4.Rest") return null;
@@ -86,7 +85,7 @@ public sealed class ContainerizedTrait : ISyntaxGenerationTask<ContainerizedTrai
         );
     }
 
-    public void Execute(SourceProductionContext context, GenerationTarget? target, Logger logger)
+    public void Execute(SourceProductionContext context, GenerationTarget? target, ILogger logger)
     {
         if (target is null) return;
 
@@ -128,7 +127,7 @@ public sealed class ContainerizedTrait : ISyntaxGenerationTask<ContainerizedTrai
         );
     }
 
-    private static string GenerateContainerType(GenerationTarget target, Logger logger)
+    private static string GenerateContainerType(GenerationTarget target, ILogger logger)
     {
         return 
             $$"""
@@ -148,7 +147,7 @@ public sealed class ContainerizedTrait : ISyntaxGenerationTask<ContainerizedTrai
 
     private static string GenerateContainerMembers(
         GenerationTarget target,
-        Logger logger)
+        ILogger logger)
     {
         var builder = new StringBuilder();
         

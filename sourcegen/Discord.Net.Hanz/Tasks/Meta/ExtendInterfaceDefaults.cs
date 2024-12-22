@@ -12,7 +12,7 @@ public sealed class ExtendInterfaceDefaults : GenerationTask
     //     ImmutableEquatableArray<>
     // );
 
-    public ExtendInterfaceDefaults(IncrementalGeneratorInitializationContext context, Logger logger) : base(context,
+    public ExtendInterfaceDefaults(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context,
         logger)
     {
         // context

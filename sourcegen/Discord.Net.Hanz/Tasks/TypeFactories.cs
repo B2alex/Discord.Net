@@ -101,7 +101,7 @@ public class TypeFactories : ISyntaxGenerationCombineTask<TypeFactories.Generati
         );
     }
 
-    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, ILogger logger,
         CancellationToken token)
     {
         if (context.Node is not ClassDeclarationSyntax target)
@@ -166,7 +166,7 @@ public class TypeFactories : ISyntaxGenerationCombineTask<TypeFactories.Generati
         public static bool operator !=(FactoryDetails left, FactoryDetails right) => !left.Equals(right);
     }
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, ILogger logger)
     {
         var factoryArgsList = new HashSet<int>();
         var generated = new HashSet<string>();

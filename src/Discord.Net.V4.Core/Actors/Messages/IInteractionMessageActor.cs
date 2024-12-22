@@ -4,9 +4,9 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetFollowupMessage)),
-    Modifiable<ModifyWebhookMessageProperties>(nameof(Routes.ModifyFollowupMessage)),
-    Deletable(nameof(Routes.DeleteFollowupMessage))
+    Loadable<Routes.GetWebhookMessage>,
+    Modifiable<Routes.UpdateWebhookMessage, ModifyWebhookMessageProperties>,
+    Deletable<Routes.DeleteWebhookMessage>
 ]
 public partial interface IInteractionMessageActor :
     IActor<ulong, IMessage>,

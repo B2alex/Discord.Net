@@ -65,3 +65,11 @@ public readonly struct IdOrEntity<TId, TEntity> :
         return !left.Equals(right);
     }
 }
+
+public static class IdOrEntityExtensions
+{
+    public static IEnumerable<TId> Ids<TId, TEntity>(this IEnumerable<IdOrEntity<TId, TEntity>> enumerable)
+        where TId : IEquatable<TId>
+        where TEntity : IIdentifiable<TId>
+        => enumerable.Select(x => x.Id);
+}

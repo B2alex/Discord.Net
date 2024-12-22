@@ -46,7 +46,7 @@ public sealed class EntityPropertiesTask : GenerationTask
 
     public IncrementalKeyValueProvider<string, EntityPropertiesWithInheritance> PropertiesWithInherited { get; }
 
-    public EntityPropertiesTask(IncrementalGeneratorInitializationContext context, Logger logger) : base(context,
+    public EntityPropertiesTask(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context,
         logger)
     {
         Properties = context.SyntaxProvider

@@ -11,7 +11,7 @@ public class ApiRouteGenerator : GenerationTask
     public IncrementalValuesProvider<OpenApiDocument> OpenApiDocumentsProvider { get; }
     public IncrementalKeyValueProvider<string, OpenApiPathItem> PathsProvider { get; }
     
-    public ApiRouteGenerator(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public ApiRouteGenerator(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         OpenApiDocumentsProvider = context
             .AdditionalTextsProvider
@@ -30,11 +30,9 @@ public class ApiRouteGenerator : GenerationTask
 
     private OpenApiDocument? ReadOpenApiSpec(AdditionalText text, CancellationToken token)
     {
-        using var logger = Logger.GetSubLogger(nameof(ReadOpenApiSpec));
-
         if (text.GetText(token) is not { } openApiSpec)
         {
-            logger.Warn("Unable to read open API spec.");
+            Logger.Warn("Unable to read open API spec.");
             
             return null;
         }
@@ -44,18 +42,18 @@ public class ApiRouteGenerator : GenerationTask
 
         foreach (var error in diagnostic.Errors)
         {
-            logger.Log(LogLevel.Error, $"{error.Message} : {error.Pointer}");
+            Logger.Log(LogLevel.Error, $"{error.Message} : {error.Pointer}");
         }
 
         foreach (var warning in diagnostic.Warnings)
         {
-            logger.Log(LogLevel.Warning, $"{warning.Message} : {warning.Pointer}");
+            Logger.Log(LogLevel.Warning, $"{warning.Message} : {warning.Pointer}");
         }
         
-        logger.Log($"Document routes: {document.Paths.Count}");
+        Logger.Log($"Document routes: {document.Paths.Count}");
         
         foreach (var documentPath in document.Paths)
-            logger.Log($" - {documentPath.Key}");
+            Logger.Log($" - {documentPath.Key}");
 
         return document;
     }

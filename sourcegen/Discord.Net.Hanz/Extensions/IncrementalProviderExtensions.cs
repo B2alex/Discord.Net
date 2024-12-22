@@ -144,6 +144,11 @@ public static class IncrementalProviderExtensions
         this IncrementalValuesProvider<T> source,
         IncrementalKeyValueProvider<U, V> other
     ) => source.Combine(other.EntriesProvider.Collect()).Select((pair, _) => pair.Left);
+    
+    public static IncrementalValueProvider<T> DependsOn<T, U, V>(
+        this IncrementalValueProvider<T> source,
+        IncrementalKeyValueProvider<U, V> other
+    ) => source.Combine(other.EntriesProvider.Collect()).Select((pair, _) => pair.Left);
 
     public static IncrementalValuesProvider<T> DependsOn<T, U, V>(
         this IncrementalValuesProvider<T> source,

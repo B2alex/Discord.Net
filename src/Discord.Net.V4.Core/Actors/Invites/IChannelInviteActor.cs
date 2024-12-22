@@ -3,8 +3,8 @@ using Discord.Rest;
 
 namespace Discord;
 
-[FetchableOfMany(nameof(Routes.GetChannelInvites))]
-public interface IChannelInviteActor :
+[FetchableOfMany<Routes.ListChannelInvites>]
+public partial interface IChannelInviteActor :
     IInviteActor,
     IChannelActor.CanonicalRelationship,
     IEntityProvider<IChannelInvite, IInviteModel>,

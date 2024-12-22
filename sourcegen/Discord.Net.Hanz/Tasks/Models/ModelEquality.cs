@@ -50,7 +50,7 @@ public class ModelEquality : ISyntaxGenerationTask<ModelEquality.GenerationTarge
         return node is TypeDeclarationSyntax {AttributeLists.Count: > 0, BaseList: not null};
     }
 
-    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context, ILogger logger,
         CancellationToken token)
     {
         if (context.Node is not TypeDeclarationSyntax {AttributeLists.Count: > 0, BaseList: not null} type) return null;
@@ -72,7 +72,7 @@ public class ModelEquality : ISyntaxGenerationTask<ModelEquality.GenerationTarge
         return new GenerationTarget(context.SemanticModel, typeSymbol, type);
     }
 
-    public void Execute(SourceProductionContext context, GenerationTarget? target, Logger logger)
+    public void Execute(SourceProductionContext context, GenerationTarget? target, ILogger logger)
     {
         if (target is null) return;
 

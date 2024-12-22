@@ -14,7 +14,7 @@ public sealed partial class ActorNode : Node
     {
         public TypePath Path { get; } = new(new([(typeof(ActorNode), ActorInfo.Actor.DisplayString)]));
 
-        public bool RedefinesRootInterfaceMemebrs =>
+        public bool RedefinesRootInterfaceMembers =>
             !ActorInfo.IsCore || AncestralInfo.EntityAssignableAncestors.Count > 0;
     }
 
@@ -30,7 +30,7 @@ public sealed partial class ActorNode : Node
 
     public ActorNode(
         IncrementalGeneratorInitializationContext context,
-        Logger logger
+        ILogger logger
     ) : base(context, logger)
     {
         BuildStateProvider =

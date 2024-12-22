@@ -33,7 +33,7 @@ public sealed class SourceOfTruth : GenerationTask
         ImmutableEquatableArray<TargetOverride<PropertySpec>> OverrideTargets
     ) : Target(ContainingType, Namespaces);
 
-    public SourceOfTruth(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public SourceOfTruth(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         context.RegisterSourceOutput(
             context
@@ -147,15 +147,13 @@ public sealed class SourceOfTruth : GenerationTask
 
         if (typeDeclaration.Modifiers.IndexOf(SyntaxKind.PartialKeyword) == -1)
             return null;
-
-        using var logger = Logger.GetSubLogger(context.TargetSymbol.ContainingType.ToFullMetadataName());
         
         return context.TargetSymbol switch
         {
             IMethodSymbol {ExplicitInterfaceImplementations.Length: 0, MethodKind: MethodKind.Ordinary} method
                 => MapMethod(method, context.SemanticModel, syntax, token),
             IPropertySymbol {ExplicitInterfaceImplementations.Length: 0} property
-                => MapProperty(property, context.SemanticModel, syntax, token, logger),
+                => MapProperty(property, context.SemanticModel, syntax, token, Logger),
             _ => null
         };
     }
@@ -165,7 +163,7 @@ public sealed class SourceOfTruth : GenerationTask
         SemanticModel model,
         MemberDeclarationSyntax syntax,
         CancellationToken token,
-        Logger logger)
+        ILogger logger)
     {
         if (symbol.ContainingType is not { } containingType)
             return null;

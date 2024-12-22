@@ -1,62 +1,70 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Deterministic>true</Deterministic>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>true</ImplicitUsings>
-    <LangVersion>Latest</LangVersion>
-    <PackageIcon>sourcegen_supremacy.png</PackageIcon>
-    <WarningLevel>4</WarningLevel>
-    <AnalyzerLanguage>cs</AnalyzerLanguage>
-    
-  </PropertyGroup>
+    <PropertyGroup>
+        <Deterministic>true</Deterministic>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>true</ImplicitUsings>
+        <LangVersion>Latest</LangVersion>
+        <PackageIcon>sourcegen_supremacy.png</PackageIcon>
+        <WarningLevel>4</WarningLevel>
+        <AnalyzerLanguage>cs</AnalyzerLanguage>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" PrivateAssets="all" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.OpenApi" Version="1.6.22" PrivateAssets="all" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.22" PrivateAssets="all" GeneratePathProperty="true" />
-    <PackageReference Include="SharpYaml" Version="2.1.1" PrivateAssets="all" GeneratePathProperty="true" />
-  </ItemGroup>
-  
-  <PropertyGroup>
-    <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-  </PropertyGroup>
-  
-  <Target Name="GetDependencyTargetPaths">
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+
     <ItemGroup>
-      <TargetPathWithTargetPlatformMoniker Include="$(PKGSharpYaml)\lib\netstandard2.0\SharpYaml.dll" Pack="true"
-                                           PackagePath="analyzers/dotnet/cs"
-                                           Visible="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_Bcl_HashCode)\lib\netstandard2.0\Microsoft.Bcl.HashCode.dll" Pack="true"
-                                           PackagePath="analyzers/dotnet/cs"
-                                           Visible="false" />
-      <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\Microsoft.OpenApi.dll" Pack="true"
-                                           PackagePath="analyzers/dotnet/cs"
-                                           Visible="false"  />
-      <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\Microsoft.OpenApi.Readers.dll" Pack="true"
-                                           PackagePath="analyzers/dotnet/cs"
-                                           Visible="false"  />
-      </ItemGroup>
-  </Target>
-  
-  <ItemGroup>
-    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true"
-          PackagePath="analyzers/dotnet/cs" Visible="false" />
-    <None Include="..\..\docs\marketing\propaganda\sourcegen_supremacy.png">
-      <Pack>True</Pack>
-      <Link>sourcegen_supremacy.png</Link>
-    </None>
-  </ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" PrivateAssets="all" GeneratePathProperty="true"/>
+        <PackageReference Include="Microsoft.OpenApi" Version="1.6.22" PrivateAssets="all" GeneratePathProperty="true"/>
+        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.22" PrivateAssets="all" GeneratePathProperty="true"/>
+        <PackageReference Include="SharpYaml" Version="2.1.1" PrivateAssets="all" GeneratePathProperty="true"/>
+        <PackageReference Include="System.Text.Json" Version="9.0.0" PrivateAssets="all" GeneratePathProperty="true"/>
+        
+        <Reference Include="System.Text.Json.SourceGeneration">
+            <HintPath>$(PKGSystem_Text_Json)\analyzers\dotnet\roslyn4.4\cs\System.Text.Json.SourceGeneration.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSharpYaml)\lib\netstandard2.0\SharpYaml.dll" Pack="true"
+                                                 PackagePath="analyzers/dotnet/cs"
+                                                 Visible="false"/>
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_Bcl_HashCode)\lib\netstandard2.0\Microsoft.Bcl.HashCode.dll" Pack="true"
+                                                 PackagePath="analyzers/dotnet/cs"
+                                                 Visible="false"/>
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\Microsoft.OpenApi.dll" Pack="true"
+                                                 PackagePath="analyzers/dotnet/cs"
+                                                 Visible="false"/>
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\Microsoft.OpenApi.Readers.dll" Pack="true"
+                                                 PackagePath="analyzers/dotnet/cs"
+                                                 Visible="false"/>
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Text_Json)\analyzers\dotnet\roslyn4.4\cs\System.Text.Json.SourceGeneration.dll" Pack="true"
+                                                 PackagePath="analyzers/dotnet/cs"
+                                                 Visible="false"/>
+        </ItemGroup>
+    </Target>
+
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true"
+              PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <None Include="..\..\docs\marketing\propaganda\sourcegen_supremacy.png">
+            <Pack>True</Pack>
+            <Link>sourcegen_supremacy.png</Link>
+        </None>
+    </ItemGroup>
 
 </Project>

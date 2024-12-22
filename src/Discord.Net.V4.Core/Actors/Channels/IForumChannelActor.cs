@@ -6,12 +6,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetChannel), typeof(GuildForumChannel)),
-    Modifiable<ModifyForumChannelProperties>(nameof(Routes.ModifyChannel)),
-    Creatable<CreateGuildForumChannelProperties>(
-        nameof(Routes.CreateGuildChannel),
-        WhenBackLinkingFrom = [typeof(IGuildActor)],
-        RouteGenerics = [typeof(GuildForumChannel)]
+    Loadable<Routes.GetChannel>,
+    Modifiable<Routes.UpdateChannel, ModifyForumChannelProperties>,
+    Creatable<Routes.CreateGuildChannel, CreateGuildForumChannelProperties>
+    (
+        WhenBackLinkingFrom = [typeof(IGuildActor)]
     ),
 ]
 public partial interface IForumChannelActor :

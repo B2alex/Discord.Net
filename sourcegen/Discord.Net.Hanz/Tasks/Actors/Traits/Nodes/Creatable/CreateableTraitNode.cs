@@ -53,7 +53,7 @@ public sealed partial class CreatableTraitNode : TraitNode
 
     private IncrementalValuesProvider<TargetMapping> CreatableProvider { get; }
 
-    public CreatableTraitNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    public CreatableTraitNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
         CreatableProvider = context
             .SyntaxProvider
@@ -170,12 +170,10 @@ public sealed partial class CreatableTraitNode : TraitNode
             return null;
 
         var details = new List<TraitAttributeDetails>();
-
-        using var logger = Logger.GetSubLogger(symbol.ToFullMetadataName()).WithCleanLogFile();
-
+        
         foreach (var attribute in context.Attributes)
         {
-            logger.Log($"Processing attribute {attribute} on {symbol}");
+            Logger.Log($"Processing attribute {attribute} on {symbol}");
 
             if (attribute.ConstructorArguments.Length == 0) continue;
 
@@ -238,18 +236,18 @@ public sealed partial class CreatableTraitNode : TraitNode
 
         if (details.Count == 0)
         {
-            logger.Log($"no details");
+            Logger.Log($"no details");
             return null;
         }
 
         foreach (var detail in details)
         {
-            logger.Log($" - {detail}");
-            logger.Log($" - {detail.FromBackLinks.Count} backlinks:");
+            Logger.Log($" - {detail}");
+            Logger.Log($" - {detail.FromBackLinks.Count} backlinks:");
 
             foreach (var backLink in detail.FromBackLinks)
             {
-                logger.Log($"   - {backLink}");
+                Logger.Log($"   - {backLink}");
             }
         }
 

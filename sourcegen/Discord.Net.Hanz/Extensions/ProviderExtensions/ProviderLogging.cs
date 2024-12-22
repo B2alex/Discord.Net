@@ -7,7 +7,7 @@ public static class ProviderLogging
 {
     public static IncrementalValuesProvider<T> WithLogging<T>(
         this IncrementalValuesProvider<T> provider,
-        Logger logger,
+        ILogger logger,
         Func<T?, string>? valueFormat = null
     )
     {
@@ -28,7 +28,7 @@ public static class ProviderLogging
 
     public static IncrementalValueProvider<T> WithLogging<T>(
         this IncrementalValueProvider<T> provider,
-        Logger logger,
+        ILogger logger,
         Func<T?, string>? valueFormat = null
     )
     {
@@ -43,7 +43,7 @@ public static class ProviderLogging
 
     public static IncrementalValueProvider<ImmutableArray<T>> WithLogging<T>(
         this IncrementalValueProvider<ImmutableArray<T>> provider,
-        Logger logger,
+        ILogger logger,
         Func<T?, string>? valueFormat = null
     )
     {
@@ -66,7 +66,7 @@ public static class ProviderLogging
 
     public static IncrementalKeyValueProvider<T, U> WithLogging<T, U>(
         this IncrementalKeyValueProvider<T, U> provider,
-        Logger logger,
+        ILogger logger,
         Func<T?, string>? keyFormat = null,
         Func<U?, string>? valueFormat = null
     )
@@ -93,7 +93,7 @@ public static class ProviderLogging
 
     public static IncrementalGroupingProvider<T, U> WithLogging<T, U>(
         this IncrementalGroupingProvider<T, U> provider,
-        Logger logger,
+        ILogger logger,
         Func<T?, string>? keyFormat = null,
         Func<U?, string>? valueFormat = null
     )

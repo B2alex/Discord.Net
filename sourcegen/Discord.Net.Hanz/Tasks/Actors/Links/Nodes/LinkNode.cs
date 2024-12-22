@@ -19,7 +19,7 @@ public abstract class LinkNode : Node
     
     protected LinkNode(
         IncrementalGeneratorInitializationContext context,
-        Logger logger
+        ILogger logger
     ) : base(context, logger)
     {
         Schematics = GetTask<LinkSchematics>(context).Schematics;

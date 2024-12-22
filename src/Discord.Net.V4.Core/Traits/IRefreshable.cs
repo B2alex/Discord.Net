@@ -1,38 +1,37 @@
 using Discord.Models;
+using Discord.Rest;
+using Discord.Rest.Pipeline;
 
 namespace Discord;
 
 #pragma warning disable CS9113 // Parameter is unread.
+
 [AttributeUsage(AttributeTargets.Interface)]
-internal sealed class RefreshableAttribute(string route) : Attribute;
+internal sealed class RefreshableAttribute : Attribute;
+
+[AttributeUsage(AttributeTargets.Interface)]
+internal sealed class RefreshableAttribute<TRoute> : Attribute
+    where TRoute : IRouteOperation<TRoute>;
+
 #pragma warning restore CS9113 // Parameter is unread.
 
 [TemplateExtension]
-public interface IRefreshable<in TSelf, TId, TModel> :
-    IFetchable<TId, TModel>,
+public interface IRefreshable<in TSelf, TRoute, TModel> :
+    IFetchable<TRoute, TModel>,
     IUpdatable<TModel>,
     IPathable,
-    IClientProvider,
-    IIdentifiable<TId>
-    where TModel : class, IEntityModel<TId>
-    where TSelf : IRefreshable<TSelf, TId, TModel>
-    where TId : IEquatable<TId>
+    IClientProvider
+    where TModel : class, IModel
+    where TRoute : IRouteOperation<TRoute>
+    where TSelf : IRefreshable<TSelf, TRoute, TModel>
 {
-    Task RefreshAsync(RequestOptions? options = null, CancellationToken token = default)
-        => RefreshInternalAsync((TSelf)this, TSelf.FetchRoute(this, Id), options, token);
-
-    internal static async Task RefreshInternalAsync(
-        TSelf self,
-        IApiOutRoute<TModel> route,
-        RequestOptions? options = null,
-        CancellationToken token = default)
+    async Task RefreshAsync(RequestOptions? options = null, CancellationToken token = default)
     {
-        var model = await self.Client.RestApiClient.ExecuteRequiredAsync(
-            route,
-            options ?? self.Client.DefaultRequestOptions,
-            token
-        );
-
-        await self.UpdateAsync(model, token);
+        await TRoute.Create(this)
+            .AsPipeline(options)
+            .Deserialize<TModel>()
+            .IfNotNull()
+            .Continue(UpdateAsync)
+            .RunAsync(Client, token);
     }
 }

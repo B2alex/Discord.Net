@@ -1,27 +1,42 @@
+using Discord.Rest;
+using Discord.Rest.Pipeline;
+
 namespace Discord;
 
 #pragma warning disable CS9113 // Parameter is unread.
+
 [AttributeUsage(AttributeTargets.Interface)]
-internal sealed class DeletableAttribute(string route) : Attribute;
+internal sealed class DeletableAttribute<TRoute> : Attribute
+    where TRoute : IRouteOperation<TRoute>;
+
 #pragma warning restore CS9113 // Parameter is unread.
 
-[TemplateExtension]
-public interface IDeletable<TId, out TSelf> :
-    IIdentifiable<TId>,
+public interface IDeletable<TRoute> : 
     IPathable,
     IClientProvider
-    where TSelf : IDeletable<TId, TSelf>, IIdentifiable<TId>, IPathable
-    where TId : IEquatable<TId>
+    where TRoute : IRouteOperation<TRoute>
 {
-    sealed Task DeleteAsync(RequestOptions? options = null, CancellationToken token = default)
-        => DeleteAsync(Client, TSelf.DeleteRoute(this, Id), options, token);
-
-    internal static Task DeleteAsync(
-        IDiscordClient client,
-        IApiRoute route,
-        RequestOptions? options = null,
-        CancellationToken token = default
-    ) => client.RestApiClient.ExecuteAsync(route, options ?? client.DefaultRequestOptions, token);
-
-    internal static abstract IApiRoute DeleteRoute(IPathable path, TId id);
+    async ValueTask DeleteAsync(RequestOptions? options = null, CancellationToken token = default)
+        => await TRoute.Create(this).AsPipeline(options).RunAsync(Client, token);
 }
+
+// [TemplateExtension]
+// public interface IDeletable<TId, out TSelf> :
+//     IIdentifiable<TId>,
+//     IPathable,
+//     IClientProvider
+//     where TSelf : IDeletable<TId, TSelf>, IIdentifiable<TId>, IPathable
+//     where TId : IEquatable<TId>
+// {
+//     sealed Task DeleteAsync(RequestOptions? options = null, CancellationToken token = default)
+//         => DeleteAsync(Client, TSelf.DeleteRoute(this, Id), options, token);
+//
+//     internal static Task DeleteAsync(
+//         IDiscordClient client,
+//         IApiRoute route,
+//         RequestOptions? options = null,
+//         CancellationToken token = default
+//     ) => client.RestApiClient.ExecuteAsync(route, options ?? client.DefaultRequestOptions, token);
+//
+//     internal static abstract IApiRoute DeleteRoute(IPathable path, TId id);
+// }

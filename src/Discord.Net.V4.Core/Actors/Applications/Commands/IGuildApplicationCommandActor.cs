@@ -3,12 +3,12 @@ using Discord.Rest;
 namespace Discord;
 
 [
-    Loadable(nameof(Routes.GetGuildApplicationCommand)),
-    Deletable(nameof(Routes.DeleteGuildApplicationCommand)),
-    Modifiable<ModifyGuildApplicationCommandProperties>(nameof(Routes.ModifyGuildApplicationCommand)),
-    Creatable<CreateGuildApplicationCommandProperties>(nameof(Routes.CreateGuildApplicationCommand)),
-    Refreshable(nameof(Routes.GetGuildApplicationCommand)),
-    FetchableOfMany(nameof(Routes.GetGuildApplicationCommands))
+    Loadable<Routes.GetGuildApplicationCommand>,
+    Deletable<Routes.DeleteGuildApplicationCommand>,
+    Modifiable<Routes.UpdateGuildApplicationCommand, ModifyGuildApplicationCommandProperties>,
+    Creatable<Routes.CreateGuildApplicationCommand, CreateGuildApplicationCommandProperties>,
+    Refreshable,
+    FetchableOfMany<Routes.ListGuildApplicationCommands>
 ]
 public partial interface IGuildApplicationCommandActor :
     IApplicationCommandActor,

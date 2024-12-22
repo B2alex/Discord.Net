@@ -149,16 +149,13 @@ public sealed class GatewayLoadable : ISyntaxGenerationCombineTask<GatewayLoadab
         return true;
     }
 
-    public GenerationTarget? GetTargetForGeneration(
-        GeneratorSyntaxContext context,
-        Logger logger,
+    public GenerationTarget? GetTargetForGeneration(GeneratorSyntaxContext context,
+        ILogger logger,
         CancellationToken token = default)
     {
         if (context.Node is not ClassDeclarationSyntax classDeclarationSyntax)
             return null;
-
-        logger = logger.WithSemanticContext(context.SemanticModel);
-
+        
         if (ModelExtensions.GetDeclaredSymbol(context.SemanticModel, classDeclarationSyntax) is not INamedTypeSymbol
             classSymbol)
         {
@@ -280,7 +277,7 @@ public sealed class GatewayLoadable : ISyntaxGenerationCombineTask<GatewayLoadab
                 )
             ).Type;
 
-    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, Logger logger)
+    public void Execute(SourceProductionContext context, ImmutableArray<GenerationTarget?> targets, ILogger logger)
     {
         if (targets.Length == 0) return;
 
@@ -305,10 +302,8 @@ public sealed class GatewayLoadable : ISyntaxGenerationCombineTask<GatewayLoadab
                     ?.GetSyntax()
                 is not ClassDeclarationSyntax entitySyntax
             ) continue;
-
-            var targetLogger = logger.WithSemanticContext(target.SemanticModel);
-
-            targetLogger.Log(
+            
+            logger.Log(
                 $"Processing {target.ClassSymbol}:\n" +
                 $"- {target.GatewayActorInterface}\n" +
                 $"- {target.CoreActor}\n" +
@@ -322,7 +317,7 @@ public sealed class GatewayLoadable : ISyntaxGenerationCombineTask<GatewayLoadab
             var syntax = SyntaxUtils.CreateSourceGenClone(target.Syntax);
             entitySyntax = SyntaxUtils.CreateSourceGenClone(entitySyntax);
 
-            ImplementLoadable(ref syntax, target, nonNullTargets, targetLogger);
+            ImplementLoadable(ref syntax, target, nonNullTargets, logger);
 
             ImplementProxyForEntity(ref entitySyntax, target, nonNullTargets);
 
@@ -554,7 +549,7 @@ public sealed class GatewayLoadable : ISyntaxGenerationCombineTask<GatewayLoadab
         ref ClassDeclarationSyntax syntax,
         GenerationTarget target,
         List<GenerationTarget> targets,
-        Logger logger)
+        ILogger logger)
     {
         if (!TryCreateRestEntityConstruction(
                 target.RestEntitySymbol,
@@ -731,7 +726,7 @@ public sealed class GatewayLoadable : ISyntaxGenerationCombineTask<GatewayLoadab
     private static bool TryCreateRestEntityConstruction(
         INamedTypeSymbol restEntity,
         ITypeSymbol model,
-        Logger logger,
+        ILogger logger,
         out string entityConstruction)
     {
         var candidates = restEntity.GetMembers("Construct").OfType<IMethodSymbol>().ToArray();

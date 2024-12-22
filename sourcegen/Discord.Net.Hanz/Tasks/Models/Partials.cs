@@ -36,7 +36,7 @@ public class Partials
         INamedTypeSymbol interfaceSymbol,
         InterfaceDeclarationSyntax interfaceSyntax,
         SemanticModel semanticModel,
-        Logger logger)
+        ILogger logger)
     {
         var fileName = $"PartialInterfaces/{interfaceSymbol.ToFullMetadataName()}";
 
@@ -207,7 +207,7 @@ public class Partials
         SemanticModel semanticModel,
         List<MemberDeclarationSyntax> addedMembers,
         HashSet<IPropertySymbol> generatedOverloads,
-        Logger logger
+        ILogger logger
     )
     {
         var isFromPartial = HasPartialAttribute(property.ContainingType);
@@ -561,7 +561,7 @@ public class Partials
         ITypeSymbol symbol,
         SemanticModel semanticModel,
         JsonModels.Context jsonContext,
-        Logger logger
+        ILogger logger
     )
     {
         if (!HasPartialAttribute(symbol))

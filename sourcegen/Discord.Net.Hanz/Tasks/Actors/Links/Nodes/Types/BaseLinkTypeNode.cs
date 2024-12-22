@@ -26,7 +26,7 @@ public abstract class BaseLinkTypeNode :
         IncrementalValuesProvider<Context> provider
     );
 
-    protected BaseLinkTypeNode(IncrementalGeneratorInitializationContext context, Logger logger) : base(context, logger)
+    protected BaseLinkTypeNode(IncrementalGeneratorInitializationContext context, ILogger logger) : base(context, logger)
     {
     }
 

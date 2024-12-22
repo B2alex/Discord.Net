@@ -1,4 +1,6 @@
 using Discord.Rest;
+using Discord.Rest.Pipeline;
+using Discord.Models;
 
 namespace Discord;
 
@@ -12,17 +14,17 @@ public partial interface IApplicationRoleConnectionMetadataActor :
         Link link,
         IEnumerable<ModifyApplicationRoleConnectionMetadataProperties> metadatas,
         RequestOptions? options = null,
-        CancellationToken token = default)
-    {
-        var result = await link.Client.RestApiClient.ExecuteRequiredAsync(
-            Routes.ModifyApplicationRoleConnectionMetadata(
-                application.Id,
-                metadatas.Select(x => x.ToApiModel())
-            ),
-            options,
-            token
-        );
-
-        return await result.MapAsync(link.CreateEntityAsync, token);
-    }
+        CancellationToken token = default
+    ) => await Routes.UpdateApplicationRoleConnectionsMetadata
+        .Create(application)
+        .AsPipeline(
+            metadatas.Select(x => x.ToApiModel()).AsCollectionParams(),
+            options
+        )
+        .Deserialize<IEnumerable<IApplicationRoleConnectionMetadataModel>>()
+        .Required()
+        .Transform(
+            (models, token) => models.MapAsync(link.CreateEntityAsync, token)
+        )
+        .RunAsync(link.Client, token);
 }

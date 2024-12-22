@@ -46,7 +46,8 @@ public class RouteMapperNode : Node
     public record Mapper(
         TypeRef Type,
         ImmutableEquatableArray<TypeMapping> Mappings,
-        ImmutableEquatableArray<string> IgnoredRoutes
+        ImmutableEquatableArray<string> IgnoredRoutes,
+        bool HasResolver
     );
 
     public record TypeMapping(string Name, TypeRef Type);
@@ -81,15 +82,15 @@ public class RouteMapperNode : Node
             ) is not null;
     }
 
-    public IncrementalKeyValueProvider<string, OpenApiPathItem> IncludedRoutes { get; } 
-    
+    public IncrementalKeyValueProvider<string, OpenApiPathItem> IncludedRoutes { get; }
+
     public IncrementalGroupingProvider<string, RequiredType> RouteTypes { get; }
     public IncrementalValuesProvider<Mapper> MapperProvider { get; }
     public IncrementalKeyValueProvider<string, ApiTypeMapping> MappedTypes { get; }
 
     public RouteMapperNode(
         IncrementalGeneratorInitializationContext context,
-        Logger logger
+        ILogger logger
     ) : base(context, logger)
     {
         MapperProvider = context
@@ -104,28 +105,7 @@ public class RouteMapperNode : Node
                     if (context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol symbol)
                         return null;
 
-                    if (!symbol.Interfaces.Any(x => x.Name is "IRouteTypeMapper"))
-                        return null;
-
-                    var mappings = classDeclarationSyntax.Members
-                        .OfType<PropertyDeclarationSyntax>()
-                        .Where(x => x.Initializer is not null)
-                        .Select(x =>
-                        {
-                            var operation = context.SemanticModel.GetOperation(x.Initializer!);
-
-                            if (operation is not IPropertyInitializerOperation initializerOperation)
-                                return null;
-
-                            if (initializerOperation.Value is not ITypeOfOperation typeOfOperation)
-                                return null;
-
-                            return new TypeMapping(x.Identifier.ValueText, new(typeOfOperation.TypeOperand));
-                        })
-                        .Where(x => x is not null)!
-                        .ToImmutableEquatableArray<TypeMapping>();
-
-                    if (mappings.Count == 0)
+                    if (!symbol.Interfaces.Any(x => x.Name is "IRouteMapper"))
                         return null;
 
                     var ignoredRoutesSyntax = classDeclarationSyntax.Members
@@ -143,7 +123,12 @@ public class RouteMapperNode : Node
                             .ToImmutableEquatableArray();
                     }
 
-                    return new Mapper(new(symbol), mappings, ignoredRoutes);
+                    return new Mapper(
+                        new(symbol),
+                        ImmutableEquatableArray<TypeMapping>.Empty,
+                        ignoredRoutes,
+                        symbol.GetMembers().Any(x => x.Name is "TryResolvePathParameter")
+                    );
                 }
             )
             .WhereNotNull();
@@ -154,7 +139,19 @@ public class RouteMapperNode : Node
             .Combine(MapperProvider.Collect())
             .Where(x => x.Right.All(y => !y.IgnoredRoutes.Contains(x.Left.Key)))
             .ToKeyed(x => (x.Left.Key, x.Left.Value));
-        
+
+        var pathParameterNames = IncludedRoutes
+            .EntriesProvider
+            .SelectMany((kvp, _) =>
+            {
+                return kvp
+                    .Value
+                    .Parameters
+                    .Where(x => x.In is ParameterLocation.Path)
+                    .Select(x => (Name: OpenApiNode.FormatPathName(x.Name), Route: kvp.Key));
+            })
+            .Collect();
+
         RouteTypes = IncludedRoutes
             .EntriesProvider
             .SelectMany((tuple, token) =>
@@ -199,6 +196,47 @@ public class RouteMapperNode : Node
                 )
             );
 
+        context.RegisterSourceOutput(
+            pathParameterNames,
+            (context, names) =>
+            {
+                context.AddSource(
+                    "ApiRoutes/PathParametersTypes",
+                    $$"""
+                      namespace Discord.Rest;
+
+                      public enum PathParameterType
+                      {
+                          {{
+                              string.Join(
+                                      $",{Environment.NewLine}",
+                                      names
+                                          .GroupBy(x => x.Name)
+                                          .Select(group =>
+                                              $"""
+                                               /// <summary>
+                                               ///    The <c>{group.Key}</c> parameter, used in the following routes:
+                                               ///    <list type="bullet">
+                                               ///      {
+                                                   string.Join(
+                                                       $"{Environment.NewLine}///      ",
+                                                       group.Select(x => $"<item><term>{x.Route}</term></item>")
+                                                   )
+                                               }
+                                               ///    </list>
+                                               /// </summary>
+                                               {group.Key}
+                                               """
+                                          )
+                                  )
+                                  .WithNewlinePadding(4)
+                          }}
+                      }
+                      """
+                );
+            }
+        );
+
         context
             .RegisterSourceOutput(
                 RouteTypes
@@ -211,27 +249,28 @@ public class RouteMapperNode : Node
     private SourceSpec CreateSourceSpec(ImmutableArray<RequiredType> requiredTypes, CancellationToken token)
     {
         return new SourceSpec(
-            "ApiRoutes/TypeMappingProvider",
+            "ApiRoutes/IRouteMapper",
             "Discord.Rest",
             Types: new([
                 new TypeSpec(
-                    "IRouteTypeMapper",
+                    "IRouteMapper",
                     TypeKind.Interface,
+                    Modifiers: new(["partial"]),
                     Properties: new([
                         new PropertySpec(
                             "IEnumerable<string>",
                             "IgnoredRoutes",
                             Expression: "[]"
                         ),
-                        ..requiredTypes
-                            .OrderBy(x => x.Name)
-                            .Select(x =>
-                                new PropertySpec(
-                                    "Type",
-                                    x.Name
-                                )
-                            )
-                            .Distinct()
+                        // ..requiredTypes
+                        //     .OrderBy(x => x.Name)
+                        //     .Select(x =>
+                        //         new PropertySpec(
+                        //             "Type",
+                        //             x.Name
+                        //         )
+                        //     )
+                        //     .Distinct()
                     ])
                 )
             ])

@@ -21,7 +21,7 @@ public class ApiRouteTask : GenerationTask
 
     public ApiRouteTask(
         IncrementalGeneratorInitializationContext context,
-        Logger logger
+        ILogger logger
     ) : base(context, logger)
     {
         Routes = context.SyntaxProvider
